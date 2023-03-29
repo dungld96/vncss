@@ -5,5 +5,5 @@
       "prettier/prettier":"warn",
       "no-console":"warn"
     },
-    "parser": "babel-eslint"
+    "parser": "@typescript-eslint/parser"
   }
