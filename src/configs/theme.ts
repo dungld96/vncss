@@ -12,5 +12,18 @@ export const theme = createTheme({
   typography: {
     fontFamily: 'inherit'
   },
-  components: {},
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          height: 44,
+          textTransform: 'initial',
+        },
+        sizeSmall: {
+          height: 36,
+          fontSize: 13,
+        },
+      },
+    },
+  },
 })

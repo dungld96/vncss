@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import { Box, TextField, IconButton, InputAdornment } from '@mui/material';
+import { Box, Checkbox, Button } from '@mui/material';
 import { useFormik, Form, FormikProvider } from 'formik';
 import imgLogo from '../../assets/img/logo.png';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
+import { Input } from 'components';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().trim().min(6, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
+  password: Yup.string().trim().min(8, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
+});
 
 const LoginScreen: React.FC = () => {
   const AuthBox = styled(Box)({
@@ -31,11 +35,6 @@ const LoginScreen: React.FC = () => {
     outline: '#EEF2FA',
   });
 
-  const [passwordShown, setPasswordShown] = useState(false);
-  const IconEye = styled(passwordShown ? VisibilityIcon : VisibilityOffIcon)({
-    color: '#C5C6D2',
-    fontSize: '16px',
-  });
   const IconKey = styled(KeyIcon)({
     color: '#8F0A0C',
     fontSize: '20px',
@@ -44,28 +43,81 @@ const LoginScreen: React.FC = () => {
     color: '#8F0A0C',
     fontSize: '20px',
   });
+  const Label = styled.p({
+    fontWeight: 400,
+    fontSize: '12px',
+    lineHeight: '20px',
+  });
 
-  const adornmentPassword = {
-    endAdornment: (
-      <InputAdornment position="end" style={{ padding: '12px' }}>
-        <IconButton onClick={() => setPasswordShown(!passwordShown)} edge="end">
-          <IconEye />
-        </IconButton>
-      </InputAdornment>
-    ),
-  };
+  const CheckBox = styled(Checkbox)({
+    '& .MuiSvgIcon-root': {
+      fontSize: 16,
+      borderRadius: 4,
+    },
+  });
+
+  const LabelSaveLogin = styled.p({
+    fontWeight: '400',
+    fontSize: '14px',
+    lineHeight: '22px',
+    color: '#333333',
+    margin: 0,
+  });
+
+  const LabelFotgotPass = styled.button({
+    outline: 'none',
+    border: 'none',
+    background: 'none',
+    cursor: 'pointer',
+    color: '#8F0A0C',
+    fontFamily: 'Roboto',
+    fontStyle: 'normal',
+    fontWeight: '500',
+    fontSize: '14px',
+    lineHeight: '22px',
+  });
+
+  const ButtonLogin = styled(Button)({
+    width: '100%',
+    height: '44px',
+    marginTop: 28,
+    borderRadius: '8px',
+    '&.MuiButton-textPrimary': {
+      color: '8F0A0C !important',
+    },
+    '&.Mui-disabled': {
+      backgroundColor: '8F0A0C !important',
+    },
+
+    '&.Mui-disabled.MuiButton-containedPrimary': {
+      color: 'white !important',
+      backgroundColor: '8F0A0C',
+    },
+  });
+
+  const LabelCopyRight = styled.p({
+    fontFamily: 'Roboto',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    fontSize: '12px',
+    lineHeight: '20px',
+    textAlign:'center',
+    color:'#C5C6D2'
+  });
 
   const formik = useFormik({
     initialValues: {
       name: '',
       password: '',
     },
+    validationSchema,
     onSubmit: (values) => {
       console.log(values);
     },
   });
-  const { handleSubmit,getFieldProps,values } = formik;
+  const { handleSubmit, getFieldProps, values, errors } = formik;
 
+  console.log(errors);
   return (
     <AuthBox>
       <div
@@ -76,93 +128,63 @@ const LoginScreen: React.FC = () => {
           boxShadow: '0px 12px 20px rgba(2, 8, 61, 0.05)',
           borderRadius: 20,
           margin: '0 auto',
-          padding: '50px 80px 24px 80px',
           boxSizing: 'border-box',
         }}
       >
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            background: '#FFFFFF',
+            padding: '50px 80px 24px 80px',
           }}
         >
-          <ImgLogo src={imgLogo} alt="" />
-          <Title>Đăng nhập</Title>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              background: '#FFFFFF',
+            }}
+          >
+            <ImgLogo src={imgLogo} alt="" />
+            <Title>Đăng nhập</Title>
+          </div>
+          <div>
+            <FormikProvider value={formik}>
+              <Form noValidate onSubmit={handleSubmit}>
+                <Label>Tên đăng nhập</Label>
+                <Input
+                  placeholder="Nhập mật khẩu"
+                  {...getFieldProps('name')}
+                  fullWidth
+                  iconStartAdorment={<IconPerson />}
+                  error={errors.name}
+                />
+                <Label>Mật khẩu</Label>
+                <Input
+                  placeholder="Nhập mật khẩu"
+                  {...getFieldProps('password')}
+                  fullWidth
+                  iconStartAdorment={<IconKey />}
+                  type={'password'}
+                  error={errors.password}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <CheckBox sx={{}} />
+                    <LabelSaveLogin>Nhớ đăng nhập</LabelSaveLogin>
+                  </div>
+                  <LabelFotgotPass type="button">Quên mật khẩu?</LabelFotgotPass>
+                </div>
+                <div>
+                  <ButtonLogin color="primary" variant="contained">
+                    Đăng nhập
+                  </ButtonLogin>
+                </div>
+              </Form>
+            </FormikProvider>
+          </div>
         </div>
-        <div>
-          <FormikProvider value={formik}>
-            <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-              <p>Tên đăng nhập</p>
-              <TextField
-                fullWidth
-                {...getFieldProps('name')}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconPerson />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                    border: '2px solid #EEF2FA',
-                  },
-                  '& .MuiInputBase-root': {
-                    borderRadius: '8px',
-                    height: '44px',
-                  },
-                  input: {
-                    '&::placeholder': {
-                      color: '#C5C6D2',
-                    },
-                    '&:-webkit-autofill':{
-                      transition:' background-color 5000s ease-in-out 0s'
-                  }
-                  },
-                }}
-                placeholder="Nhập tên đăng nhập"
-              />
-              <p>Tên đăng nhập</p>
-              <TextField
-                fullWidth
-                type={passwordShown?'text': 'password'}
-                {...getFieldProps('password')}
-                InputProps={{
-                  ...adornmentPassword,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconKey />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-                    border: '2px solid #EEF2FA',
-                  },
-                  '& .MuiInputBase-root': {
-                    borderRadius: '8px',
-                    height: 44,
-                  },
-                  '&::placeholder': {
-                    color: 'red',
-                  },
-                  input: {
-                    '&::placeholder': {
-                      color: '#C5C6D2',
-                    },
-                    '&:-webkit-autofill':{
-                      transition:' background-color 5000s ease-in-out 0s'
-                  }
-                  },
-                }}
-                placeholder="Nhập mật khẩu"
-              />
-            </Form>
-          </FormikProvider>
-        </div>
+        <LabelCopyRight>Sản phẩm thuộc bản quyền công ty Sesaco Việt Nam. Hotline: 02432262556</LabelCopyRight>
       </div>
     </AuthBox>
   );
