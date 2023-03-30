@@ -1,4 +1,4 @@
-import React, { useState,useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Box, TextField, IconButton, InputAdornment } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -10,8 +10,8 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: string;
   iconStartAdorment?: any;
   iconEndAdorment?: any;
-  inputRef?: any
-  maxLength?: number
+  inputRef?: any;
+  maxLength?: number;
   [key: string]: any;
 }
 
@@ -31,7 +31,7 @@ const Input: React.FC<Props> = (props) => {
     onChange,
     maxLength,
     ...rest
-  } = props as any
+  } = props as any;
   const isPassword = type === 'password';
   const [passwordShown, setPasswordShown] = useState(!isPassword);
 
@@ -56,12 +56,12 @@ const Input: React.FC<Props> = (props) => {
   };
 
   const handleFocus = useCallback((e: any) => {
-    onFocus?.(e)
-  }, [])
+    onFocus?.(e);
+  }, []);
 
   const handleBlur = useCallback((e: any) => {
-    onBlur?.(e)
-  }, [])
+    onBlur?.(e);
+  }, []);
 
   return (
     <div>
@@ -85,9 +85,12 @@ const Input: React.FC<Props> = (props) => {
           '& .MuiInputBase-root': {
             borderRadius: '8px',
             height: '44px',
+            color: '#1E2323',
+            fontWeight: '500',
+            fontSize: '14px',
           },
           '& .MuiFormHelperText-root': {
-            color:'#ec0e0e'
+            color: '#ec0e0e',
           },
           input: {
             '&::placeholder': {
