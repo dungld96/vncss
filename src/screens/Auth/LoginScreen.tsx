@@ -85,6 +85,7 @@ const LabelCopyRight = styled.p({
   lineHeight: '20px',
   textAlign: 'center',
   color: '#C5C6D2',
+  marginBottom:24
 });
 
 const LoginScreen: React.FC = () => {
@@ -122,7 +123,6 @@ const LoginScreen: React.FC = () => {
         <div
           style={{
             minWidth: 544,
-            height: 642,
             background: '#FFFFFF',
             boxShadow: '0px 12px 20px rgba(2, 8, 61, 0.05)',
             borderRadius: 20,
