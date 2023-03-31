@@ -10,6 +10,8 @@ import MadalChangPassword from './MadalChangPassword';
 
 const ProfileContainer = styled.div({
   width: '100%',
+  background:'#FFFFFF',
+  height:'100%'
 });
 
 const ProfileWrapper = styled.div({
@@ -55,6 +57,7 @@ const ProfileInfor = styled.div({
 
 const InforUser = styled.div({
   width: '384px',
+  maxWidth: '384px',
 });
 const SeperateLine = styled.div({
     border: '0.5px solid #EEF2FA',
