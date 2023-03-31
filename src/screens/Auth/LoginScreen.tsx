@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Box, Checkbox } from '@mui/material';
 import { useFormik, Form, FormikProvider } from 'formik';
-import imgLogo from '../../assets/img/logo.png';
+import imgLogo from '../../assets/img/logo.svg';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
 import { Input } from 'components';
