@@ -12,8 +12,18 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   iconEndAdorment?: any;
   inputRef?: any;
   maxLength?: number;
+  topLable?:string
   [key: string]: any;
 }
+
+const TopLabel = styled.p({
+  fontWeight: 400,
+  fontSize: '12px',
+  lineHeight: '20px',
+  padding:0,
+  marginTop:20,
+  marginBottom:8
+});
 
 const Input: React.FC<Props> = (props) => {
   const {
@@ -30,6 +40,7 @@ const Input: React.FC<Props> = (props) => {
     onBlur,
     onChange,
     maxLength,
+    topLable,
     ...rest
   } = props as any;
   const isPassword = type === 'password';
@@ -65,6 +76,7 @@ const Input: React.FC<Props> = (props) => {
 
   return (
     <div>
+      {topLable && <TopLabel>{topLable}</TopLabel>}
       <TextField
         {...rest}
         value={value}

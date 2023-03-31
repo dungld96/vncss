@@ -150,16 +150,16 @@ const LoginScreen: React.FC = () => {
             <div>
               <FormikProvider value={formik}>
                 <Form noValidate onSubmit={handleSubmit}>
-                  <Label>Tên đăng nhập</Label>
                   <Input
+                    topLable='Tên đăng nhập'
                     placeholder="Nhập mật khẩu"
                     {...getFieldProps('name')}
                     fullWidth
                     iconStartAdorment={<IconPerson />}
                     error={errors.name}
                   />
-                  <Label>Mật khẩu</Label>
                   <Input
+                    topLable='Mật khẩu'
                     placeholder="Nhập mật khẩu"
                     {...getFieldProps('password')}
                     fullWidth

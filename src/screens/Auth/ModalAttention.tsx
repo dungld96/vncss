@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Modal } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import styled from '@emotion/styled';
 import Button from 'components/button/Button';
 import Success from '../../assets/img/Success.svg';
