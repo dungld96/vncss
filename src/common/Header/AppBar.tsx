@@ -1,15 +1,30 @@
 import * as React from 'react';
 import { Box, AppBar, Toolbar, Typography, IconButton, Avatar, Menu } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 import AvatarImage from '../../assets/img/avatar-ex.png';
 import { InnerProfileMenu } from './InnerProfileMenu';
+import { logout } from '../../state/modules/auth/reducer';
+import { useAppDispatch } from '../../state/store';
+
 export default function AppBarHeader() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout);
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('current_user');
+    navigate('/login');
   };
 
   return (
@@ -50,7 +65,7 @@ export default function AppBarHeader() {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <InnerProfileMenu />
+              <InnerProfileMenu handleLogout={handleLogout} />
             </Menu>
           </Box>
         </Toolbar>

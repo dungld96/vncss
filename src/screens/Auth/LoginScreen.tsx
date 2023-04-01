@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Box, Checkbox } from '@mui/material';
 import { useFormik, Form, FormikProvider } from 'formik';
-import imgLogo from '../../assets/img/logo.svg';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
 import { Input } from 'components';
 import * as Yup from 'yup';
 import ModalAttention from './ModalAttention';
 import Button from 'components/button/Button';
+import imgLogo from '../../assets/img/logo.svg';
+import { useLoginMutation } from '../../services/auth.service';
+import { useAppDispatch } from '../../state/store';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().trim().min(6, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
+  username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
   password: Yup.string().trim().min(8, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
 });
 const AuthBox = styled(Box)({
@@ -85,25 +89,36 @@ const LabelCopyRight = styled.p({
   lineHeight: '20px',
   textAlign: 'center',
   color: '#C5C6D2',
-  marginBottom:24
+  marginBottom: 24,
 });
 
-const LoginScreen: React.FC = () => {
-  const [modalAttention, setModalAttention] = useState({
-    show: false,
-    title: '',
-    content: '',
-    icon: '',
-  });
+const initForm = {
+  show: false,
+  title: '',
+  content: '',
+  icon: '',
+};
+const LoginScreen = () => {
+  const [modalAttention, setModalAttention] = useState(initForm);
+  const [loginUser, { isLoading, isError, error, isSuccess }] = useLoginMutation();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = ((location.state as any)?.from.pathname as string) || '/';
 
   const formik = useFormik({
     initialValues: {
-      name: '',
+      username: '',
       password: '',
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      try {
+        await loginUser(values).unwrap();
+        navigate(from);
+      } catch (error) {
+        console.error('rejected', error);
+      }
     },
   });
   const { handleSubmit, getFieldProps, values, errors } = formik;
@@ -120,7 +135,7 @@ const LoginScreen: React.FC = () => {
     <>
       <ModalAttention {...modalAttention} onClose={closeModalAttention} />
       <AuthBox>
-        <div
+        <Box
           style={{
             minWidth: 544,
             background: '#FFFFFF',
@@ -130,12 +145,12 @@ const LoginScreen: React.FC = () => {
             boxSizing: 'border-box',
           }}
         >
-          <div
+          <Box
             style={{
               padding: '50px 80px 24px 80px',
             }}
           >
-            <div
+            <Box
               style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -146,17 +161,17 @@ const LoginScreen: React.FC = () => {
             >
               <ImgLogo src={imgLogo} alt="" />
               <Title>Đăng nhập</Title>
-            </div>
-            <div>
+            </Box>
+            <Box>
               <FormikProvider value={formik}>
                 <Form noValidate onSubmit={handleSubmit}>
                   <Label>Tên đăng nhập</Label>
                   <Input
                     placeholder="Nhập mật khẩu"
-                    {...getFieldProps('name')}
+                    {...getFieldProps('username')}
                     fullWidth
                     iconStartAdorment={<IconPerson />}
-                    error={errors.name}
+                    error={errors.username}
                   />
                   <Label>Mật khẩu</Label>
                   <Input
@@ -167,13 +182,13 @@ const LoginScreen: React.FC = () => {
                     type={'password'}
                     // error={errors.password}
                   />
-                  <div
+                  <Box
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box style={{ display: 'flex', alignItems: 'center' }}>
                       <CheckBox sx={{}} />
                       <LabelSaveLogin>Nhớ đăng nhập</LabelSaveLogin>
-                    </div>
+                    </Box>
                     <LabelFotgotPass
                       type="button"
                       onClick={() =>
@@ -187,18 +202,25 @@ const LoginScreen: React.FC = () => {
                     >
                       Quên mật khẩu?
                     </LabelFotgotPass>
-                  </div>
-                  <div>
-                    <Button style={{ marginTop: 40 }} fullWidth color="primary" variant="contained">
+                  </Box>
+                  <Box>
+                    <Button
+                      style={{ marginTop: 40 }}
+                      fullWidth
+                      color="primary"
+                      variant="contained"
+                      type="submit"
+                      disabled={isLoading}
+                    >
                       Đăng nhập
                     </Button>
-                  </div>
+                  </Box>
                 </Form>
               </FormikProvider>
-            </div>
-          </div>
+            </Box>
+          </Box>
           <LabelCopyRight>Sản phẩm thuộc bản quyền công ty Sesaco Việt Nam. Hotline: 02432262556</LabelCopyRight>
-        </div>
+        </Box>
       </AuthBox>
     </>
   );
