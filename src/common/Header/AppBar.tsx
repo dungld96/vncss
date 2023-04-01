@@ -27,6 +27,10 @@ export default function AppBarHeader() {
     navigate('/login');
   };
 
+  const goProfile = () => {
+    navigate('/profile');
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -65,7 +69,7 @@ export default function AppBarHeader() {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <InnerProfileMenu handleLogout={handleLogout} />
+              <InnerProfileMenu handleLogout={handleLogout} goProfile={goProfile} />
             </Menu>
           </Box>
         </Toolbar>
