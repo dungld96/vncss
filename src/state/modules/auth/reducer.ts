@@ -1,26 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { User } from '../../../services/auth.service'
+import type { IUser } from '../../../services/auth.service';
 import type { RootState } from '../../store';
 
 type AuthState = {
-  user: User | null;
+  currentUser: IUser | null;
   accessToken: string | null;
 };
 
+const initialState: AuthState = { currentUser: null, accessToken: null };
+
 const slice = createSlice({
   name: 'auth',
-  initialState: { user: null, accessToken: null } as AuthState,
+  initialState: { currentUser: null, accessToken: null } as AuthState,
   reducers: {
-    setCurrentUser: (state, { payload: { user, accessToken } }: PayloadAction<{ user: User; accessToken: string }>) => {
-      state.user = user;
+    setAccessToken: (state, { payload: { accessToken } }: PayloadAction<{ accessToken: string }>) => {
       state.accessToken = accessToken;
     },
+    setCurrentUser: (state, { payload: { currentUser } }: PayloadAction<{ currentUser: IUser }>) => {
+      state.currentUser = currentUser;
+    },
+    logout: () => initialState,
   },
 });
 
-export const { setCurrentUser } = slice.actions;
+export const { setCurrentUser, setAccessToken, logout } = slice.actions;
 
 export default slice.reducer;
 
-export const selectCurrentUser = (state: RootState) => state.auth.user;
+export const selectAuth = (state: RootState) => state.auth;

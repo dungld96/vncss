@@ -8,6 +8,7 @@ import { store } from './state/store';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@mui/material';
 import { theme } from 'configs/theme';
+import AuthMiddleware from 'common/Middleware/AuthMiddleware';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -15,7 +16,9 @@ root.render(
     {/* <React.StrictMode> */}
     <BrowserRouter>
       <Provider store={store}>
-        <App />
+        <AuthMiddleware>
+          <App />
+        </AuthMiddleware>
       </Provider>
     </BrowserRouter>
     {/* </React.StrictMode> */}

@@ -15,14 +15,14 @@ const imageIcon = (image: string) => {
 
 const listFeature = [
   {
-    // id: ROUTE_HOME_ID,
+    id: '31cbc275-67f2-44e9-9c86-4ecbf1e84459',
     title: 'Thống kê',
     icon: imageIcon(dashboardIcon),
     permission: ['overview'],
     // route: ROUTE_HOME,
   },
   {
-    // id: ROUTE_CATEGORIES_ID,
+    id: '68d536e2-eff0-4388-84ad-739c31867c8b',
     title: 'Cơ quan quản lý',
     icon: imageIcon(RegulatoryAgencyIcon),
     permission: ['regulatory_agency'],
@@ -90,8 +90,8 @@ export default function DrawerSidebar({ open }: Props) {
           </Box>
         </Box>
         <Box sx={{ height: '100%', backgroundColor: '#ffffff', paddingTop: '10px' }}>
-          {listFeature.map(({ icon, title }) => (
-            <List component="div" disablePadding>
+          {listFeature.map(({ id, icon, title }) => (
+            <List key={id} component="div" disablePadding>
               <ListItem button>
                 <ListItemIcon sx={{ color: '#8F0A0C', minWidth: 40 }}>{icon}</ListItemIcon>
                 <ListItemText sx={{ color: '#8F0A0C' }} primary={title}></ListItemText>

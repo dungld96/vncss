@@ -12,7 +12,11 @@ import {
 import { Logout as LogoutIcon } from '@mui/icons-material';
 import avatarEx from '../../assets/img/avatar-ex.png';
 
-export const InnerProfileMenu = () => {
+interface Props {
+  handleLogout: () => void;
+}
+
+export const InnerProfileMenu = ({ handleLogout }: Props) => {
   return (
     <>
       <ListSubheader key="header" sx={{ display: 'flex' }}>
@@ -30,7 +34,7 @@ export const InnerProfileMenu = () => {
         </Box>
       </ListSubheader>
       <Divider />
-      <MenuItem key="logout">
+      <MenuItem key="logout" onClick={handleLogout}>
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>
