@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import LoginScreen from 'screens/Auth/LoginScreen';
+import Profile from 'screens/Profile/Profile';
 import RequireUser from 'screens/Auth/RequireUser';
 import DashboardScreen from 'screens/Dashboard/DashboardScreen';
 import Layout from 'common/Layout/Layout';
@@ -12,6 +13,8 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<RequireUser allowedRoles={['user']} />}>
             <Route index element={<DashboardScreen />} />
+            <Route path="profile" element={<Profile />} />
+
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Box, Checkbox } from '@mui/material';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import background from '../../assets/img/BACKGROUND.svg';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
 import { Input } from 'components';
@@ -21,9 +22,11 @@ const validationSchema = Yup.object().shape({
 const AuthBox = styled(Box)({
   width: '100vw',
   height: '100vh',
-  backgroundColor: '#ecf1f5',
   display: 'flex',
   alignItems: 'center',
+  backgroundImage:`url("${background}")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundSize:'cover'
 });
 
 const ImgLogo = styled.img({
@@ -165,16 +168,16 @@ const LoginScreen = () => {
             <Box>
               <FormikProvider value={formik}>
                 <Form noValidate onSubmit={handleSubmit}>
-                  <Label>Tên đăng nhập</Label>
                   <Input
+                    topLable='Tên đăng nhập'
                     placeholder="Nhập mật khẩu"
                     {...getFieldProps('username')}
                     fullWidth
                     iconStartAdorment={<IconPerson />}
                     error={errors.username}
                   />
-                  <Label>Mật khẩu</Label>
                   <Input
+                    topLable='Mật khẩu'
                     placeholder="Nhập mật khẩu"
                     {...getFieldProps('password')}
                     fullWidth
