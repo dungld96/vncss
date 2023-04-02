@@ -10,7 +10,7 @@ import Layout from 'common/Layout/Layout';
 
 function App() {
   return (
-    <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh' }}>
+    <Box sx={{ backgroundColor: '#E5E5E5', height: '100vh' }}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<RequireUser allowedRoles={['user']} />}>

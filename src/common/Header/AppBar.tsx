@@ -39,7 +39,8 @@ export default function AppBarHeader() {
           width: 'auto',
           backgroundColor: '#ffffff',
           marginLeft: '56px',
-          boxShadow: '1px 0 8px 0 rgba(0, 0, 0, 0.1),0 2px 5px 0 rgba(0, 0, 0, 0.1)!important',
+          boxShadow: 'none',
+          // boxShadow: '1px 0 8px 0 rgba(0, 0, 0, 0.1),0 2px 5px 0 rgba(0, 0, 0, 0.1)!important',
         }}
       >
         <Toolbar>

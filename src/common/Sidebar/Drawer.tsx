@@ -88,7 +88,10 @@ export default function DrawerSidebar({ open }: Props) {
               }),
             borderRight: 'none !important',
             zIndex: 1202,
-            boxShadow: '6px 0px 18px rgba(0, 0, 0, 0.06)',
+            boxShadow: open || hovering ? '0px 24px 40px rgba(2, 8, 61, 0.12)' : 'none',
+            // boxShadow: '6px 0px 18px rgba(0, 0, 0, 0.06)',
+            // boxShadow: '0px 24px 40px rgba(2, 8, 61, 0.12)',
+
             overflowX: open || hovering ? '' : 'hidden',
           },
         }}
@@ -117,8 +120,14 @@ export default function DrawerSidebar({ open }: Props) {
           {listFeature.map((item) => (
             <List key={item.id} component="div" disablePadding>
               <ListItem button onClick={() => onClickDrawerItem(item)}>
-                <ListItemIcon sx={{ color: '#8F0A0C', minWidth: 40 }}>{item.icon}</ListItemIcon>
-                <ListItemText sx={{ color: '#8F0A0C' }} primary={item.title}></ListItemText>
+                <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>{item.icon}</ListItemIcon>
+                <ListItemText
+                  sx={{ color: '#8B8C9B', fontWeight: '500 !important', fontSize: '14px !important' }}
+                  primary={item.title}
+                  primaryTypographyProps={{
+                    sx: { color: '#8B8C9B', fontWeight: '500 !important', fontSize: '14px !important' },
+                  }}
+                ></ListItemText>
               </ListItem>
             </List>
           ))}
