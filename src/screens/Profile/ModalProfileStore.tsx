@@ -1,9 +1,9 @@
-import Modal from 'components/modal/Modal';
+import Modal from 'common/modal/Modal';
 import React from 'react';
 import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'components/button/Button';
-import { Input } from 'components';
+import Button from 'common/button/Button';
+import { Input } from 'common';
 
 interface Props {
   show: boolean;

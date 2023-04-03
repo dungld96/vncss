@@ -16,15 +16,14 @@ const Button: React.FC<Props> = (props) => {
     borderRadius: '8px',
     margin: 0,
     '&.MuiButton-textPrimary': {
-      color: '8F0A0C !important',
+      color: '#8F0A0C !important',
     },
     '&.Mui-disabled': {
-      backgroundColor: '8F0A0C !important',
+      backgroundColor: '#EDCCCC !important',
     },
 
     '&.Mui-disabled.MuiButton-containedPrimary': {
       color: 'white !important',
-      backgroundColor: '8F0A0C',
     },
   });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'components/button/Button';
+import Button from 'common/button/Button';
 import Success from '../../assets/img/Success.svg';
 import Failed from '../../assets/img/Failed.svg';
 import Warning from '../../assets/img/Warning.svg';
