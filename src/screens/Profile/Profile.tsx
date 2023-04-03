@@ -1,4 +1,4 @@
-import React, { useRef,useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Avatar, Stack } from '@mui/material';
 import DefaultAvatar from '../../assets/img/avatar.svg';
@@ -12,8 +12,8 @@ import { IUser } from 'services/auth.service';
 
 const ProfileContainer = styled.div({
   width: '100%',
-  background:'#FFFFFF',
-  height:'100%'
+  background: '#FFFFFF',
+  height: '100%',
 });
 
 const ProfileWrapper = styled.div({
@@ -62,8 +62,8 @@ const InforUser = styled.div({
   maxWidth: '384px',
 });
 const SeperateLine = styled.div({
-    border: '0.5px solid #EEF2FA',
-    maxHeight:'270px'
+  border: '0.5px solid #EEF2FA',
+  maxHeight: '270px',
 });
 
 const Title = styled.div({
@@ -100,18 +100,18 @@ const LabelInfor = styled.div({
     fontSize: '14px',
     lineHeight: '22px',
     color: '#8B8C9B',
-    margin:0,
+    margin: 0,
   },
   '& .infor': {
     fontWeight: '700',
     fontSize: '14px',
     lineHeight: '22px',
-    margin:0,
+    margin: 0,
     color: '#1E2323',
     '&.button': {
-      cursor:'pointer',
-      color:'#8F0A0C'
-    }
+      cursor: 'pointer',
+      color: '#8F0A0C',
+    },
   },
 });
 
@@ -174,8 +174,9 @@ const Profile: React.FC = () => {
             <IconChange onClick={() => inputRef.current.click()}>
               <CameraAltIcon
                 sx={{
-                  color: '#144DD1',
-                  fontSize: '20px',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
                 }}
               />
             </IconChange>

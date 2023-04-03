@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { Box, Drawer, List, ListItemIcon, ListItem, Icon, ListItemText } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_HOME, ROUTE_REGULATORY_AGENCY, ROUTE_USER } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory_agency.svg';
 import dashboardIcon from '../../assets/icons/dashboard-icon.svg';
+import usersIcon from '../../assets/icons/users.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
@@ -19,14 +22,21 @@ const listFeature = [
     title: 'Thống kê',
     icon: imageIcon(dashboardIcon),
     permission: ['overview'],
-    // route: ROUTE_HOME,
+    route: ROUTE_HOME,
   },
   {
     id: '68d536e2-eff0-4388-84ad-739c31867c8b',
     title: 'Cơ quan quản lý',
     icon: imageIcon(RegulatoryAgencyIcon),
     permission: ['regulatory_agency'],
-    // route: ROUTE_CATEGORIES,
+    route: ROUTE_REGULATORY_AGENCY,
+  },
+  {
+    id: '11115061-4494-4bdc-8a6e-5a59aadec58f',
+    title: 'Nhân viên',
+    icon: imageIcon(usersIcon),
+    permission: ['users'],
+    route: ROUTE_USER,
   },
 ];
 
@@ -36,12 +46,26 @@ interface Props {
 export default function DrawerSidebar({ open }: Props) {
   const [expanded, setExpanded] = useState([]);
   const [hovering, setHovering] = useState(false);
+  const navigate = useNavigate();
+
   const handleMouseEnterChild = () => {
     setHovering(true);
   };
   const handleMouseLeaveChild = () => {
     setHovering(false);
   };
+
+  const onClickDrawerItem = (item: {
+    id: string;
+    title: string;
+    icon: ReactNode;
+    permission: string[];
+    route: string;
+  }) => {
+    const route = item.route;
+    navigate(route);
+  };
+
   return (
     <Box>
       <Drawer
@@ -64,7 +88,10 @@ export default function DrawerSidebar({ open }: Props) {
               }),
             borderRight: 'none !important',
             zIndex: 1202,
-            boxShadow: '6px 0px 18px rgba(0, 0, 0, 0.06)',
+            boxShadow: open || hovering ? '0px 24px 40px rgba(2, 8, 61, 0.12)' : 'none',
+            // boxShadow: '6px 0px 18px rgba(0, 0, 0, 0.06)',
+            // boxShadow: '0px 24px 40px rgba(2, 8, 61, 0.12)',
+
             overflowX: open || hovering ? '' : 'hidden',
           },
         }}
@@ -90,11 +117,17 @@ export default function DrawerSidebar({ open }: Props) {
           </Box>
         </Box>
         <Box sx={{ height: '100%', backgroundColor: '#ffffff', paddingTop: '10px' }}>
-          {listFeature.map(({ id, icon, title }) => (
-            <List key={id} component="div" disablePadding>
-              <ListItem button>
-                <ListItemIcon sx={{ color: '#8F0A0C', minWidth: 40 }}>{icon}</ListItemIcon>
-                <ListItemText sx={{ color: '#8F0A0C' }} primary={title}></ListItemText>
+          {listFeature.map((item) => (
+            <List key={item.id} component="div" disablePadding>
+              <ListItem button onClick={() => onClickDrawerItem(item)}>
+                <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>{item.icon}</ListItemIcon>
+                <ListItemText
+                  sx={{ color: '#8B8C9B', fontWeight: '500 !important', fontSize: '14px !important' }}
+                  primary={item.title}
+                  primaryTypographyProps={{
+                    sx: { color: '#8B8C9B', fontWeight: '500 !important', fontSize: '14px !important' },
+                  }}
+                ></ListItemText>
               </ListItem>
             </List>
           ))}
