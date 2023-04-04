@@ -6,10 +6,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import background from '../../assets/img/BACKGROUND.svg';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
-import { Input } from 'components';
+import { Input } from 'common';
 import * as Yup from 'yup';
 import ModalAttention from './ModalAttention';
-import Button from 'components/button/Button';
+import Button from 'common/button/Button';
 import imgLogo from '../../assets/img/logo.svg';
 import { useLoginMutation } from '../../services/auth.service';
 import { useAppDispatch } from '../../state/store';
@@ -125,7 +125,6 @@ const LoginScreen = () => {
     },
   });
   const { handleSubmit, getFieldProps, values, errors } = formik;
-  console.log('🚀 ~ file: LoginScreen.tsx:109 ~ values:', values);
 
   const closeModalAttention = () => {
     setModalAttention({
@@ -198,7 +197,7 @@ const LoginScreen = () => {
                         setModalAttention({
                           show: true,
                           title: 'Quên mật khẩu',
-                          icon: 'failed',
+                          icon: '',
                           content: 'Vui lòng liên hệ Admin để được cấp lại mật khẩu của tài khoản',
                         })
                       }
