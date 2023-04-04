@@ -1,4 +1,4 @@
-import React, { useRef,useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Avatar, Stack } from '@mui/material';
 import DefaultAvatar from '../../assets/img/avatar.svg';
@@ -10,8 +10,8 @@ import MadalChangPassword from './MadalChangPassword';
 
 const ProfileContainer = styled.div({
   width: '100%',
-  background:'#FFFFFF',
-  height:'100%'
+  background: '#FFFFFF',
+  height: '100%',
 });
 
 const ProfileWrapper = styled.div({
@@ -60,8 +60,8 @@ const InforUser = styled.div({
   maxWidth: '384px',
 });
 const SeperateLine = styled.div({
-    border: '0.5px solid #EEF2FA',
-    maxHeight:'270px'
+  border: '0.5px solid #EEF2FA',
+  maxHeight: '270px',
 });
 
 const Title = styled.div({
@@ -98,18 +98,18 @@ const LabelInfor = styled.div({
     fontSize: '14px',
     lineHeight: '22px',
     color: '#8B8C9B',
-    margin:0,
+    margin: 0,
   },
   '& .infor': {
     fontWeight: '700',
     fontSize: '14px',
     lineHeight: '22px',
-    margin:0,
+    margin: 0,
     color: '#1E2323',
     '&.button': {
-      cursor:'pointer',
-      color:'#8F0A0C'
-    }
+      cursor: 'pointer',
+      color: '#8F0A0C',
+    },
   },
 });
 
@@ -135,59 +135,63 @@ const RenderInfor = ({ label, infor, action }: { label: string; infor: string; a
 
 const Profile: React.FC = () => {
   const inputRef = useRef<any>();
-  const [modalUser,setModalUser] = useState({show:false})
-  const [modalStore,setModalStore] = useState({show:false})
-  const [modalChangePass,setModalChangePass] = useState({show:false})
+  const [modalUser, setModalUser] = useState({ show: false });
+  const [modalStore, setModalStore] = useState({ show: false });
+  const [modalChangePass, setModalChangePass] = useState({ show: false });
 
   return (
     <>
-    <ModalProfileUser {...modalUser} onClose={() => setModalUser({show:false})} />
-    <ModalProfileStore {...modalStore} onClose={() => setModalStore({show:false})} />
-    <MadalChangPassword {...modalChangePass} onClose={() => setModalChangePass({show:false})} />
-    <ProfileContainer>
-      <ProfileWrapper>
-        <Stack flexDirection="column" justifyContent="center" alignItems="center">
-          <AvatarWrapper>
-            <Avatar
-              src={DefaultAvatar}
-              sx={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-              }}
-            />
-            <IconChange onClick={() => inputRef.current.click()}>
-              <CameraAltIcon
+      <ModalProfileUser {...modalUser} onClose={() => setModalUser({ show: false })} />
+      <ModalProfileStore {...modalStore} onClose={() => setModalStore({ show: false })} />
+      <MadalChangPassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      <ProfileContainer>
+        <ProfileWrapper>
+          <Stack flexDirection="column" justifyContent="center" alignItems="center">
+            <AvatarWrapper>
+              <Avatar
+                src={DefaultAvatar}
                 sx={{
-                  color: '#144DD1',
-                  fontSize: '20px',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
                 }}
               />
-            </IconChange>
-            <input ref={inputRef} type="file" accept="image/x-png,image/jpeg" style={{ display: 'none' }} />
-          </AvatarWrapper>
-          <FullName>Thomas Nguyen</FullName>
-        </Stack>
-        <ProfileInfor>
-          <InforUser>
-            <RenderTitle title={'Thông tin'} action={() => setModalUser({show:true})} />
-            <RenderInfor label='Tên đăng nhập' infor='Admin' />
-            <RenderInfor label='Tên người sử dụng' infor='Thomas Nguyen' />
-            <RenderInfor label='Email' infor='Admin@email.com' />
-            <RenderInfor label='Số điện thoại' infor='0988488999' />
-            <RenderInfor label='Mật khẩu' infor='Thay đổi mật khẩu' action={() => setModalChangePass({show:true})} />
-          </InforUser>
-          <SeperateLine />
-          <InforUser>
-            <RenderTitle title={'Thông tin'} action={() => setModalStore({show:true})} />
-            <RenderInfor label='Tên cửa hàng' infor='Nhà phân phối' />
-            <RenderInfor label='Địa chỉ' infor='Hà Nội, Việt Nam' />
-            <RenderInfor label='Level' infor='01' />
-            <RenderInfor label='Trạng thái' infor='Hoạt động' />
-          </InforUser>
-        </ProfileInfor>
-      </ProfileWrapper>
-    </ProfileContainer>
+              <IconChange onClick={() => inputRef.current.click()}>
+                <CameraAltIcon
+                  sx={{
+                    color: '#144DD1',
+                    fontSize: '20px',
+                  }}
+                />
+              </IconChange>
+              <input ref={inputRef} type="file" accept="image/x-png,image/jpeg" style={{ display: 'none' }} />
+            </AvatarWrapper>
+            <FullName>Thomas Nguyen</FullName>
+          </Stack>
+          <ProfileInfor>
+            <InforUser>
+              <RenderTitle title={'Thông tin'} action={() => setModalUser({ show: true })} />
+              <RenderInfor label="Tên đăng nhập" infor="Admin" />
+              <RenderInfor label="Tên người sử dụng" infor="Thomas Nguyen" />
+              <RenderInfor label="Email" infor="Admin@email.com" />
+              <RenderInfor label="Số điện thoại" infor="0988488999" />
+              <RenderInfor
+                label="Mật khẩu"
+                infor="Thay đổi mật khẩu"
+                action={() => setModalChangePass({ show: true })}
+              />
+            </InforUser>
+            <SeperateLine />
+            <InforUser>
+              <RenderTitle title={'Thông tin'} action={() => setModalStore({ show: true })} />
+              <RenderInfor label="Tên cửa hàng" infor="Nhà phân phối" />
+              <RenderInfor label="Địa chỉ" infor="Hà Nội, Việt Nam" />
+              <RenderInfor label="Level" infor="01" />
+              <RenderInfor label="Trạng thái" infor="Hoạt động" />
+            </InforUser>
+          </ProfileInfor>
+        </ProfileWrapper>
+      </ProfileContainer>
     </>
   );
 };
