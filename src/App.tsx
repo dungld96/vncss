@@ -1,13 +1,13 @@
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import LoginScreen from 'screens/Auth/LoginScreen';
-import Profile from 'screens/Profile/Profile';
-import RequireUser from 'screens/Auth/RequireUser';
-import DashboardScreen from 'screens/Dashboard/DashboardScreen';
-import Layout from 'common/Layout/Layout';
+import LoginScreen from './screens/Auth/LoginScreen';
 import UsersScreen from './screens/Users/UsersScreen';
+import Profile from './screens/Profile/Profile';
+import RequireUser from './screens/Auth/RequireUser';
+import DashboardScreen from './screens/Dashboard/DashboardScreen';
 import AgenciesScreen from './screens/Agencies/AgenciesScreen';
 import RegulatoryAgenciesScreen from './screens/RegulatoryAgencies/RegulatoryAgenciesScreen';
+import Layout from './common/Layout/Layout';
 
 function App() {
   return (

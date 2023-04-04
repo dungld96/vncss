@@ -1,42 +1,61 @@
 import { useState, ReactNode } from 'react';
-import { Box, Drawer, List, ListItemIcon, ListItem, Icon, ListItemText } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { ROUTE_HOME, ROUTE_REGULATORY_AGENCY, ROUTE_USER } from '../../utils/routesMap';
-import RegulatoryAgencyIcon from '../../assets/icons/regulatory_agency.svg';
+import { Box, Drawer, List, ListItemIcon, ListItem, ListItemText } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ImageIcon } from '../../utils/UtilsComponent';
+import { ROUTE_AGENCY, ROUTE_HOME, ROUTE_REGULATORY_AGENCY, ROUTE_USER } from '../../utils/routesMap';
+import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
+import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
 import dashboardIcon from '../../assets/icons/dashboard-icon.svg';
-import usersIcon from '../../assets/icons/users.svg';
+import dashboardActiveIcon from '../../assets/icons/dashboard-active-icon.svg';
+import agencyIcon from '../../assets/icons/agency-icon.svg';
+import agencyActiveIcon from '../../assets/icons/agency-active-icon.svg';
+import usersIcon from '../../assets/icons/users-icon.svg';
+import usersActiveIcon from '../../assets/icons/users-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
-const imageIcon = (image: string) => {
-  return (
-    <Icon sx={{ width: '0.85em', height: '0.85em' }}>
-      <img style={{ width: '100%', position: 'relative', top: '-4px' }} src={image} alt="" />
-    </Icon>
-  );
-};
+interface IRouteItem {
+  id: string;
+  title: string;
+  icon: ReactNode;
+  activeIcon: ReactNode;
+  permission: string[];
+  route: string;
+}
+
 
 const listFeature = [
   {
     id: '31cbc275-67f2-44e9-9c86-4ecbf1e84459',
     title: 'Thống kê',
-    icon: imageIcon(dashboardIcon),
+    icon: <ImageIcon image={dashboardIcon} />,
+    activeIcon: <ImageIcon image={dashboardActiveIcon} />,
     permission: ['overview'],
     route: ROUTE_HOME,
   },
   {
     id: '68d536e2-eff0-4388-84ad-739c31867c8b',
     title: 'Cơ quan quản lý',
-    icon: imageIcon(RegulatoryAgencyIcon),
+    icon: <ImageIcon image={RegulatoryAgencyIcon} />,
+    activeIcon: <ImageIcon image={RegulatoryAgencyActiveIcon} />,
     permission: ['regulatory_agency'],
     route: ROUTE_REGULATORY_AGENCY,
   },
   {
     id: '11115061-4494-4bdc-8a6e-5a59aadec58f',
     title: 'Nhân viên',
-    icon: imageIcon(usersIcon),
+    icon: <ImageIcon image={usersIcon} />,
+    activeIcon: <ImageIcon image={usersActiveIcon} />,
     permission: ['users'],
     route: ROUTE_USER,
+  },
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671a5',
+    title: 'Đại lý',
+    icon: <ImageIcon image={agencyIcon} />,
+    activeIcon: <ImageIcon image={agencyActiveIcon} />,
+    permission: ['agency'],
+    route: ROUTE_AGENCY,
   },
 ];
 
@@ -47,6 +66,7 @@ export default function DrawerSidebar({ open }: Props) {
   const [expanded, setExpanded] = useState([]);
   const [hovering, setHovering] = useState(false);
   const navigate = useNavigate();
+  const localtion = useLocation();
 
   const handleMouseEnterChild = () => {
     setHovering(true);
@@ -55,15 +75,17 @@ export default function DrawerSidebar({ open }: Props) {
     setHovering(false);
   };
 
-  const onClickDrawerItem = (item: {
-    id: string;
-    title: string;
-    icon: ReactNode;
-    permission: string[];
-    route: string;
-  }) => {
+  const onClickDrawerItem = (item: IRouteItem) => {
     const route = item.route;
     navigate(route);
+  };
+
+  const highlighting = (item: IRouteItem) => {
+    // const subItemIds = _.get(item, 'subItems', []).map((subitem) => subitem.id);
+    // if (!open && !hovering && _.includes(subItemIds, currentRouteId)) {
+    //   return true;
+    // }
+    return item.route === localtion.pathname;
   };
 
   return (
@@ -77,7 +99,7 @@ export default function DrawerSidebar({ open }: Props) {
           sx: {
             position: 'fixed',
             whiteSpace: 'nowrap',
-            width: open || hovering ? 240 : 56,
+            width: open || hovering ? 240 : 60,
             transition: (theme) =>
               theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
@@ -119,13 +141,31 @@ export default function DrawerSidebar({ open }: Props) {
         <Box sx={{ height: '100%', backgroundColor: '#ffffff', paddingTop: '10px' }}>
           {listFeature.map((item) => (
             <List key={item.id} component="div" disablePadding>
-              <ListItem button onClick={() => onClickDrawerItem(item)}>
-                <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>{item.icon}</ListItemIcon>
+              <ListItem
+                button
+                onClick={() => onClickDrawerItem(item)}
+                style={{
+                  backgroundColor: highlighting(item) ? '#FFF3F4' : '',
+                  borderLeft: highlighting(item) ? '4px solid #A53B3D' : '',
+                  padding: highlighting(item) ? '12px 16px' : '12px 16px 12px 20px',
+                }}
+              >
+                <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>
+                  {highlighting(item) ? item.activeIcon : item.icon}
+                </ListItemIcon>
                 <ListItemText
-                  sx={{ color: '#8B8C9B', fontWeight: '500 !important', fontSize: '14px !important' }}
+                  sx={{
+                    color: highlighting(item) ? '#8F0A0C' : '#8B8C9B',
+                    fontWeight: '500 !important',
+                    fontSize: '14px !important',
+                  }}
                   primary={item.title}
                   primaryTypographyProps={{
-                    sx: { color: '#8B8C9B', fontWeight: '500 !important', fontSize: '14px !important' },
+                    sx: {
+                      color: highlighting(item) ? '#8F0A0C' : '#8B8C9B',
+                      fontWeight: '500 !important',
+                      fontSize: '14px !important',
+                    },
                   }}
                 ></ListItemText>
               </ListItem>
