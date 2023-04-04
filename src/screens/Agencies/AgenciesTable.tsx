@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Paper, IconButton, ListItemIcon, Menu, MenuItem, ListItemText } from '@mui/material';
+import { Paper, IconButton, ListItemIcon, Menu, MenuItem, ListItemText, Divider } from '@mui/material';
 import { MoreHoriz } from '@mui/icons-material';
 import { TreeDataState, CustomTreeData } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
@@ -66,23 +66,25 @@ const ActionCellContent = ({
           horizontal: 'left',
         }}
       >
-        <MenuItem onClick={() => onActionClick('change-pass', rowId)}>
+        <MenuItem onClick={() => onActionClick('change-pass', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={KeyIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Đổi mật khẩu</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => onActionClick('edit', rowId)}>
+        <Divider sx={{ margin: '0 16px !important' }} />
+        <MenuItem onClick={() => onActionClick('edit', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Sửa</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => onActionClick('delete', rowId)}>
+        <Divider sx={{ margin: '0 16px !important' }} />
+        <MenuItem onClick={() => onActionClick('delete', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Xoá</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>Xoá</ListItemText>
         </MenuItem>
       </Menu>
     </div>
