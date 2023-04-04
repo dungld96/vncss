@@ -1,16 +1,17 @@
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import LoginScreen from 'screens/Auth/LoginScreen';
-import UsersScreen from 'screens/Users/UsersScreen';
 import Profile from 'screens/Profile/Profile';
 import RequireUser from 'screens/Auth/RequireUser';
 import DashboardScreen from 'screens/Dashboard/DashboardScreen';
-import RegulatoryAgenciesScreen from 'screens/RegulatoryAgencies/RegulatoryAgenciesScreen';
 import Layout from 'common/Layout/Layout';
+import UsersScreen from './screens/Users/UsersScreen';
+import AgenciesScreen from './screens/Agencies/AgenciesScreen';
+import RegulatoryAgenciesScreen from './screens/RegulatoryAgencies/RegulatoryAgenciesScreen';
 
 function App() {
   return (
-    <Box sx={{ backgroundColor: '#E5E5E5', height: '100vh' }}>
+    <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh' }}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<RequireUser allowedRoles={['user']} />}>
@@ -18,6 +19,7 @@ function App() {
             <Route path="profile" element={<Profile />} />
             <Route path="users" element={<UsersScreen />} />
             <Route path="regulatory-agency" element={<RegulatoryAgenciesScreen />} />
+            <Route path="agencies" element={<AgenciesScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>
