@@ -6,12 +6,13 @@ import Button from 'common/button/Button';
 import { Input } from 'common';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import { CurrentUserRequestInterface, useUpdateCurrentUserMutation } from 'services/users.service';
+import { useUpdateCurrentUserMutation } from 'services/users.service';
+import { IUser } from 'services/auth.service';
 
 interface Props {
   show: boolean;
   onClose: () => void;
-  initialValues: CurrentUserRequestInterface;
+  initialValues: IUser;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -33,7 +34,7 @@ const ModalProfileUser: React.FC<Props> = ({ show, onClose, initialValues }) => 
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await updateCurrentUser({ ...values }).unwrap();
+        await updateCurrentUser({ user: values }).unwrap();
         onClose();
       } catch (error) {
         console.error('rejected', error);

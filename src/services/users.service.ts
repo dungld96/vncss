@@ -10,22 +10,26 @@ export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
 }
 
 export interface CurrentUserRequestInterface {
-  id: string | number;
-  name: string;
-  email: string;
-  phone: string;
+  user: IUser;
 }
 export interface PasswordRequestInterface {
-  current_password:string
-  new_password:string
+  current_password: string;
+  new_password: string;
 }
 
 export const usersApi = createApi({
   ...queryRootConfig,
   reducerPath: 'usersApi',
+  tagTypes: ['Users'],
   endpoints: (build) => ({
     getCurrentUser: build.query<CurrentUserResponsiveInterface, null>({
       query: () => ({ url: 'users/current-user' }),
+      providesTags(result) {
+        if (result) {
+          return [{ type: 'Users', id: result.data.user.id }];
+        }
+        return [{ type: 'Users', id: 'LIST' }];
+      },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
@@ -42,7 +46,7 @@ export const usersApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `users/${body.id}`,
+            url: `users/${body.user.id}`,
             method: 'PUT',
             body,
           };
@@ -50,13 +54,9 @@ export const usersApi = createApi({
           throw new error.message();
         }
       },
-      async onQueryStarted(args, { dispatch }) {
-        try {
-          // await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
-        } catch (error) {}
-      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Users', id: data.user.id }]),
     }),
-    changePassword: build.mutation<any,PasswordRequestInterface>({
+    changePassword: build.mutation<any, PasswordRequestInterface>({
       query: (body) => {
         try {
           return {
@@ -73,8 +73,8 @@ export const usersApi = createApi({
           await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
         } catch (error) {}
       },
-    })
+    }),
   }),
 });
 
-export const { useGetCurrentUserQuery, useUpdateCurrentUserMutation,useChangePasswordMutation } = usersApi;
+export const { useGetCurrentUserQuery, useUpdateCurrentUserMutation, useChangePasswordMutation } = usersApi;

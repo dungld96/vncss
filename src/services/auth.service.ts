@@ -3,9 +3,10 @@ import { ResponsiveInterface } from './http.service';
 import { queryRootConfig } from './http.service';
 import { usersApi } from './users.service';
 export interface IUser {
-  id: string;
+  id: string | number;
   name: string;
-  status: string;
+  email: string;
+  phone: string;
 }
 
 interface AuthRequestInterface {

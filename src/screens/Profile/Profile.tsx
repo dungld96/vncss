@@ -137,73 +137,83 @@ const RenderInfor = ({ label, infor, action }: { label: string; infor: string; a
 
 const Profile: React.FC = () => {
   const inputRef = useRef<any>();
-  const [modalUser,setModalUser] = useState({show:false,initialValues:{id:'',name:'',email:'',phone:''}})
-  const [modalStore,setModalStore] = useState({show:false})
-  const [modalChangePass,setModalChangePass] = useState({show:false})
+  const [modalUser, setModalUser] = useState({
+    show: false,
+    initialValues: { id: '', name: '', email: '', phone: '' },
+  });
+  const [modalStore, setModalStore] = useState({ show: false });
+  const [modalChangePass, setModalChangePass] = useState({ show: false });
 
-  const {auth:{currentUser}}  = useAuth() as any
+  const {
+    auth: { currentUser },
+  } = useAuth() as any;
 
   const showModalUser = () => {
-    setModalUser({show:true,
-    initialValues:{
-      id:currentUser.id,
-      name:currentUser.name,
-      email:currentUser.email,
-      phone:currentUser.phone,
-    }})
-  }
-
+    setModalUser({
+      show: true,
+      initialValues: {
+        id: currentUser.id,
+        name: currentUser.name,
+        email: currentUser.email,
+        phone: currentUser.phone,
+      },
+    });
+  };
 
   return (
     <>
-    <ModalProfileUser {...modalUser} onClose={() => setModalUser({...modalUser,show:false})} />
-    <ModalProfileStore {...modalStore} onClose={() => setModalStore({show:false})} />
-    <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({show:false})} />
-    <ProfileContainer>
-      <ProfileWrapper>
-        <Stack flexDirection="column" justifyContent="center" alignItems="center">
-          <AvatarWrapper>
-            <Avatar
-              src={DefaultAvatar}
-              sx={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-              }}
-            />
-            <IconChange onClick={() => inputRef.current.click()}>
-              <CameraAltIcon
+      <ModalProfileUser {...modalUser} onClose={() => setModalUser({ ...modalUser, show: false })} />
+      <ModalProfileStore {...modalStore} onClose={() => setModalStore({ show: false })} />
+      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      <ProfileContainer>
+        <ProfileWrapper>
+          <Stack flexDirection="column" justifyContent="center" alignItems="center">
+            <AvatarWrapper>
+              <Avatar
+                src={DefaultAvatar}
                 sx={{
                   width: '100%',
                   height: '100%',
                   borderRadius: '50%',
                 }}
               />
-            </IconChange>
-            <input ref={inputRef} type="file" accept="image/x-png,image/jpeg" style={{ display: 'none' }} />
-          </AvatarWrapper>
-          <FullName>{currentUser?.name}</FullName>
-        </Stack>
-        <ProfileInfor>
-          <InforUser>
-            <RenderTitle title={'Thông tin'} action={showModalUser} />
-            <RenderInfor label='Tên đăng nhập' infor={currentUser?.username} />
-            <RenderInfor label='Tên người sử dụng' infor={currentUser?.name} />
-            <RenderInfor label='Email' infor={currentUser?.email } />
-            <RenderInfor label='Số điện thoại' infor={currentUser?.phone} />
-            <RenderInfor label='Mật khẩu' infor='Thay đổi mật khẩu' action={() => setModalChangePass({show:true})} />
-          </InforUser>
-          <SeperateLine />
-          <InforUser>
-            <RenderTitle title={'Thông tin'} action={() => setModalStore({show:true})} />
-            <RenderInfor label='Tên cửa hàng' infor='Nhà phân phối' />
-            <RenderInfor label='Địa chỉ' infor='Hà Nội, Việt Nam' />
-            <RenderInfor label='Level' infor='01' />
-            <RenderInfor label='Trạng thái' infor='Hoạt động' />
-          </InforUser>
-        </ProfileInfor>
-      </ProfileWrapper>
-    </ProfileContainer>
+              <IconChange onClick={() => inputRef.current.click()}>
+                <CameraAltIcon
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                  }}
+                />
+              </IconChange>
+              <input ref={inputRef} type="file" accept="image/x-png,image/jpeg" style={{ display: 'none' }} />
+            </AvatarWrapper>
+            <FullName>{currentUser?.name}</FullName>
+          </Stack>
+          <ProfileInfor>
+            <InforUser>
+              <RenderTitle title={'Thông tin'} action={showModalUser} />
+              <RenderInfor label="Tên đăng nhập" infor={currentUser?.username} />
+              <RenderInfor label="Tên người sử dụng" infor={currentUser?.name} />
+              <RenderInfor label="Email" infor={currentUser?.email} />
+              <RenderInfor label="Số điện thoại" infor={currentUser?.phone} />
+              <RenderInfor
+                label="Mật khẩu"
+                infor="Thay đổi mật khẩu"
+                action={() => setModalChangePass({ show: true })}
+              />
+            </InforUser>
+            <SeperateLine />
+            <InforUser>
+              <RenderTitle title={'Thông tin'} action={() => setModalStore({ show: true })} />
+              <RenderInfor label="Tên cửa hàng" infor="Nhà phân phối" />
+              <RenderInfor label="Địa chỉ" infor="Hà Nội, Việt Nam" />
+              <RenderInfor label="Level" infor="01" />
+              <RenderInfor label="Trạng thái" infor="Hoạt động" />
+            </InforUser>
+          </ProfileInfor>
+        </ProfileWrapper>
+      </ProfileContainer>
     </>
   );
 };
