@@ -1,0 +1,197 @@
+import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
+import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
+import { MoreHoriz } from '@mui/icons-material';
+import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper } from '@mui/material';
+import React, { useMemo, useState } from 'react';
+import { getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
+import { ImageIcon } from '../../utils/UtilsComponent';
+
+import { Input } from 'common';
+import Button from 'common/button/Button';
+import ModalAttention from 'common/modal/ModalAttention';
+import AddIcon from '../../assets/icons/add-circle.svg';
+import DeleteIcon from '../../assets/icons/delete-icon.svg';
+import EditIcon from '../../assets/icons/edit-icon.svg';
+import KeyIcon from '../../assets/icons/key-icon.svg';
+import SearchIcon from '../../assets/icons/search-icon.svg';
+import { users } from './mockData';
+import ModalAddEditUser from './ModalAddEditUser';
+import ModalChangePassword from './ModalChangePassword';
+import { IUser } from 'services/auth.service';
+
+const ActionCellContent = ({
+  cellProps,
+  onActionClick,
+}: {
+  cellProps: Table.DataCellProps;
+  onActionClick: (type: string, id: string | IUser) => void;
+}) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const rowId = useMemo(() => cellProps.row?.id, [cellProps]);
+
+  return (
+    <div>
+      <IconButton
+        id="demo-positioned-button"
+        aria-controls={open ? 'demo-positioned-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        <MoreHoriz />
+      </IconButton>
+      <Menu
+        id="demo-positioned-menu"
+        aria-labelledby="demo-positioned-button"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <MenuItem onClick={() => onActionClick('change-pass', rowId)} sx={{ padding: '16px' }}>
+          <ListItemIcon>
+            <ImageIcon image={KeyIcon} />
+          </ListItemIcon>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Thay đổi mật khẩu</ListItemText>
+        </MenuItem>
+        <Divider sx={{ margin: '0 16px !important' }} />
+        <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
+          <ListItemIcon>
+            <ImageIcon image={EditIcon} />
+          </ListItemIcon>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa thông tin</ListItemText>
+        </MenuItem>
+        <Divider sx={{ margin: '0 16px !important' }} />
+        <MenuItem onClick={() => onActionClick('delete', rowId)} sx={{ padding: '16px' }}>
+          <ListItemIcon>
+            <ImageIcon image={DeleteIcon} />
+          </ListItemIcon>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>
+            Xoá nhân viên
+          </ListItemText>
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+};
+const defaultValueUser = {
+  id: '',
+  name: '',
+  email: '',
+  phone: '',
+  confirmed: '',
+  username: '',
+};
+
+const defaultAttention = {
+  show: false,
+  title: '',
+  content: '',
+  type: '',
+  textConfirm: '',
+};
+export const UsersTable = () => {
+  const [selection, setSelection] = useState<Array<number | string>>([]);
+  const [modalUser, setModalUser] = useState({
+    show: false,
+    type: 'create',
+    initialValues: defaultValueUser,
+  });
+  const [modalChangePass, setModalChangePass] = useState({ show: false });
+
+  const [modalAttention, setModalAttention] = useState(defaultAttention);
+
+  const [columns] = useState([
+    { name: 'name', title: 'Họ tên' },
+    { name: 'email', title: 'Email' },
+    { name: 'phone', title: 'Số điện thoại' },
+    { name: 'username', title: 'Tài khoản' },
+    { name: 'password', title: 'Mật khẩu' },
+    { name: 'confirmed', title: 'Chức vụ' },
+    { name: 'action', title: 'Hành động' },
+  ]);
+
+  const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
+    { columnName: 'name', width: 200 },
+    { columnName: 'phone', align: 'center' },
+    { columnName: 'action', width: 200, align: 'center' },
+  ]);
+
+  const handleClick = (type: string, id: string | any) => {
+    if (type === 'edit') {
+      setModalUser({
+        show: true,
+        type: 'update',
+        initialValues: id,
+      });
+    } else if (type === 'change-pass') {
+      setModalChangePass({ show: true });
+    } else if (type === 'delete') {
+      setModalAttention({
+        show: true,
+        type: 'warning',
+        title: 'Xoá nhân viên',
+        content: 'Bạn có chắc chắn muốn xoá nhân viên này không?',
+        textConfirm: 'Xoá nhân viên',
+      });
+    }
+  };
+
+  const closeModalAttention = () => {
+    setModalAttention({
+      ...modalAttention,
+      show: false,
+    });
+  };
+
+  return (
+    <>
+      <ModalAttention {...modalAttention} onClose={closeModalAttention} onCancel={closeModalAttention} />
+      <ModalAddEditUser {...modalUser} onClose={() => setModalUser({ ...modalUser, show: false })} />
+      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <Input
+          style={{ width: 311, background: '#FFFFFF' }}
+          placeholder="Tìm kiếm tên nhân viên"
+          iconStartAdorment={<ImageIcon image={SearchIcon} />}
+        />
+        <Button
+          variant="contained"
+          onClick={() => setModalUser({ show: true, type: 'create', initialValues: defaultValueUser })}
+        >
+          <ImageIcon image={AddIcon} />
+          <Box sx={{ marginLeft: '8px' }}>Thêm mới nhân viên</Box>
+        </Button>
+      </Box>
+      <Paper sx={{ boxShadow: 'none' }}>
+        <Grid rows={users} columns={columns}>
+          <SelectionState selection={selection} onSelectionChange={(e) => setSelection(e)} />
+          <IntegratedSelection />
+          <Table
+            columnExtensions={tableColumnExtensions}
+            cellComponent={(props) =>
+              getTableCell(props, <ActionCellContent cellProps={props} onActionClick={handleClick} />)
+            }
+          />
+          <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
+          <TableSelection highlightRow showSelectionColumn showSelectAll />
+        </Grid>
+      </Paper>
+    </>
+  );
+};

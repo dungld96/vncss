@@ -10,8 +10,11 @@ interface Props {
   show: boolean;
   title: string;
   content: string;
-  icon?: string | 'success' | 'warning' | 'failed';
+  type?: string | 'success' | 'warning' | 'failed';
   onClose?: () => void;
+  onCancel?: () => void;
+  onSuccess?: () => void;
+  textConfirm?: string;
 }
 
 const DialogWrapper = styled.div({
@@ -37,6 +40,8 @@ const Content = styled(DialogContent)({
   padding: 0,
 });
 const Action = styled(DialogActions)({
+  display: 'flex',
+  alignItems: 'center',
   padding: 0,
   marginTop: 32,
 });
@@ -52,9 +57,10 @@ const IconStatusWrapper = styled.div({
   marginBottom: 20,
 });
 
-const ModalAttention: React.FC<Props> = ({ show, title, content, onClose, icon }) => {
+const ModalAttention: React.FC<Props> = (props) => {
+  const { show, title, content, onClose, type, onCancel, onSuccess, textConfirm } = props;
   const renderIcon = () => {
-    switch (icon) {
+    switch (type) {
       case 'success':
         return <IconStatus src={Success} />;
       case 'warning':
@@ -82,8 +88,21 @@ const ModalAttention: React.FC<Props> = ({ show, title, content, onClose, icon }
         <Title>{title}</Title>
         <Content>{content}</Content>
         <Action>
-          <Button fullWidth color="primary" variant="contained" onClick={() => onClose?.()}>
-            Đã hiểu
+          {!!onCancel && (
+            <Button fullWidth color="primary" variant="outlined" onClick={() => onClose?.()}>
+              Quay lại
+            </Button>
+          )}
+          <Button
+            fullWidth
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              onClose?.();
+              onSuccess?.();
+            }}
+          >
+            {textConfirm || 'Đã hiểu'}
           </Button>
         </Action>
       </DialogWrapper>
