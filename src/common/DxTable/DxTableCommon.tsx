@@ -32,7 +32,10 @@ export const TableHeaderContent = (props: TableHeaderRow.ContentProps) => (
 );
 
 export const TableHeaderCell = (props: TableHeaderRow.CellProps) => (
-  <TableHeaderRow.Cell {...props} style={{ padding: '0 8px', height: '48px', borderBottom: '1px solid #EEF2FA' }} />
+  <TableHeaderRow.Cell
+    {...props}
+    style={{ paddingTop: 0, paddingBottom: 0, height: '48px', borderBottom: '1px solid #EEF2FA' }}
+  />
 );
 
 export const ExpandButtonTableTree = (props: TableTreeColumn.ExpandButtonProps) => (

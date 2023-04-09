@@ -58,12 +58,12 @@ const ActionCellContent = ({
         open={open}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+          vertical: 'bottom',
+          horizontal: 'right',
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'left',
+          horizontal: 'right',
         }}
       >
         <MenuItem onClick={() => onActionClick('change-pass', rowId)} sx={{ padding: '16px' }}>

@@ -26,7 +26,7 @@ export const usersApi = createApi({
       query: () => ({ url: 'users/current-user' }),
       providesTags(result) {
         if (result) {
-          return [{ type: 'Users', id: result.data.user.id }];
+          return [{ type: 'Users', id: result.data?.user.id }];
         }
         return [{ type: 'Users', id: 'LIST' }];
       },
