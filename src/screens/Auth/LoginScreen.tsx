@@ -8,7 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
 import { Input } from 'common';
 import * as Yup from 'yup';
-import ModalAttention from './ModalAttention';
+import ModalAttention from '../../common/modal/ModalAttention';
 import Button from 'common/button/Button';
 import imgLogo from '../../assets/img/logo.svg';
 import { useLoginMutation } from '../../services/auth.service';
@@ -24,9 +24,9 @@ const AuthBox = styled(Box)({
   height: '100vh',
   display: 'flex',
   alignItems: 'center',
-  backgroundImage:`url("${background}")`,
+  backgroundImage: `url("${background}")`,
   backgroundRepeat: 'no-repeat',
-  backgroundSize:'cover'
+  backgroundSize: 'cover',
 });
 
 const ImgLogo = styled.img({
@@ -99,7 +99,7 @@ const initForm = {
   show: false,
   title: '',
   content: '',
-  icon: '',
+  type: '',
 };
 const LoginScreen = () => {
   const [modalAttention, setModalAttention] = useState(initForm);
@@ -168,7 +168,7 @@ const LoginScreen = () => {
               <FormikProvider value={formik}>
                 <Form noValidate onSubmit={handleSubmit}>
                   <Input
-                    topLable='Tên đăng nhập'
+                    topLable="Tên đăng nhập"
                     placeholder="Nhập mật khẩu"
                     {...getFieldProps('username')}
                     fullWidth
@@ -176,7 +176,7 @@ const LoginScreen = () => {
                     error={errors.username}
                   />
                   <Input
-                    topLable='Mật khẩu'
+                    topLable="Mật khẩu"
                     placeholder="Nhập mật khẩu"
                     {...getFieldProps('password')}
                     fullWidth
@@ -197,7 +197,7 @@ const LoginScreen = () => {
                         setModalAttention({
                           show: true,
                           title: 'Quên mật khẩu',
-                          icon: '',
+                          type: '',
                           content: 'Vui lòng liên hệ Admin để được cấp lại mật khẩu của tài khoản',
                         })
                       }

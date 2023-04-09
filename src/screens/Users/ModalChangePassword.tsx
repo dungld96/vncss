@@ -30,36 +30,21 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
     initialValues: {
       current_password: '',
       new_password: '',
-      confirm_new_password: '',
     },
     enableReinitialize: true,
     validationSchema,
     onSubmit: async ({ current_password, new_password }) => {
-      try {
-        await changePassword({ current_password, new_password }).unwrap();
-        onClose();
-      } catch (error) {
-        console.error('rejected', error);
-      }
+      console.log('first');
     },
   });
 
   const { handleSubmit, getFieldProps, values, errors } = formik;
-
-  console.log(values);
 
   return (
     <Modal size="sm" show={show} close={onClose} title="Sửa thông tin đại lý">
       <FormikProvider value={formik}>
         <Form noValidate onSubmit={handleSubmit}>
           <ContentWrapper>
-            <Input
-              {...getFieldProps('current_password')}
-              fullWidth
-              topLable="Mật khẩu hiện tại"
-              placeholder="Nhập mật khẩu hiện tại"
-              iconStartAdorment={<ImageIcon image={KeyIcon} />}
-            />
             <Input
               {...getFieldProps('new_password')}
               fullWidth

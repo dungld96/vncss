@@ -70,7 +70,7 @@ export const usersApi = createApi({
       },
       async onQueryStarted(args, { dispatch }) {
         try {
-          await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
+          // await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
         } catch (error) {}
       },
     }),
