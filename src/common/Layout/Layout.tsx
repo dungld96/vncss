@@ -8,7 +8,7 @@ function App() {
     <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh' }}>
       <AppBar />
       <Drawer />
-      <Box mt={2} ml={9}>
+      <Box mt={2} ml={9} mr={'12px'}>
         <Outlet />
       </Box>
     </Box>

@@ -1,8 +1,12 @@
 import React from 'react';
-import { Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
+import { Table, TableHeaderRow, TableTreeColumn, TableSelection } from '@devexpress/dx-react-grid-material-ui';
 
 export const TableTreeCell = (props: TableTreeColumn.CellProps) => (
   <TableTreeColumn.Cell {...props} style={{ borderBottom: '1px solid #EEF2FA', color: '#1E2323' }} />
+);
+
+export const ExpandButtonTableTree = (props: TableTreeColumn.ExpandButtonProps) => (
+  <TableTreeColumn.ExpandButton {...props} style={{ color: '#C5C6D2' }} />
 );
 
 export const getTableCell = (props: Table.DataCellProps, actionCellContent: React.ReactNode) => {
@@ -19,7 +23,7 @@ export const getTableCell = (props: Table.DataCellProps, actionCellContent: Reac
         color: '#1E2323',
         paddingTop: 0,
         paddingBottom: 0,
-        height: '48px !important',
+        height: '46px',
       }}
     >
       {name === 'action' && actionCellContent ? actionCellContent : value}
@@ -32,12 +36,15 @@ export const TableHeaderContent = (props: TableHeaderRow.ContentProps) => (
 );
 
 export const TableHeaderCell = (props: TableHeaderRow.CellProps) => (
-  <TableHeaderRow.Cell
-    {...props}
-    style={{ paddingTop: 0, paddingBottom: 0, height: '48px', borderBottom: '1px solid #EEF2FA' }}
-  />
+  <TableHeaderRow.Cell {...props} style={{ padding: '0 8px', height: '47px', borderBottom: '1px solid #EEF2FA' }} />
 );
 
-export const ExpandButtonTableTree = (props: TableTreeColumn.ExpandButtonProps) => (
-  <TableTreeColumn.ExpandButton {...props} style={{ color: '#C5C6D2' }} />
+export const TableSelectionCell = (props: TableSelection.CellProps) => (
+  <TableSelection.Cell {...props} sx={{ svg: { fontSize: '21px' }, borderBottom: '1px solid #EEF2FA' }} />
+);
+export const TableSelectionHeaderCell = (props: TableSelection.HeaderCellProps) => (
+  <TableSelection.HeaderCell
+    {...props}
+    sx={{ svg: { color: '#C5C6D2', fontSize: '21px' }, borderBottom: '1px solid #EEF2FA' }}
+  />
 );

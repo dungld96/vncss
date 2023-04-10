@@ -1,5 +1,5 @@
 import Modal from 'common/modal/Modal';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
 import Button from 'common/button/Button';
@@ -7,12 +7,16 @@ import { Input } from 'common';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { IUser } from 'services/auth.service';
+import { ImageIcon } from 'utils/UtilsComponent';
+import KeyIcon from '../../assets/icons/key-icon.svg';
+import { UserType } from './constants';
+import { useAddlUserMutation, useChangeDetailUserMutation } from 'services/users.service';
 
 interface Props {
   show: boolean;
   onClose: () => void;
   type: string;
-  initialValues: IUser;
+  initialValues: UserType;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -24,19 +28,48 @@ const ContentWrapper = styled(DialogContent)({
   marginBottom: 32,
 });
 
-const validationSchema = Yup.object().shape({});
+const Schema = {
+  name: Yup.string().required('Tên nhân viên không được để trống'),
+  email: Yup.string().required('Email không được để trống'),
+  phone: Yup.string().required('Số điện thoại không được để trống'),
+  username: Yup.string().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
+};
+
+const validationPassword = {
+  password: Yup.string().min(8, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
+  confirm_password: Yup.string()
+    .trim()
+    .required('Xác nhận mật khẩu không được để trống.')
+    .oneOf([Yup.ref('password'), ''], 'Xác nhận mật khẩu phải khớp với mật khẩu mới.'),
+};
 
 const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
+  const [addUser] = useAddlUserMutation();
+  const [editUser] = useChangeDetailUserMutation();
   const isUpdate = type === 'update';
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
-    validationSchema,
-    onSubmit: async (values) => {
-      console.log(values);
+    validationSchema: Yup.object().shape({
+      ...Schema,
+      ...(!isUpdate ? validationPassword : {}),
+    }),
+    onSubmit: async ({ id, name, email, phone, username, password }) => {
+      if (isUpdate) {
+        await editUser({ user: { id, name, email, phone, username } }).unwrap();
+        onClose();
+      } else {
+        await addUser({ user: { name, email, phone, username, password, confirmed: 1 } }).unwrap();
+        onClose();
+      }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors } = formik;
+  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm } = formik;
+
+  useEffect(() => {
+    if (!show) return;
+    resetForm();
+  }, [show]);
   return (
     <Modal size="sm" show={show} close={onClose} title={isUpdate ? 'Chỉnh sửa thông tin' : 'Thêm nhân viên mới'}>
       <FormikProvider value={formik}>
@@ -47,33 +80,59 @@ const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues 
               placeholder="Nhập tên nhân viên"
               topLable="Tên nhân viên"
               {...getFieldProps('name')}
+              error={errors.name}
             />
-            <Input style={{ width: 286 }} placeholder="Nhập email" topLable="Email" {...getFieldProps('email')} />
+            <Input
+              style={{ width: 286 }}
+              placeholder="Nhập email"
+              topLable="Email"
+              {...getFieldProps('email')}
+              error={errors.email}
+            />
             <Input
               style={{ width: 286 }}
               placeholder="Nhập số điện thoại"
               topLable="Số điện thoại"
               {...getFieldProps('phone')}
+              error={errors.phone}
             />
-            <Input
-              style={{ width: 286 }}
-              placeholder="Chọn chức vụ"
-              topLable="Chức vụ"
-              {...getFieldProps('confirmed')}
-            />
+            <Input style={{ width: 286 }} placeholder="Chọn chức vụ" topLable="Chức vụ" />
             <Input
               style={{ width: 286 }}
               placeholder="Nhập tên đăng nhập"
               topLable="Tên đăng nhập"
               {...getFieldProps('username')}
+              error={errors.username}
             />
+            {!isUpdate && (
+              <Input
+                style={{ width: 286 }}
+                placeholder="Nhập mật khẩu"
+                topLable="Mật khẩu"
+                type="password"
+                iconStartAdorment={<ImageIcon image={KeyIcon} />}
+                {...getFieldProps('password')}
+                error={errors.password}
+              />
+            )}
+            {!isUpdate && (
+              <Input
+                style={{ width: 286 }}
+                placeholder="Nhập lại mật khẩu"
+                topLable="Nhập lại mật khẩu"
+                type="password"
+                iconStartAdorment={<ImageIcon image={KeyIcon} />}
+                {...getFieldProps('confirm_password')}
+                error={errors.confirm_password}
+              />
+            )}
           </ContentWrapper>
 
           <DialogActions sx={{ padding: 0 }}>
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained">
+            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
               {isUpdate ? 'Thay đổi' : 'Thêm mới'}
             </Button>
           </DialogActions>

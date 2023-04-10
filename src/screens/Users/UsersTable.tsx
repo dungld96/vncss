@@ -1,9 +1,34 @@
-import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
-import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
-import { MoreHoriz } from '@mui/icons-material';
-import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import { getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
+import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
+import {
+  Grid,
+  Table,
+  TableHeaderRow,
+  TableSelection,
+  TableSelectionProps,
+  Toolbar,
+} from '@devexpress/dx-react-grid-material-ui';
+import { MoreHoriz } from '@mui/icons-material';
+import {
+  Box,
+  Checkbox,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+  Button as ButtonBase,
+} from '@mui/material';
+import {
+  getTableCell,
+  TableHeaderCell,
+  TableHeaderContent,
+  TableSelectionCell,
+  TableSelectionHeaderCell,
+} from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { Input } from 'common';
@@ -18,6 +43,8 @@ import { users } from './mockData';
 import ModalAddEditUser from './ModalAddEditUser';
 import ModalChangePassword from './ModalChangePassword';
 import { IUser } from 'services/auth.service';
+import { useDeletelUserMutation, useGetAllUsersQuery } from 'services/users.service';
+import { defaultAttention, defaultValueUser } from './constants';
 
 const ActionCellContent = ({
   cellProps,
@@ -89,23 +116,9 @@ const ActionCellContent = ({
     </div>
   );
 };
-const defaultValueUser = {
-  id: '',
-  name: '',
-  email: '',
-  phone: '',
-  confirmed: '',
-  username: '',
-};
 
-const defaultAttention = {
-  show: false,
-  title: '',
-  content: '',
-  type: '',
-  textConfirm: '',
-};
 export const UsersTable = () => {
+  const [deleteUser] = useDeletelUserMutation();
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const [modalUser, setModalUser] = useState({
     show: false,
@@ -116,12 +129,15 @@ export const UsersTable = () => {
 
   const [modalAttention, setModalAttention] = useState(defaultAttention);
 
+  const { data } = useGetAllUsersQuery(null) as any;
+  const users = data?.data?.users;
+
   const [columns] = useState([
     { name: 'name', title: 'Họ tên' },
     { name: 'email', title: 'Email' },
     { name: 'phone', title: 'Số điện thoại' },
     { name: 'username', title: 'Tài khoản' },
-    { name: 'password', title: 'Mật khẩu' },
+    // { name: 'password', title: 'Mật khẩu' },
     { name: 'confirmed', title: 'Chức vụ' },
     { name: 'action', title: 'Hành động' },
   ]);
@@ -148,6 +164,7 @@ export const UsersTable = () => {
         title: 'Xoá nhân viên',
         content: 'Bạn có chắc chắn muốn xoá nhân viên này không?',
         textConfirm: 'Xoá nhân viên',
+        onSuccess: async () => await deleteUser({ id }).unwrap(),
       });
     }
   };
@@ -156,6 +173,30 @@ export const UsersTable = () => {
     setModalAttention({
       ...modalAttention,
       show: false,
+    });
+  };
+
+  const onCancelSelection = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setSelection([]);
+  };
+
+  const handleSelectionChange = (selectedRowIndices: (number | string)[]) => {
+    const selectedRowIds = selectedRowIndices.map((index) => users[Number(index)]?.id);
+    setSelection(selectedRowIds);
+  };
+
+  const handleDeleteMultilUsers = () => {
+    setModalAttention({
+      show: true,
+      type: 'warning',
+      title: 'Xoá nhân viên',
+      content: 'Bạn có chắc chắn muốn xoá nhân viên này không?',
+      textConfirm: 'Xoá nhân viên',
+      onSuccess: async () => {
+        await deleteUser({ id: selection.join(',') }).unwrap();
+        setSelection([]);
+      },
     });
   };
 
@@ -178,9 +219,12 @@ export const UsersTable = () => {
           <Box sx={{ marginLeft: '8px' }}>Thêm mới nhân viên</Box>
         </Button>
       </Box>
-      <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={users} columns={columns}>
-          <SelectionState selection={selection} onSelectionChange={(e) => setSelection(e)} />
+      <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
+        <Grid rows={users || []} columns={columns}>
+          <SelectionState
+            selection={selection.map((id) => users.findIndex((r: IUser) => r.id === id))}
+            onSelectionChange={handleSelectionChange}
+          />
           <IntegratedSelection />
           <Table
             columnExtensions={tableColumnExtensions}
@@ -189,7 +233,45 @@ export const UsersTable = () => {
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
-          <TableSelection highlightRow showSelectionColumn showSelectAll />
+          <TableSelection
+            highlightRow
+            showSelectionColumn
+            showSelectAll
+            cellComponent={TableSelectionCell}
+            headerCellComponent={TableSelectionHeaderCell}
+          />
+
+          {selection.length > 0 && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                height: '48px',
+                backgroundColor: '#fff',
+                zIndex: 2,
+                padding: '0 12px',
+              }}
+            >
+              <Box display="flex" alignItems="center" justifyContent="space-between" height="100%">
+                <Checkbox
+                  indeterminate
+                  onClick={(e) => onCancelSelection(e)}
+                  sx={{ svg: { color: '#8F0A0C', fontSize: '21px' } }}
+                />
+                <Typography variant="subtitle2">Đang chọn ({selection.length})</Typography>
+              </Box>
+              <ButtonBase
+                sx={{ color: '#E5401C', marginRight: '32px' }}
+                startIcon={<ImageIcon image={DeleteIcon} />}
+                onClick={handleDeleteMultilUsers}
+              >
+                Xóa
+              </ButtonBase>
+            </Box>
+          )}
         </Grid>
       </Paper>
     </>
