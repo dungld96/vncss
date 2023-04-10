@@ -1,9 +1,26 @@
-import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
-import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
-import { MoreHoriz } from '@mui/icons-material';
-import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import { getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
+import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
+import { Grid, Table, TableHeaderRow, TableSelection, Toolbar } from '@devexpress/dx-react-grid-material-ui';
+import { MoreHoriz } from '@mui/icons-material';
+import {
+  Box,
+  Checkbox,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+} from '@mui/material';
+import {
+  getTableCell,
+  TableHeaderCell,
+  TableHeaderContent,
+  TableSelectionCell,
+  TableSelectionHeaderCell,
+} from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { Input } from 'common';
@@ -159,6 +176,11 @@ export const UsersTable = () => {
     });
   };
 
+  const onCancelSelection = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setSelection([]);
+  };
+
   return (
     <>
       <ModalAttention {...modalAttention} onClose={closeModalAttention} onCancel={closeModalAttention} />
@@ -178,7 +200,7 @@ export const UsersTable = () => {
           <Box sx={{ marginLeft: '8px' }}>Thêm mới nhân viên</Box>
         </Button>
       </Box>
-      <Paper sx={{ boxShadow: 'none' }}>
+      <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
         <Grid rows={users} columns={columns}>
           <SelectionState selection={selection} onSelectionChange={(e) => setSelection(e)} />
           <IntegratedSelection />
@@ -189,7 +211,35 @@ export const UsersTable = () => {
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
-          <TableSelection highlightRow showSelectionColumn showSelectAll />
+          <TableSelection
+            highlightRow
+            showSelectionColumn
+            showSelectAll
+            cellComponent={TableSelectionCell}
+            headerCellComponent={TableSelectionHeaderCell}
+          />
+
+          {selection.length > 0 && (
+            <Box
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                height: '48px',
+                backgroundColor: '#fff',
+                zIndex: 2,
+                padding: '0 12px',
+              }}
+            >
+              <Box display="flex" alignItems="center" height="100%">
+                <Checkbox
+                  indeterminate
+                  onClick={(e) => onCancelSelection(e)}
+                  sx={{ svg: { color: '#C5C6D2', fontSize: '21px' } }}
+                />
+                <Typography variant="subtitle2">Đang chọn ({selection.length})</Typography>
+              </Box>
+            </Box>
+          )}
         </Grid>
       </Paper>
     </>
