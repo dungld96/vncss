@@ -4,7 +4,7 @@ import { setCurrentUser } from '../state/modules/auth/reducer';
 import type { IUser } from './auth.service';
 import { IAgency } from 'screens/Agencies/mockData';
 
-export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
+export interface CurrentAgencyResponsiveInterface extends ResponsiveInterface {
   data: {
     agency: IAgency;
   };
@@ -14,45 +14,35 @@ export interface CurrentUserRequestInterface {
   agency: IAgency;
 }
 
-export const usersApi = createApi({
+export const agenciesApi = createApi({
   ...queryRootConfig,
-  reducerPath: 'usersApi',
+  reducerPath: 'agenciesApi',
   tagTypes: ['Agencies'],
   endpoints: (build) => ({
-    getCurrentArgency: build.query<CurrentUserResponsiveInterface, null>({
-      query: () => ({ url: 'users/current-agency' }),
+    getCurrentArgency: build.query<CurrentAgencyResponsiveInterface, { id: string }>({
+      query: (body) => ({ url: `agencies/${body.id}` }),
       providesTags(result) {
         if (result) {
           return [{ type: 'Agencies', id: result.data.agency.id }];
         }
         return [{ type: 'Agencies', id: 'LIST' }];
       },
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          const {
-            data: {
-              data: { agency },
-            },
-          } = await queryFulfilled;
-          //   return agency
-        } catch (error) {}
-      },
     }),
-    // updateCurrentUser: build.mutation<CurrentUserResponsiveInterface, CurrentUserRequestInterface>({
-    //   query: (body) => {
-    //     try {
-    //       return {
-    //         url: `users/${body.agency.id}`,
-    //         method: 'PUT',
-    //         body,
-    //       };
-    //     } catch (error: any) {
-    //       throw new error.message();
-    //     }
-    //   },
-    //   invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Agencies', id: data.agency.id }]),
-    // }),
+    updateAgency: build.mutation<CurrentAgencyResponsiveInterface, CurrentUserRequestInterface>({
+      query: (body) => {
+        try {
+          return {
+            url: `agencies/${body.agency.id}`,
+            method: 'PUT',
+            body,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Agencies', id: data.agency.id }]),
+    }),
   }),
 });
 
-export const {} = usersApi;
+export const { useGetCurrentArgencyQuery, useUpdateAgencyMutation } = agenciesApi;

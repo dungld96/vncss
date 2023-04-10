@@ -46,8 +46,6 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
 
   const { handleSubmit, getFieldProps, values, errors } = formik;
 
-  console.log(values);
-
   return (
     <Modal size="sm" show={show} close={onClose} title="Sửa thông tin đại lý">
       <FormikProvider value={formik}>
