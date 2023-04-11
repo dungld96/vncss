@@ -40,10 +40,7 @@ export const TableHeaderCell = (props: TableHeaderRow.CellProps) => (
 );
 
 export const TableSelectionCell = (props: TableSelection.CellProps) => (
-  <TableSelection.Cell
-    {...props}
-    sx={{ svg: { color: '#C5C6D2', fontSize: '21px' }, borderBottom: '1px solid #EEF2FA' }}
-  />
+  <TableSelection.Cell {...props} sx={{ svg: { fontSize: '21px' }, borderBottom: '1px solid #EEF2FA' }} />
 );
 export const TableSelectionHeaderCell = (props: TableSelection.HeaderCellProps) => (
   <TableSelection.HeaderCell

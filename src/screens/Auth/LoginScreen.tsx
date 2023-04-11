@@ -182,7 +182,7 @@ const LoginScreen = () => {
                     fullWidth
                     iconStartAdorment={<IconKey />}
                     type={'password'}
-                    // error={errors.password}
+                    error={errors.password}
                   />
                   <Box
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}

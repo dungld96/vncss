@@ -8,6 +8,7 @@ import DashboardScreen from './screens/Dashboard/DashboardScreen';
 import AgenciesScreen from './screens/Agencies/AgenciesScreen';
 import RegulatoryAgenciesScreen from './screens/RegulatoryAgencies/RegulatoryAgenciesScreen';
 import Layout from './common/Layout/Layout';
+import ReportsScreen from 'screens/Reports/ReportsScreen';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="users" element={<UsersScreen />} />
             <Route path="regulatory-agency" element={<RegulatoryAgenciesScreen />} />
             <Route path="agencies" element={<AgenciesScreen />} />
+            <Route path="reports" element={<ReportsScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>

@@ -17,16 +17,22 @@ export interface PasswordRequestInterface {
   new_password: string;
 }
 
+export interface UsersResponsiveInterface extends ResponsiveInterface {
+  data: {
+    user: IUser[];
+  };
+}
+
 export const usersApi = createApi({
   ...queryRootConfig,
   reducerPath: 'usersApi',
-  tagTypes: ['Users'],
+  tagTypes: ['Users', 'AllUsers'],
   endpoints: (build) => ({
     getCurrentUser: build.query<CurrentUserResponsiveInterface, null>({
       query: () => ({ url: 'users/current-user' }),
       providesTags(result) {
         if (result) {
-          return [{ type: 'Users', id: result.data.user.id }];
+          return [{ type: 'Users', id: result.data?.user.id }];
         }
         return [{ type: 'Users', id: 'LIST' }];
       },
@@ -68,13 +74,66 @@ export const usersApi = createApi({
           throw new error.message();
         }
       },
-      async onQueryStarted(args, { dispatch }) {
-        try {
-          // await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
-        } catch (error) {}
+    }),
+    getAllUsers: build.query<UsersResponsiveInterface, null>({
+      query: () => ({ url: 'users' }),
+      providesTags(result) {
+        if (result) {
+          return [{ type: 'AllUsers' }];
+        }
+        return [{ type: 'AllUsers' }];
       },
+    }),
+    addlUser: build.mutation<any, any>({
+      query: (body) => {
+        try {
+          return {
+            url: 'users',
+            method: 'POST',
+            body,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AllUsers' }]),
+    }),
+    changeDetailUser: build.mutation<any, any>({
+      query: (body) => {
+        try {
+          return {
+            url: `users/${body.user.id}`,
+            method: 'PUT',
+            body,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AllUsers' }]),
+    }),
+    deletelUser: build.mutation<null, any>({
+      query: (body) => {
+        try {
+          return {
+            url: `users/${body.id}`,
+            method: 'DELETE',
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AllUsers' }]),
     }),
   }),
 });
 
-export const { useGetCurrentUserQuery, useUpdateCurrentUserMutation, useChangePasswordMutation } = usersApi;
+export const {
+  useGetCurrentUserQuery,
+  useUpdateCurrentUserMutation,
+  useChangePasswordMutation,
+  useGetAllUsersQuery,
+  useChangeDetailUserMutation,
+  useAddlUserMutation,
+  useDeletelUserMutation
+} = usersApi;

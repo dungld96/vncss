@@ -9,6 +9,7 @@ import ModalProfileStore from './ModalProfileStore';
 import ModalChangePassword from './ModalChangePassword';
 import { useAuth } from 'hooks/useAuth';
 import { IUser } from 'services/auth.service';
+import { useGetCurrentArgencyQuery } from 'services/agencies.service';
 
 const ProfileContainer = styled.div({
   width: '100%',
@@ -141,12 +142,16 @@ const Profile: React.FC = () => {
     show: false,
     initialValues: { id: '', name: '', email: '', phone: '' },
   });
-  const [modalStore, setModalStore] = useState({ show: false });
+  const [modalStore, setModalStore] = useState({ show: false, initialValues: { id: '', name: '', address: '' } });
   const [modalChangePass, setModalChangePass] = useState({ show: false });
 
   const {
     auth: { currentUser },
   } = useAuth() as any;
+
+  const { data: agency } = useGetCurrentArgencyQuery({ id: currentUser?.agency_id });
+
+  const currentAgency: any = agency?.data?.agency;
 
   const showModalUser = () => {
     setModalUser({
@@ -160,10 +165,21 @@ const Profile: React.FC = () => {
     });
   };
 
+  const showModalStore = () => {
+    setModalStore({
+      show: true,
+      initialValues: {
+        id: currentAgency.id,
+        name: currentAgency.name,
+        address: currentAgency.address,
+      },
+    });
+  };
+
   return (
     <>
       <ModalProfileUser {...modalUser} onClose={() => setModalUser({ ...modalUser, show: false })} />
-      <ModalProfileStore {...modalStore} onClose={() => setModalStore({ show: false })} />
+      <ModalProfileStore {...modalStore} onClose={() => setModalStore({ ...modalStore, show: false })} />
       <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
       <ProfileContainer>
         <ProfileWrapper>
@@ -183,7 +199,7 @@ const Profile: React.FC = () => {
                     width: '60%',
                     height: '60%',
                     borderRadius: '50%',
-                    color: "#144DD1"
+                    color: '#144DD1',
                   }}
                 />
               </IconChange>
@@ -206,11 +222,14 @@ const Profile: React.FC = () => {
             </InforUser>
             <SeperateLine />
             <InforUser>
-              <RenderTitle title={'Thông tin'} action={() => setModalStore({ show: true })} />
-              <RenderInfor label="Tên cửa hàng" infor="Nhà phân phối" />
-              <RenderInfor label="Địa chỉ" infor="Hà Nội, Việt Nam" />
-              <RenderInfor label="Level" infor="01" />
-              <RenderInfor label="Trạng thái" infor="Hoạt động" />
+              <RenderTitle title={'Thông tin'} action={showModalStore} />
+              <RenderInfor label="Tên cửa hàng" infor={currentAgency?.name || ''} />
+              <RenderInfor label="Địa chỉ" infor={currentAgency?.address || ''} />
+              <RenderInfor label="Level" infor={currentAgency?.level} />
+              <RenderInfor
+                label="Trạng thái"
+                infor={currentAgency?.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+              />
             </InforUser>
           </ProfileInfor>
         </ProfileWrapper>

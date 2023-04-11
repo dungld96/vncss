@@ -36,15 +36,14 @@ const customFetchBase: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryEr
       const release = await mutex.acquire();
 
       try {
-        const refreshResult = await baseQuery({ credentials: 'include', url: 'auth/refresh' }, api, extraOptions);
-
-        if (refreshResult.data) {
-          // Retry the initial query
-          result = await baseQuery(args, api, extraOptions);
-        } else {
-          api.dispatch(logout());
-          window.location.href = '/login';
-        }
+        // const refreshResult = await baseQuery({ credentials: 'include', url: 'auth/refresh' }, api, extraOptions);
+        // if (refreshResult.data) {
+        //   // Retry the initial query
+        //   result = await baseQuery(args, api, extraOptions);
+        // } else {
+        //   api.dispatch(logout());
+        //   window.location.href = '/login';
+        // }
       } finally {
         // release must be called once the mutex should be released again.
         release();
