@@ -9,11 +9,23 @@ export const ExpandButtonTableTree = (props: TableTreeColumn.ExpandButtonProps) 
   <TableTreeColumn.ExpandButton {...props} style={{ color: '#C5C6D2' }} />
 );
 
-export const getTableCell = (props: Table.DataCellProps, actionCellContent: React.ReactNode) => {
+export type CustomFieldType = {
+  [columnName: string]: {
+    renderContent: (props: Table.DataCellProps) => React.ReactNode;
+  };
+};
+
+export const getTableCell = (
+  props: Table.DataCellProps,
+  actionCellContent: React.ReactNode,
+  customField?: CustomFieldType
+) => {
   const {
     value,
     column: { name },
   } = props;
+
+  const customRenderer = customField && customField[name] && customField[name].renderContent;
 
   return (
     <Table.Cell
@@ -26,7 +38,7 @@ export const getTableCell = (props: Table.DataCellProps, actionCellContent: Reac
         height: '46px',
       }}
     >
-      {name === 'action' && actionCellContent ? actionCellContent : value}
+      {name === 'action' && actionCellContent ? actionCellContent : customRenderer ? customRenderer(props) : value}
     </Table.Cell>
   );
 };
