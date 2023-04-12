@@ -9,6 +9,7 @@ import {
   MenuItem,
   Popover,
   TextField,
+  Typography,
 } from '@mui/material';
 import { isEqual } from 'lodash';
 import React, { CSSProperties, useEffect, useRef, useState } from 'react';
@@ -35,6 +36,7 @@ export interface Props {
   fullWidth?: boolean;
   error?: any;
   topLable?: string;
+  noMarginTop?: boolean;
   [key: string]: any;
 }
 
@@ -50,6 +52,7 @@ const Select: React.FC<Props> = ({
   placeholder,
   error,
   topLable,
+  noMarginTop,
   ...rest
 }) => {
   const anchorRef = useRef<HTMLInputElement>(null);
@@ -91,67 +94,74 @@ const Select: React.FC<Props> = ({
       }}
     >
       {topLable && (
-        <p
+        <Typography
           style={{
             fontWeight: 400,
             fontSize: '12px',
             lineHeight: '20px',
             padding: 0,
-            marginTop: 20,
+            marginTop: noMarginTop ? undefined : 20,
             marginBottom: 8,
             cursor: 'pointer !important',
           }}
         >
           {topLable}
-        </p>
+        </Typography>
       )}
-      <TextField
-        {...rest}
-        ref={anchorRef}
-        onClick={disabled ? undefined : handleOpen}
-        value={value}
-        disabled={disabled}
-        size="small"
-        fullWidth={fullWidth}
-        placeholder={placeholder}
-        helperText={errorTextField}
-        error={!!errorTextField}
-        InputProps={{
-          readOnly,
-          endAdornment: (
-            <InputAdornment
-              position="end"
-              style={{ opacity: disabled ? 0.5 : 1, transform: open ? 'rotate(180deg)' : undefined }}
-            >
-              <ImageIcon image={ArrowDownIcon} />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-            border: '2px solid #EEF2FA',
-          },
-          '& .MuiInputBase-root': {
-            borderRadius: '8px',
-            height: '44px',
-            color: '#1E2323',
-            fontWeight: '500',
-            fontSize: '14px',
-          },
-          '& .MuiFormHelperText-root': {
-            color: '#ec0e0e',
-          },
-          input: {
-            cursor: 'pointer !important',
-            '&::placeholder': {
-              color: '#C5C6D2',
+      <Box sx={{ background: '#fff', borderRadius: '8px' }}>
+        <TextField
+          {...rest}
+          ref={anchorRef}
+          onClick={disabled ? undefined : handleOpen}
+          value={value}
+          disabled={disabled}
+          size="small"
+          fullWidth={fullWidth}
+          placeholder={placeholder}
+          helperText={errorTextField}
+          error={!!errorTextField}
+          InputProps={{
+            readOnly,
+            endAdornment: (
+              <InputAdornment
+                position="end"
+                sx={{
+                  opacity: disabled ? 0.5 : 1,
+                  transform: open ? 'rotate(180deg)' : undefined,
+                  backgroundColor: '#fff',
+                }}
+              >
+                <ImageIcon image={ArrowDownIcon} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
+              border: '2px solid #EEF2FA',
             },
-            '&:-webkit-autofill': {
-              transition: ' background-color 5000s ease-in-out 0s',
+            '& .MuiInputBase-root': {
+              borderRadius: '8px',
+              height: '44px',
+              color: '#1E2323',
+              fontWeight: '500',
+              fontSize: '14px',
             },
-          },
-        }}
-      />
+            '& .MuiFormHelperText-root': {
+              color: '#ec0e0e',
+            },
+            input: {
+              background: '#fff',
+              cursor: 'pointer !important',
+              '&::placeholder': {
+                color: '#C5C6D2',
+              },
+              '&:-webkit-autofill': {
+                transition: ' background-color 5000s ease-in-out 0s',
+              },
+            },
+          }}
+        />
+      </Box>
 
       <Popover
         anchorOrigin={{
