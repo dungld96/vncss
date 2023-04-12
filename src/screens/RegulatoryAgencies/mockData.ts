@@ -157,7 +157,7 @@ export const regulatoryAgencies: Regulatory[] = [
     address: '44 Yết Kiêu, Hoàn Kiếm.Hà Nội',
     account: 'CA_bocongan',
     tag: '@CA_bocongan',
-    number_location: 7271,
+    number_location: 72271,
     number_device: 4771,
   },
   {
@@ -167,7 +167,7 @@ export const regulatoryAgencies: Regulatory[] = [
     address: '44 Yết Kiêu, Hoàn Kiếm.Hà Nội',
     account: 'CA_bocongan',
     tag: '@CA_bocongan',
-    number_location: 5130,
+    number_location: 53130,
     number_device: 6179,
   },
   {
@@ -187,7 +187,7 @@ export const regulatoryAgencies: Regulatory[] = [
     address: '44 Yết Kiêu, Hoàn Kiếm.Hà Nội',
     account: 'CA_bocongan',
     tag: '@CA_bocongan',
-    number_location: 5601,
+    number_location: 56401,
     number_device: 3182,
   },
   {
