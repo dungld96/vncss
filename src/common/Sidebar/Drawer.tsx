@@ -2,7 +2,7 @@ import { useState, ReactNode } from 'react';
 import { Box, Drawer, List, ListItemIcon, ListItem, ListItemText } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ImageIcon } from '../../utils/UtilsComponent';
-import { ROUTE_AGENCY, ROUTE_HOME, ROUTE_REGULATORY_AGENCY, ROUTE_REPORTS, ROUTE_USER } from '../../utils/routesMap';
+import { ROUTE_AGENCY, ROUTE_HOME, ROUTE_REGULATORY_AGENCY, ROUTE_REPORTS, ROUTE_USER, ROUTE_WAREHOUSESIM } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
 import dashboardIcon from '../../assets/icons/dashboard-icon.svg';
@@ -13,6 +13,8 @@ import usersIcon from '../../assets/icons/users-icon.svg';
 import usersActiveIcon from '../../assets/icons/users-active-icon.svg';
 import reportsIcon from '../../assets/icons/report-icon.svg';
 import reportsActiveIcon from '../../assets/icons/report-active-icon.svg';
+import simIcon from '../../assets/icons/sim-icon.svg';
+import simActiveIcon from '../../assets/icons/sim-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
@@ -57,6 +59,14 @@ const listFeature = [
     activeIcon: <ImageIcon image={agencyActiveIcon} />,
     permission: ['agency'],
     route: ROUTE_AGENCY,
+  },
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ff',
+    title: 'Kho Sim',
+    icon: <ImageIcon image={simIcon} />,
+    activeIcon: <ImageIcon image={simActiveIcon} />,
+    permission: ['warehouse-sim'],
+    route: ROUTE_WAREHOUSESIM,
   },
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ss',
