@@ -1,5 +1,5 @@
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
-import { Box, Paper, Popover } from '@mui/material';
+import { Box, Paper, Popover, Typography } from '@mui/material';
 import { Input } from 'common';
 import Button from 'common/button/Button';
 import { useState, useRef } from 'react';
@@ -35,7 +35,7 @@ const ReportsTable = () => {
           <FilterBox />
           <Button style={{ marginLeft: 16 }} variant="contained" onClick={() => {}}>
             <ImageIcon image={ExportIcon} />
-            <Box sx={{ marginLeft: '8px' }}>Xuất excel</Box>
+            <Typography sx={{ marginLeft: '8px' }}>Xuất excel</Typography>
           </Button>
         </Box>
       </Box>

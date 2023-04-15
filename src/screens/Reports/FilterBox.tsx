@@ -27,7 +27,7 @@ const FilterBox = () => {
     <Box>
       <ButtonBase aria-describedby={id} onClick={handleClick}>
         <ImageIcon image={FilterIcon} />
-        <Box sx={{ marginLeft: '8px' }}>Bộ lọc</Box>
+        <Typography sx={{ marginLeft: '8px' }}>Bộ lọc</Typography>
       </ButtonBase>
       <Popover
         id={id}
