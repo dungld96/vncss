@@ -6,7 +6,7 @@ import { useState, useRef } from 'react';
 import { ImageIcon } from 'utils/UtilsComponent';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import ExportIcon from '../../assets/icons/export-icon.svg';
-import { TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
+import { TableHeaderCell, TableHeaderContent, TableRowContent } from '../../common/DxTable/DxTableCommon';
 import { reports } from './mockData';
 import FilterBox from './FilterBox';
 
@@ -41,7 +41,7 @@ const ReportsTable = () => {
       </Box>
       <Paper sx={{ boxShadow: 'none' }}>
         <Grid rows={reports} columns={columns}>
-          <Table columnExtensions={tableColumnExtensions} />
+          <Table columnExtensions={tableColumnExtensions} cellComponent={TableRowContent}/>
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
         </Grid>
       </Paper>

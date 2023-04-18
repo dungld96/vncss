@@ -2,7 +2,16 @@ import { useState, ReactNode } from 'react';
 import { Box, Drawer, List, ListItemIcon, ListItem, ListItemText } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ImageIcon } from '../../utils/UtilsComponent';
-import { ROUTE_AGENCY, ROUTE_HOME, ROUTE_REGULATORY_AGENCY, ROUTE_REPORTS, ROUTE_USER, ROUTE_WAREHOUSESIM } from '../../utils/routesMap';
+import {
+  ROUTE_AGENCY,
+  ROUTE_HOME,
+  ROUTE_REGULATORY_AGENCY,
+  ROUTE_REPORTS,
+  ROUTE_USER,
+  ROUTE_VEHICLE_PROTECT,
+  ROUTE_VITAL_VEHICLE,
+  ROUTE_WAREHOUSESIM,
+} from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
 import dashboardIcon from '../../assets/icons/dashboard-icon.svg';
@@ -15,6 +24,10 @@ import reportsIcon from '../../assets/icons/report-icon.svg';
 import reportsActiveIcon from '../../assets/icons/report-active-icon.svg';
 import simIcon from '../../assets/icons/sim-icon.svg';
 import simActiveIcon from '../../assets/icons/sim-active-icon.svg';
+import vehicelVitalIcon from '../../assets/icons/vehicel-vital-icon.svg';
+import vehicelVitalActiveIcon from '../../assets/icons/vehicel-vital-active-icon.svg';
+import CarProtectIcon from '../../assets/icons/car-protect-icon.svg';
+import CarProtectActiveIcon from '../../assets/icons/car-protect-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
@@ -59,6 +72,22 @@ const listFeature = [
     activeIcon: <ImageIcon image={agencyActiveIcon} />,
     permission: ['agency'],
     route: ROUTE_AGENCY,
+  },
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671aa',
+    title: 'Phương tiện tuần tra',
+    icon: <ImageIcon image={CarProtectIcon} />,
+    activeIcon: <ImageIcon image={CarProtectActiveIcon} />,
+    permission: [''],
+    route: ROUTE_VEHICLE_PROTECT,
+  },
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671cc',
+    title: 'Phương tiện trọng yếu',
+    icon: <ImageIcon image={vehicelVitalIcon} />,
+    activeIcon: <ImageIcon image={vehicelVitalActiveIcon} />,
+    permission: [''],
+    route: ROUTE_VITAL_VEHICLE,
   },
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ff',
