@@ -43,6 +43,7 @@ import SearchIcon from '../../assets/icons/search-icon.svg';
 import { IUser } from 'services/auth.service';
 import { defaultAttention } from 'screens/Users/constants';
 import { data } from './mockData';
+import VehicleAdd from './VehicleAdd';
 
 const ActionCellContent = ({
   cellProps,
@@ -175,6 +176,7 @@ export const VehicleWrapper = () => {
 
   return (
     <>
+      <VehicleAdd />
       <ModalAttention {...modalAttention} onClose={closeModalAttention} onCancel={closeModalAttention} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input

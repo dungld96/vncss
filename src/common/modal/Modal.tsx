@@ -8,7 +8,8 @@ interface Props {
   title: string;
   size?: Breakpoint;
   close?: () => void;
-  children: JSX.Element | any;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 const Title = styled(DialogTitle)({
@@ -30,7 +31,7 @@ const Title = styled(DialogTitle)({
 });
 
 const Modal: React.FC<Props> = (props) => {
-  const { show, title, close, size = 'xs', children } = props;
+  const { show, title, close, size = 'xs', children, style } = props;
   return (
     <Dialog
       open={show}
@@ -40,6 +41,7 @@ const Modal: React.FC<Props> = (props) => {
         '.MuiPaper-root': {
           borderRadius: '12px',
           padding: '20px 32px 32px',
+          ...style,
         },
       }}
     >
