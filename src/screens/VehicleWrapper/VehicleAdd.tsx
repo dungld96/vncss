@@ -1,9 +1,10 @@
-import { Box, DialogActions, Step, StepLabel, Stepper } from '@mui/material';
+import { Box, DialogActions, Divider, Step, StepLabel, Stepper } from '@mui/material';
 import { Input } from 'common';
 import Button from 'common/button/Button';
 import Modal from 'common/modal/Modal';
 import SelectPosition from 'common/SelectPosition/SelectPosition';
 import React, { useState } from 'react';
+import VehicleInfo from './VehicleInfo';
 
 const steps = ['Thông tin kích hoạt', 'Chọn vị trí trên bản đồ', 'Thông tin chi tiết'];
 
@@ -44,15 +45,20 @@ const VehicleAdd = () => {
       case 1:
         return <SelectPosition selectedPosition={selectedPosition} handleSelectedPosition={handleSelectedPosition} />;
       case 2:
-        return <div>3</div>;
+        return <VehicleInfo />;
       default:
         return 'Unknown step';
     }
   };
 
   return (
-    <Modal style={{ height: '756px' }} size="xl" show={true} title="Thêm mới phương tiện tuần tra">
-      <Box sx={{ marginTop: '16px' }}>
+    <Modal
+      style={{ height: '756px', minHeight: '756px', maxWidth: '1136px', display: 'flex', flexDirection: 'column' }}
+      size="xl"
+      show={true}
+      title="Thêm mới phương tiện tuần tra"
+    >
+      <Box sx={{ marginTop: '16px', marginBottom: '16px' }}>
         <Stepper
           sx={{
             display: 'flex',
@@ -97,6 +103,7 @@ const VehicleAdd = () => {
           ))}
         </Stepper>
       </Box>
+      <Divider />
       <Box
         sx={{
           width: '100%',

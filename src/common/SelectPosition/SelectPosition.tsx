@@ -1,96 +1,19 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import { get, noop } from 'lodash';
 import GoogleMapReact from 'google-map-react';
-import { Box, Typography } from '@mui/material';
+import { Box, InputAdornment, TextField, Typography } from '@mui/material';
 
 import mapStyles from './MapStyles.json';
 
-// import MyLocation from '../Geo/MyLocation';
-// import MakerSelected from './MakerSelected';
+import Input from 'common/input/Input';
+import { ImageIcon } from 'utils/UtilsComponent';
+import SearchIcon from '../../assets/icons/search-icon.svg';
+import SearchBox from './SearchBoxPosition';
 
 export const centerDefault = {
   lat: 21.027627,
   lng: 105.833166,
 };
-
-// const SearchBox = ({ map, maps, onPlacesChanged, placeholder }) => {
-//   const input = React.useRef(null);
-//   const searchBox = React.useRef(null);
-//   const markers = React.useRef([]);
-//   React.useEffect(() => {
-//     if (!searchBox.current && maps && maps.places) {
-//       searchBox.current = new maps.places.SearchBox(input.current);
-//       map.addListener('bounds_changed', () => {
-//         searchBox.current.setBounds(map.getBounds());
-//       });
-//       searchBox.current.addListener('places_changed', () => {
-//         const places = searchBox.current.getPlaces();
-//         if (places.length === 0) {
-//           return;
-//         }
-//         markers.current.forEach(marker => {
-//           marker.setMap(null);
-//         });
-//         markers.current = [];
-//         const bounds = new maps.LatLngBounds();
-//         places.forEach(place => {
-//           if (!place.geometry) {
-//             console.log('Returned place contains no geometry');
-//             return;
-//           }
-//           const icon = {
-//             url: place.icon,
-//             size: new maps.Size(71, 71),
-//             origin: new maps.Point(0, 0),
-//             anchor: new maps.Point(17, 34),
-//             scaledSize: new maps.Size(25, 25)
-//           };
-//           // Create a marker for each place.
-//           markers.current.push(
-//             new maps.Marker({
-//               map,
-//               icon,
-//               title: place.name,
-//               position: place.geometry.location
-//             })
-//           );
-
-//           if (place.geometry.viewport) {
-//             // Only geocodes have viewport.
-//             bounds.union(place.geometry.viewport);
-//           } else {
-//             bounds.extend(place.geometry.location);
-//           }
-//         });
-//         map.fitBounds(bounds);
-//       });
-//     }
-
-//     return () => {
-//       if (maps) {
-//         searchBox.current = null;
-//         maps.event.clearInstanceListeners(searchBox);
-//       }
-//     };
-//   }, [map, maps]);
-
-//   return (
-//     <input
-//       style={{
-//         position: 'absolute',
-//         top: '5px',
-//         left: '5px',
-//         zIndex: 1,
-//         border: '1px solid #ddd',
-//         borderRadius: '4px',
-//         padding: '5px 10px'
-//       }}
-//       ref={input}
-//       placeholder={placeholder}
-//       type="text"
-//     />
-//   );
-// };
 
 interface Props {
   selectedPosition: any;
@@ -167,31 +90,79 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
   //     googleMapRef.current.map_.setZoom(googleMapRef.current.map_.getZoom() - 1);
   //   };
 
-  //   const handleSearch = places => {
-  //     console.log(places);
-  //   };
+  const handleSearch = (places: any) => {
+    console.log(places);
+  };
   return (
-    <Box>
+    <Box
+      sx={{
+        height: '100%',
+        width: 'calc(100% + 64px)',
+        position: 'relative',
+        boxSizing: 'border-box ',
+        paddingBottom: '24px',
+        marginLeft: '-32px',
+      }}
+    >
       {selectedPosition && (
-        <Box>
-          <Typography color="inherit">
-            <span>Kinh độ:</span>
-            <span>{get(selectedPosition, 'lng', '--')}</span>
+        <Box
+          sx={{
+            position: 'absolute',
+            zIndex: '1',
+            background: '#fff',
+            borderRadius: '8px',
+            width: '143px',
+            padding: '8px 12px',
+            left: '32px',
+            bottom: '48px',
+          }}
+        >
+          <Typography
+            color="inherit"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '12px',
+              lineHeight: '20px',
+              marginBottom: '8px',
+            }}
+          >
+            <span style={{ fontWeight: '400' }}>Kinh độ:</span>
+            <span style={{ fontWeight: '700', color: '#8F0A0C' }}>{get(selectedPosition, 'lng', '--')}</span>
           </Typography>
-          <Typography color="inherit">
-            <span>Vĩ độ:</span>
-            <span>{get(selectedPosition, 'lat', '--')}</span>
+          <Typography
+            color="inherit"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '12px',
+              lineHeight: '20px',
+            }}
+          >
+            <span style={{ fontWeight: '400' }}>Vĩ độ:</span>
+            <span style={{ fontWeight: '700', color: '#8F0A0C' }}>{get(selectedPosition, 'lat', '--')}</span>
           </Typography>
         </Box>
       )}
-      {/* {loadedMapApi && (
+      {loadedMapApi && (
         <SearchBox
+          style={{
+            width: '286px',
+            position: 'absolute',
+            zIndex: '9999',
+            background: '#fff',
+            left: '32px',
+            top: '24px',
+            borderRadius: '8px',
+          }}
           placeholder={'Tìm kiếm vị trí.'}
           onPlacesChanged={handleSearch}
           map={map}
           maps={googlemaps}
-        /> */}
-      {/* )} */}
+        />
+      )}
 
       <GoogleMapReact
         bootstrapURLKeys={{

@@ -43,6 +43,10 @@ const Modal: React.FC<Props> = (props) => {
           padding: '20px 32px 32px',
           ...style,
         },
+        '.MuiDialog-container': {
+          webkitBackdropFilter: 'blur(2px)',
+          backdropFilter: 'blur(2px)',
+        },
       }}
     >
       <Title>

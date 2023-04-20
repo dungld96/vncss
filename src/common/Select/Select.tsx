@@ -182,7 +182,7 @@ const Select: React.FC<Props> = ({
         onClose={() => handleClose()}
         anchorEl={anchorRef.current}
       >
-        <SimpleBar className="SelectPaper-paper" style={{ maxHeight }} autoHide={false}>
+        <SimpleBar style={{ maxHeight }} autoHide={false}>
           {newData.map((item) => (
             <MenuItem
               key={item.value}
