@@ -1,49 +1,28 @@
-import React, { useMemo, useState } from 'react';
-import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
-import {
-  Grid,
-  Table,
-  TableHeaderRow,
-  TableSelection,
-  TableSelectionProps,
-  Toolbar,
-} from '@devexpress/dx-react-grid-material-ui';
+import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
-import {
-  Box,
-  Checkbox,
-  Divider,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Paper,
-  Typography,
-  Button as ButtonBase,
-} from '@mui/material';
-import {
-  CustomFieldType,
-  getTableCell,
-  TableHeaderCell,
-  TableHeaderContent,
-  TableSelectionCell,
-  TableSelectionHeaderCell,
-} from '../../common/DxTable/DxTableCommon';
+import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
+import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import ModalAttention from 'common/modal/ModalAttention';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
-import EditIcon from '../../assets/icons/edit-icon.svg';
 import EditIcon2 from '../../assets/icons/edit-icon-2.svg';
+import EditIcon from '../../assets/icons/edit-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
-import { IUser } from 'services/auth.service';
-import { defaultAttention } from 'screens/Users/constants';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import ModalAttention from '../../common/modal/ModalAttention';
+import { defaultAttention } from '../../screens/Users/constants';
+import { IUser } from '../../services/auth.service';
 import { data } from './mockData';
 import VehicleAdd from './VehicleAdd';
+import ModalEditTags from './ModalEditTags';
+import VehicleEdit from './VehicleEdit';
+
+interface Props {
+  type: string;
+}
 
 const ActionCellContent = ({
   cellProps,
@@ -109,8 +88,12 @@ const ActionCellContent = ({
   );
 };
 
-export const VehicleWrapper = () => {
+export const VehicleWrapper: React.FC<Props> = ({ type }) => {
+  const isProtect = type === 'protect';
   const [modalAttention, setModalAttention] = useState(defaultAttention);
+  const [showModalAdd, setShowModalAdd] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showModalEditTag, setShowModalEditTag] = useState(false);
 
   const [columns] = useState([
     { name: 'name', title: 'Tên phương tiện' },
@@ -144,7 +127,7 @@ export const VehicleWrapper = () => {
             >
               {row.tag.join(', ')}
             </Typography>
-            <IconButton>
+            <IconButton onClick={() => setShowModalEditTag(true)}>
               <ImageIcon image={EditIcon2} />
             </IconButton>
           </Box>
@@ -155,12 +138,13 @@ export const VehicleWrapper = () => {
 
   const handleClick = (type: string, id: string | any) => {
     if (type === 'edit') {
+      setShowModalEdit(true);
     } else if (type === 'delete') {
       setModalAttention({
         show: true,
         type: 'warning',
-        title: 'Xoá phương tiện trọng yếu',
-        content: 'Bạn có chắc chắn muốn xoá phương tiện trọng yếu này không?',
+        title: `Xoá phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'}`,
+        content: `Bạn có chắc chắn muốn xoá phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'} này không?`,
         textConfirm: 'Xoá phương tiện',
         onSuccess: async () => {},
       });
@@ -176,7 +160,9 @@ export const VehicleWrapper = () => {
 
   return (
     <>
-      <VehicleAdd />
+      <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
+      <VehicleAdd isProtect={isProtect} show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <VehicleEdit isProtect={isProtect} show={showModalEdit} onClose={() => setShowModalEdit(false)} />
       <ModalAttention {...modalAttention} onClose={closeModalAttention} onCancel={closeModalAttention} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
@@ -184,7 +170,7 @@ export const VehicleWrapper = () => {
           placeholder="Tìm kiếm tên hoặc biển số"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
-        <Button variant="contained" onClick={() => {}}>
+        <Button variant="contained" onClick={() => setShowModalAdd(true)}>
           <ImageIcon image={AddIcon} />
           <Box sx={{ marginLeft: '8px' }}>Thêm mới phương tiện</Box>
         </Button>

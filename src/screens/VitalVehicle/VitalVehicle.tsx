@@ -4,7 +4,7 @@ import { VehicleWrapper } from 'screens/VehicleWrapper/VehicleWrapper';
 const VitalVehicle = () => {
   return (
     <div>
-      <VehicleWrapper />
+      <VehicleWrapper type="vital" />
     </div>
   );
 };

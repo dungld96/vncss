@@ -1,14 +1,20 @@
 import { Box, DialogActions, Divider, Step, StepLabel, Stepper } from '@mui/material';
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import Modal from 'common/modal/Modal';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
 import SelectPosition from 'common/SelectPosition/SelectPosition';
 import React, { useState } from 'react';
 import VehicleInfo from './VehicleInfo';
 
 const steps = ['Thông tin kích hoạt', 'Chọn vị trí trên bản đồ', 'Thông tin chi tiết'];
 
-const VehicleAdd = () => {
+interface Props {
+  isProtect: boolean;
+  show: boolean;
+  onClose: () => void;
+}
+
+const VehicleAdd: React.FC<Props> = ({ isProtect, show, onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const [selectedPosition, setSelectedPosition] = useState(null);
@@ -30,7 +36,11 @@ const VehicleAdd = () => {
           <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Box width={'440px'}>
               <Input fullWidth topLable="Serial" placeholder="Nhập serial" />
-              <Input fullWidth topLable="Tên phương tiện tuần tra" placeholder="Nhập tên phương tiện" />
+              <Input
+                fullWidth
+                topLable={`Tên phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'}`}
+                placeholder="Nhập tên phương tiện"
+              />
               <Button
                 fullWidth
                 variant="contained"
@@ -45,7 +55,7 @@ const VehicleAdd = () => {
       case 1:
         return <SelectPosition selectedPosition={selectedPosition} handleSelectedPosition={handleSelectedPosition} />;
       case 2:
-        return <VehicleInfo />;
+        return <VehicleInfo maxHeight="calc(100vh - 364px)" />;
       default:
         return 'Unknown step';
     }
@@ -53,10 +63,17 @@ const VehicleAdd = () => {
 
   return (
     <Modal
-      style={{ height: '756px', minHeight: '756px', maxWidth: '1136px', display: 'flex', flexDirection: 'column' }}
+      style={{
+        height: 'calc(100vh - 150px)',
+        maxHeight: '756px',
+        maxWidth: '1136px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
       size="xl"
-      show={true}
-      title="Thêm mới phương tiện tuần tra"
+      show={show}
+      close={onClose}
+      title={`Thêm mới phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'}`}
     >
       <Box sx={{ marginTop: '16px', marginBottom: '16px' }}>
         <Stepper

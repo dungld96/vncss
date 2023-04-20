@@ -1,30 +1,43 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import React from 'react';
+import { ImageIcon } from 'utils/UtilsComponent';
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
+import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
+import { dataTag, TagType } from './dataSelectTag';
+import SelectTag from './SelectTag';
+
+interface Props {
+  tags: TagType[];
 }
 
-const TableTag = () => {
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-  ];
+const TableTag: React.FC<Props> = ({ tags }) => {
   return (
-    <TableContainer>
+    <TableContainer
+      sx={{
+        border: 'none',
+      }}
+    >
       <Table
         border={1}
         sx={{
           borderRadius: '8px',
+          borderCollapse: 'unset',
+          tableLayout: 'auto',
+          // border: '1px solid #C5C6D2',
         }}
-        aria-label="caption table"
       >
-        <caption style={{ textAlign: 'center' }}>
-          <button>A basic table example with a caption</button>
-        </caption>
-        <TableHead>
-          <TableRow>
+        <TableHead
+          sx={{
+            background: '#EEF2FA',
+            border: 'none',
+            borderTopLeftRadius: '8px',
+          }}
+        >
+          <TableRow
+            sx={{
+              border: 'none',
+            }}
+          >
             <TableCell align="center" width={'45%'}>
               Thẻ tag
             </TableCell>
@@ -35,17 +48,35 @@ const TableTag = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
+          {tags.map(({ tagName, agency }) => (
+            <TableRow
+              key={tagName}
+              sx={{
+                border: 'none',
+              }}
+            >
               <TableCell align="center" width={'45%'}>
-                {row.fat}
+                {tagName}
               </TableCell>
               <TableCell align="center" width={'45%'}>
-                {row.carbs}
+                {agency}
               </TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
+              <TableCell align="center">
+                <IconButton>
+                  <ImageIcon image={deleteIconGray} />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
+          <TableRow
+            sx={{
+              border: 'none',
+            }}
+          >
+            <TableCell colSpan={3} align="center" width={'100%'}>
+              <SelectTag data={dataTag} />
+            </TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>

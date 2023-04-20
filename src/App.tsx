@@ -26,8 +26,8 @@ function App() {
             <Route path="agencies" element={<AgenciesScreen />} />
             <Route path="warehouse-sim" element={<WarehouseSimScreen />} />
             <Route path="reports" element={<ReportsScreen />} />
-            <Route path="vehicel-protect" element={<VehicleProtect />} />
-            <Route path="vehicel-vital" element={<VitalVehicle />} />
+            <Route path="vehicle-protect" element={<VehicleProtect />} />
+            <Route path="vehicle-vital" element={<VitalVehicle />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>

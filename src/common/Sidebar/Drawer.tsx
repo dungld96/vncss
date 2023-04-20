@@ -24,8 +24,8 @@ import reportsIcon from '../../assets/icons/report-icon.svg';
 import reportsActiveIcon from '../../assets/icons/report-active-icon.svg';
 import simIcon from '../../assets/icons/sim-icon.svg';
 import simActiveIcon from '../../assets/icons/sim-active-icon.svg';
-import vehicelVitalIcon from '../../assets/icons/vehicel-vital-icon.svg';
-import vehicelVitalActiveIcon from '../../assets/icons/vehicel-vital-active-icon.svg';
+import vehicleVitalIcon from '../../assets/icons/vehicle-vital-icon.svg';
+import vehicleVitalActiveIcon from '../../assets/icons/vehicle-vital-active-icon.svg';
 import CarProtectIcon from '../../assets/icons/car-protect-icon.svg';
 import CarProtectActiveIcon from '../../assets/icons/car-protect-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
@@ -74,20 +74,20 @@ const listFeature = [
     route: ROUTE_AGENCY,
   },
   {
-    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671aa',
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671cc',
     title: 'Phương tiện tuần tra',
+    icon: <ImageIcon image={vehicleVitalIcon} />,
+    activeIcon: <ImageIcon image={vehicleVitalActiveIcon} />,
+    permission: [''],
+    route: ROUTE_VITAL_VEHICLE,
+  },
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671aa',
+    title: 'Phương tiện trọng yếu',
     icon: <ImageIcon image={CarProtectIcon} />,
     activeIcon: <ImageIcon image={CarProtectActiveIcon} />,
     permission: [''],
     route: ROUTE_VEHICLE_PROTECT,
-  },
-  {
-    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671cc',
-    title: 'Phương tiện trọng yếu',
-    icon: <ImageIcon image={vehicelVitalIcon} />,
-    activeIcon: <ImageIcon image={vehicelVitalActiveIcon} />,
-    permission: [''],
-    route: ROUTE_VITAL_VEHICLE,
   },
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ff',
