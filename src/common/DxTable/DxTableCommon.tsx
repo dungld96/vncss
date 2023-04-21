@@ -31,6 +31,7 @@ export const getTableCell = (
     <Table.Cell
       {...props}
       style={{
+        padding: '0 8px 0 24px',
         borderBottom: '1px solid #EEF2FA',
         color: '#1E2323',
         paddingTop: 0,
@@ -43,12 +44,18 @@ export const getTableCell = (
   );
 };
 
+export const TableRowContent = (props: Table.DataCellProps) => (
+  <Table.Cell {...props} style={{ padding: '0 8px 0 24px', color: '#1E2323', height: '46px' }} />
+);
 export const TableHeaderContent = (props: TableHeaderRow.ContentProps) => (
   <TableHeaderRow.Content {...props} style={{ color: '#8B8C9B', opacity: 0.5 }} />
 );
 
 export const TableHeaderCell = (props: TableHeaderRow.CellProps) => (
-  <TableHeaderRow.Cell {...props} style={{ padding: '0 8px', height: '47px', borderBottom: '1px solid #EEF2FA' }} />
+  <TableHeaderRow.Cell
+    {...props}
+    style={{ padding: '0 8px 0 24px', height: '47px', borderBottom: '1px solid #EEF2FA' }}
+  />
 );
 
 export const TableSelectionCell = (props: TableSelection.CellProps) => (

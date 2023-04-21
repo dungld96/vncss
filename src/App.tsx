@@ -10,6 +10,8 @@ import RegulatoryAgenciesScreen from './screens/RegulatoryAgencies/RegulatoryAge
 import Layout from './common/Layout/Layout';
 import ReportsScreen from 'screens/Reports/ReportsScreen';
 import WarehouseSimScreen from 'screens/WarehouseSim/WarehouseSimScreen';
+import VitalVehicle from 'screens/VitalVehicle/VitalVehicle';
+import VehicleProtect from 'screens/VehicleProtect/VehicleProtect';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
             <Route path="agencies" element={<AgenciesScreen />} />
             <Route path="warehouse-sim" element={<WarehouseSimScreen />} />
             <Route path="reports" element={<ReportsScreen />} />
+            <Route path="vehicle-protect" element={<VehicleProtect />} />
+            <Route path="vehicle-vital" element={<VitalVehicle />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>
