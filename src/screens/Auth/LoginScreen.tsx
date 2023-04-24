@@ -1,19 +1,17 @@
-import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { Box, Checkbox } from '@mui/material';
-import { useFormik, Form, FormikProvider } from 'formik';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import background from '../../assets/img/BACKGROUND.svg';
-import PersonIcon from '@mui/icons-material/Person';
 import KeyIcon from '@mui/icons-material/Key';
+import PersonIcon from '@mui/icons-material/Person';
+import { Box, Checkbox } from '@mui/material';
 import { Input } from 'common';
-import * as Yup from 'yup';
-import ModalAttention from '../../common/modal/ModalAttention';
 import Button from 'common/button/Button';
+import { Form, FormikProvider, useFormik } from 'formik';
+import useModalConfirm from 'hooks/useModalConfirm';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import background from '../../assets/img/BACKGROUND.svg';
 import imgLogo from '../../assets/img/logo.svg';
 import { useLoginMutation } from '../../services/auth.service';
-import { useAppDispatch } from '../../state/store';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
@@ -103,6 +101,7 @@ const initForm = {
 };
 const LoginScreen = () => {
   const [modalAttention, setModalAttention] = useState(initForm);
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [loginUser, { isLoading, isError, error, isSuccess }] = useLoginMutation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -126,16 +125,24 @@ const LoginScreen = () => {
   });
   const { handleSubmit, getFieldProps, values, errors } = formik;
 
-  const closeModalAttention = () => {
-    setModalAttention({
-      ...modalAttention,
-      show: false,
+  // const closeModalAttention = () => {
+  //   setModalAttention({
+  //     ...modalAttention,
+  //     show: false,
+  //   });
+  // };
+  const handleForgotPass = () => {
+    showModalConfirm({
+      title: 'Quên mật khẩu',
+      content: 'Vui lòng liên hệ Admin để được cấp lại mật khẩu của tài khoản',
+      confirm: {
+        action: hideModalConfirm,
+      },
     });
   };
 
   return (
     <>
-      <ModalAttention {...modalAttention} onClose={closeModalAttention} />
       <AuthBox>
         <Box
           style={{
@@ -191,17 +198,7 @@ const LoginScreen = () => {
                       <CheckBox sx={{}} />
                       <LabelSaveLogin>Nhớ đăng nhập</LabelSaveLogin>
                     </Box>
-                    <LabelFotgotPass
-                      type="button"
-                      onClick={() =>
-                        setModalAttention({
-                          show: true,
-                          title: 'Quên mật khẩu',
-                          type: '',
-                          content: 'Vui lòng liên hệ Admin để được cấp lại mật khẩu của tài khoản',
-                        })
-                      }
-                    >
+                    <LabelFotgotPass type="button" onClick={handleForgotPass}>
                       Quên mật khẩu?
                     </LabelFotgotPass>
                   </Box>

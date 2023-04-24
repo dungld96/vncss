@@ -1,20 +1,19 @@
 import { Box, DialogActions, Divider, Step, StepLabel, Stepper } from '@mui/material';
-import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import Modal from '../../common/modal/Modal';
 import SelectPosition from '../../common/SelectPosition/SelectPosition';
 import React, { useState } from 'react';
-import VehicleInfo from './VehicleInfo';
+import LocationInfo from './LocationInfo';
+import ConfirmInfo from './ConfirmInfo';
 
-const steps = ['Thông tin kích hoạt', 'Chọn vị trí trên bản đồ', 'Thông tin chi tiết'];
+const steps = ['Chọn vị trí triển khai trên bản đồ', 'Thông tin vị trí triển khai', 'Xác nhận thông tin'];
 
 interface Props {
-  isProtect: boolean;
   show: boolean;
   onClose: () => void;
 }
 
-const VehicleAdd: React.FC<Props> = ({ isProtect, show, onClose }) => {
+const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const [selectedPosition, setSelectedPosition] = useState(null);
@@ -30,30 +29,11 @@ const VehicleAdd: React.FC<Props> = ({ isProtect, show, onClose }) => {
   const RenderStep = (step: number) => {
     switch (step) {
       case 0:
-        return (
-          <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Box width={'440px'}>
-              <Input fullWidth topLable="Serial" placeholder="Nhập serial" />
-              <Input
-                fullWidth
-                topLable={`Tên phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'}`}
-                placeholder="Nhập tên phương tiện"
-              />
-              <Button
-                fullWidth
-                variant="contained"
-                style={{ marginTop: '40px' }}
-                onClick={() => handleNext(activeStep)}
-              >
-                Tiếp theo
-              </Button>
-            </Box>
-          </Box>
-        );
-      case 1:
         return <SelectPosition selectedPosition={selectedPosition} handleSelectedPosition={handleSelectedPosition} />;
+      case 1:
+        return <LocationInfo maxHeight="calc(100vh - 364px)" />;
       case 2:
-        return <VehicleInfo maxHeight="calc(100vh - 364px)" />;
+        return <ConfirmInfo maxHeight="calc(100vh - 364px)" />;
       default:
         return 'Unknown step';
     }
@@ -67,11 +47,12 @@ const VehicleAdd: React.FC<Props> = ({ isProtect, show, onClose }) => {
         maxWidth: '1136px',
         display: 'flex',
         flexDirection: 'column',
+        overflowX: 'visible',
       }}
       size="xl"
       show={show}
       close={onClose}
-      title={`Thêm mới phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'}`}
+      title="Thêm mới vị trí triển khai"
     >
       <Box sx={{ marginTop: '16px', marginBottom: '16px' }}>
         <Stepper
@@ -127,18 +108,18 @@ const VehicleAdd: React.FC<Props> = ({ isProtect, show, onClose }) => {
       >
         {RenderStep(activeStep)}
       </Box>
-      {activeStep !== 0 && (
-        <DialogActions sx={{ padding: 0 }}>
-          <Button style={{ width: 131 }} variant="contained" onClick={() => setActiveStep(activeStep - 1)}>
-            back
+      <DialogActions sx={{ padding: 0 }}>
+        {activeStep !== 0 && (
+          <Button style={{ width: 131 }} variant="outlined" onClick={() => setActiveStep(activeStep - 1)}>
+            Trước đó
           </Button>
-          <Button style={{ width: 131 }} variant="contained" onClick={() => handleNext(activeStep)}>
-            Tiếp theo
-          </Button>
-        </DialogActions>
-      )}
+        )}
+        <Button style={{ width: 131 }} variant="contained" onClick={() => handleNext(activeStep)}>
+          Tiếp theo
+        </Button>
+      </DialogActions>
     </Modal>
   );
 };
 
-export default VehicleAdd;
+export default ModalAdd;

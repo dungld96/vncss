@@ -1,16 +1,9 @@
-import React, { useMemo, useState } from 'react';
 import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
-import {
-  Grid,
-  Table,
-  TableHeaderRow,
-  TableSelection,
-  TableSelectionProps,
-  Toolbar,
-} from '@devexpress/dx-react-grid-material-ui';
+import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
 import {
   Box,
+  Button as ButtonBase,
   Checkbox,
   Divider,
   IconButton,
@@ -20,8 +13,8 @@ import {
   MenuItem,
   Paper,
   Typography,
-  Button as ButtonBase,
 } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import {
   getTableCell,
   TableHeaderCell,
@@ -33,18 +26,17 @@ import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { Input } from 'common';
 import Button from 'common/button/Button';
-import ModalAttention from 'common/modal/ModalAttention';
+import { IUser } from 'services/auth.service';
+import { useDeletelUserMutation, useGetAllUsersQuery } from 'services/users.service';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
 import KeyIcon from '../../assets/icons/key-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
-import { users } from './mockData';
+import useModalConfirm from '../../hooks/useModalConfirm';
+import { defaultValueUser } from './constants';
 import ModalAddEditUser from './ModalAddEditUser';
 import ModalChangePassword from './ModalChangePassword';
-import { IUser } from 'services/auth.service';
-import { useDeletelUserMutation, useGetAllUsersQuery } from 'services/users.service';
-import { defaultAttention, defaultValueUser } from './constants';
 
 const ActionCellContent = ({
   cellProps,
@@ -126,8 +118,7 @@ export const UsersTable = () => {
     initialValues: defaultValueUser,
   });
   const [modalChangePass, setModalChangePass] = useState({ show: false });
-
-  const [modalAttention, setModalAttention] = useState(defaultAttention);
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
 
   const { data } = useGetAllUsersQuery(null) as any;
   const users = data?.data?.users;
@@ -158,22 +149,22 @@ export const UsersTable = () => {
     } else if (type === 'change-pass') {
       setModalChangePass({ show: true });
     } else if (type === 'delete') {
-      setModalAttention({
-        show: true,
+      showModalConfirm({
         type: 'warning',
         title: 'Xoá nhân viên',
         content: 'Bạn có chắc chắn muốn xoá nhân viên này không?',
-        textConfirm: 'Xoá nhân viên',
-        onSuccess: async () => await deleteUser({ id }).unwrap(),
+        confirm: {
+          action: async () => {
+            await deleteUser({ id }).unwrap();
+            hideModalConfirm();
+          },
+          text: 'Xoá nhân viên',
+        },
+        cancel: {
+          action: hideModalConfirm,
+        },
       });
     }
-  };
-
-  const closeModalAttention = () => {
-    setModalAttention({
-      ...modalAttention,
-      show: false,
-    });
   };
 
   const onCancelSelection = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -187,22 +178,26 @@ export const UsersTable = () => {
   };
 
   const handleDeleteMultilUsers = () => {
-    setModalAttention({
-      show: true,
+    showModalConfirm({
       type: 'warning',
       title: 'Xoá nhân viên',
       content: 'Bạn có chắc chắn muốn xoá nhân viên này không?',
-      textConfirm: 'Xoá nhân viên',
-      onSuccess: async () => {
-        await deleteUser({ id: selection.join(',') }).unwrap();
-        setSelection([]);
+      confirm: {
+        action: async () => {
+          await deleteUser({ id: selection.join(',') }).unwrap();
+          setSelection([]);
+          hideModalConfirm();
+        },
+        text: 'Xoá nhân viên',
+      },
+      cancel: {
+        action: hideModalConfirm,
       },
     });
   };
 
   return (
     <>
-      <ModalAttention {...modalAttention} onClose={closeModalAttention} onCancel={closeModalAttention} />
       <ModalAddEditUser {...modalUser} onClose={() => setModalUser({ ...modalUser, show: false })} />
       <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
