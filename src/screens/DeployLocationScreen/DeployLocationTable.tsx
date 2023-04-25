@@ -17,6 +17,7 @@ import { IUser } from '../../services/auth.service';
 import { data } from './mockData';
 import ModalEditTags from '../../screens/VehicleWrapper/ModalEditTags';
 import ModalAdd from './ModalAdd';
+import ModalEdit from './ModalEdit';
 
 const ActionCellContent = ({
   cellProps,
@@ -152,6 +153,7 @@ export const DeployLocationTable: React.FC = () => {
     <>
       <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
       <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <ModalEdit show={showModalEdit} onClose={() => setShowModalEdit(false)} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}

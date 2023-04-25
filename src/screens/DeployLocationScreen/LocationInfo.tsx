@@ -25,15 +25,24 @@ const LocationInfo: React.FC<Props> = ({ maxHeight }) => {
       <Box>
         <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px' }}>Thông tin chung</Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          <Input style={{ width: '312px' }} topLable="Tên vị trí triển khai" />
-          <Input style={{ width: '312px' }} topLable="Người liên hệ" />
-          <Input style={{ width: '312px' }} topLable="Số điện thoại người liên hệ" />
-          <Select fullWidth style={{ width: '312px' }} topLable="Tỉnh thành" />
-          <Select fullWidth style={{ width: '312px' }} topLable="Quận, Huyện" />
-          <Select fullWidth style={{ width: '312px' }} topLable="Phường, Xã" />
-          <Input style={{ width: '312px' }} topLable="Tên đường, Toà nhà, Số nhà" />
-          <Select fullWidth style={{ width: '312px' }} topLable="Loại hình kinh doanh" />
-          <Input style={{ width: '312px' }} topLable="Ngày ký hợp đồng" />
+          <Input style={{ width: '312px' }} topLable="Tên vị trí triển khai" placeholder="Nhập tên vị trí" />
+          <Input style={{ width: '312px' }} topLable="Người liên hệ" placeholder="Nhập tên người liên hệ" />
+          <Input
+            style={{ width: '312px' }}
+            topLable="Số điện thoại người liên hệ"
+            placeholder="Nhập số điện thoại liên hệ"
+          />
+          <Select fullWidth style={{ width: '312px' }} topLable="Tỉnh thành" placeholder="Chọn tỉnh thành" />
+          <Select fullWidth style={{ width: '312px' }} topLable="Quận, Huyện" placeholder="Chọn quận huyện" />
+          <Select fullWidth style={{ width: '312px' }} topLable="Phường, Xã" placeholder="Chọn phường xã" />
+          <Input style={{ width: '312px' }} topLable="Tên đường, Toà nhà, Số nhà" placeholder="Nhập địa chỉ" />
+          <Select
+            fullWidth
+            style={{ width: '312px' }}
+            topLable="Loại hình kinh doanh"
+            placeholder="Chọn loại hình kinh doanh"
+          />
+          <Input style={{ width: '312px' }} topLable="Ngày ký hợp đồng" placeholder="DD/MM/YYYY" />
         </Box>
       </Box>
 
@@ -78,7 +87,7 @@ const LocationInfo: React.FC<Props> = ({ maxHeight }) => {
       </Box>
       <Divider sx={{ marginTop: '16px !important' }} />
       <Box marginTop="32px">
-        <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px' }}>
+        <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px', marginBottom: '20px' }}>
           Cơ quan, Đơn vị giám sát vị trí
         </Typography>
         <Box>
