@@ -15,11 +15,12 @@ import VehicleProtect from './screens/VehicleProtect/VehicleProtect';
 import MonitorDepartmentScreen from './screens/MonitorDepartment/MonitorDepartmentScreen';
 import ModalConfirmContainer from './common/modal/ModalConfirmContainer';
 import DeployLocationScreen from './screens/DeployLocationScreen/DeployLocationScreen';
+import WarehouseNodeScreen from 'screens/WarehouseNode/WarehouseNodeScreen';
 
 function App() {
   return (
     <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh', fontFamily: 'Roboto' }}>
-      <ModalConfirmContainer/>
+      <ModalConfirmContainer />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<RequireUser allowedRoles={['user']} />}>
@@ -34,6 +35,7 @@ function App() {
             <Route path="vehicle-vital" element={<VitalVehicle />} />
             <Route path="monitor-department" element={<MonitorDepartmentScreen />} />
             <Route path="depoy-location" element={<DeployLocationScreen />} />
+            <Route path="warehouse-node" element={<WarehouseNodeScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>
