@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import {
+  CustomFieldType,
   getTableCell,
   TableHeaderCell,
   TableHeaderContent,
@@ -27,14 +28,16 @@ import { ImageIcon } from '../../utils/UtilsComponent';
 import { Input } from 'common';
 import Button from 'common/button/Button';
 import { IUser } from 'services/auth.service';
-import { useDeletelUserMutation, useGetAllUsersQuery } from 'services/users.service';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
-import KeyIcon from '../../assets/icons/key-icon.svg';
+import ShopIcon from '../../assets/icons/shop-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
+import BackIcon from '../../assets/icons/back-icon.svg';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { data } from './mockData';
+import { mappingStatusNode, mappingStatusNodeColor } from './constants';
+import ModalAddNode from './ModalAddNode';
 
 const ActionCellContent = ({
   cellProps,
@@ -89,14 +92,14 @@ const ActionCellContent = ({
         <Divider sx={{ margin: '0 16px !important' }} />
         <MenuItem onClick={() => onActionClick('change-pass', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
-            <ImageIcon image={KeyIcon} />
+            <ImageIcon image={ShopIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chuyển xuống đại lý</ListItemText>
         </MenuItem>
         <Divider sx={{ margin: '0 16px !important' }} />
-        <MenuItem onClick={() => onActionClick('delete', rowId)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('recall', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
-            <ImageIcon image={DeleteIcon} />
+            <ImageIcon image={BackIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>
             Thu hồi Node
@@ -115,9 +118,9 @@ const ActionCellContent = ({
 };
 
 export const WarehouseNodeTable = () => {
-  const [deleteUser] = useDeletelUserMutation();
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
+  const [showModalAdd, setShowModalAdd] = useState(false);
 
   const [columns] = useState([
     { name: 'type', title: 'Loại' },
@@ -137,9 +140,41 @@ export const WarehouseNodeTable = () => {
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
+  const [customField] = useState<CustomFieldType>({
+    status: {
+      renderContent: ({ row }) => (
+        <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
+          {mappingStatusNode[row.status]}
+        </Typography>
+      ),
+    },
+    gateway: {
+      renderContent: ({ row }) => (
+        <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{row.gateway || '--'}</Typography>
+      ),
+    },
+  });
+
+  const handleRecall = (id: string, more?: boolean) => {
+    showModalConfirm({
+      title: 'Thu hồi node',
+      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Node này không?`,
+      confirm: {
+        action: async () => {
+          hideModalConfirm();
+        },
+        text: 'Thu hồi',
+      },
+      cancel: {
+        action: hideModalConfirm,
+      },
+    });
+  };
+
   const handleClick = (type: string, id: string | any) => {
     if (type === 'edit') {
-    } else if (type === 'change-pass') {
+    } else if (type === 'recall') {
+      handleRecall(id);
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
@@ -171,11 +206,10 @@ export const WarehouseNodeTable = () => {
   const handleDeleteMultilUsers = () => {
     showModalConfirm({
       type: 'warning',
-      title: 'Xoá nhân viên',
-      content: 'Bạn có chắc chắn muốn xoá nhân viên này không?',
+      title: 'Xoá node',
+      content: 'Bạn có chắc chắn muốn xoá node này không?',
       confirm: {
         action: async () => {
-          await deleteUser({ id: selection.join(',') }).unwrap();
           setSelection([]);
           hideModalConfirm();
         },
@@ -189,15 +223,16 @@ export const WarehouseNodeTable = () => {
 
   return (
     <>
+      <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
           placeholder="Tìm kiếm tên nhân viên"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
-        <Button variant="contained" onClick={() => {}}>
+        <Button variant="contained" onClick={() => setShowModalAdd(true)}>
           <ImageIcon image={AddIcon} />
-          <Box sx={{ marginLeft: '8px' }}>Thêm mới nhân viên</Box>
+          <Box sx={{ marginLeft: '8px' }}>Thêm mới Node</Box>
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
@@ -210,7 +245,7 @@ export const WarehouseNodeTable = () => {
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={(props) =>
-              getTableCell(props, <ActionCellContent cellProps={props} onActionClick={handleClick} />)
+              getTableCell(props, <ActionCellContent cellProps={props} onActionClick={handleClick} />, customField)
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
@@ -244,13 +279,29 @@ export const WarehouseNodeTable = () => {
                 />
                 <Typography variant="subtitle2">Đang chọn ({selection.length})</Typography>
               </Box>
-              <ButtonBase
-                sx={{ color: '#E5401C', marginRight: '32px' }}
-                startIcon={<ImageIcon image={DeleteIcon} />}
-                onClick={handleDeleteMultilUsers}
-              >
-                Xóa
-              </ButtonBase>
+              <Box display={'flex'} alignItems="center">
+                <ButtonBase
+                  sx={{ color: '#52535C', marginRight: '32px' }}
+                  startIcon={<ImageIcon image={ShopIcon} />}
+                  onClick={handleDeleteMultilUsers}
+                >
+                  Chuyển
+                </ButtonBase>
+                <ButtonBase
+                  sx={{ color: '#E5401C', marginRight: '32px' }}
+                  startIcon={<ImageIcon image={BackIcon} />}
+                  onClick={() => handleRecall(selection.join(','), true)}
+                >
+                  Thu hồi
+                </ButtonBase>
+                <ButtonBase
+                  sx={{ color: '#E5401C', marginRight: '32px' }}
+                  startIcon={<ImageIcon image={DeleteIcon} />}
+                  onClick={handleDeleteMultilUsers}
+                >
+                  Xóa
+                </ButtonBase>
+              </Box>
             </Box>
           )}
         </Grid>
