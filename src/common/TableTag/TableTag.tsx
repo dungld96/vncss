@@ -1,6 +1,6 @@
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import React from 'react';
-import { ImageIcon } from 'utils/UtilsComponent';
+import { ImageIcon } from '../../utils/UtilsComponent';
 
 import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
 import { dataTag, TagType } from './dataSelectTag';
@@ -8,9 +8,10 @@ import SelectTag from './SelectTag';
 
 interface Props {
   tags: TagType[];
+  hideButtonAdd?: boolean;
 }
 
-const TableTag: React.FC<Props> = ({ tags }) => {
+const TableTag: React.FC<Props> = ({ tags, hideButtonAdd }) => {
   return (
     <TableContainer
       sx={{
@@ -21,9 +22,10 @@ const TableTag: React.FC<Props> = ({ tags }) => {
         border={1}
         sx={{
           borderRadius: '8px',
-          borderCollapse: 'unset',
+          borderCollapse: 'collapse',
           tableLayout: 'auto',
-          // border: '1px solid #C5C6D2',
+          border: 'none',
+          overflow: 'hidden',
         }}
       >
         <TableHead
@@ -33,15 +35,11 @@ const TableTag: React.FC<Props> = ({ tags }) => {
             borderTopLeftRadius: '8px',
           }}
         >
-          <TableRow
-            sx={{
-              border: 'none',
-            }}
-          >
-            <TableCell align="center" width={'45%'}>
+          <TableRow>
+            <TableCell align="center" width={'45%'} sx={{ borderRightColor: 'rgba(224, 224, 224, 1)' }}>
               Thẻ tag
             </TableCell>
-            <TableCell align="center" width={'45%'}>
+            <TableCell align="center" width={'45%'} sx={{ borderRightColor: 'rgba(224, 224, 224, 1)' }}>
               Tên cơ quan, đơn vị
             </TableCell>
             <TableCell align="center"></TableCell>
@@ -55,10 +53,10 @@ const TableTag: React.FC<Props> = ({ tags }) => {
                 border: 'none',
               }}
             >
-              <TableCell align="center" width={'45%'}>
+              <TableCell align="center" width={'45%'} sx={{ fontSize: '14px', fontWeight: '400', color: '#8F0A0C' }}>
                 {tagName}
               </TableCell>
-              <TableCell align="center" width={'45%'}>
+              <TableCell align="center" width={'45%'} sx={{ fontSize: '14px', fontWeight: '500', color: '#1E2323' }}>
                 {agency}
               </TableCell>
               <TableCell align="center">
@@ -68,15 +66,17 @@ const TableTag: React.FC<Props> = ({ tags }) => {
               </TableCell>
             </TableRow>
           ))}
-          <TableRow
-            sx={{
-              border: 'none',
-            }}
-          >
-            <TableCell colSpan={3} align="center" width={'100%'}>
-              <SelectTag data={dataTag} />
-            </TableCell>
-          </TableRow>
+          {!hideButtonAdd && (
+            <TableRow
+              sx={{
+                border: 'none',
+              }}
+            >
+              <TableCell colSpan={3} align="center" width={'100%'}>
+                <SelectTag data={dataTag} />
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </TableContainer>

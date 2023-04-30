@@ -12,7 +12,8 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   iconEndAdorment?: any;
   inputRef?: any;
   maxLength?: number;
-  topLable?:string
+  topLable?: string;
+  noOutLine?: boolean;
   [key: string]: any;
 }
 
@@ -20,9 +21,9 @@ const TopLabel = styled.p({
   fontWeight: 400,
   fontSize: '12px',
   lineHeight: '20px',
-  padding:0,
-  marginTop:20,
-  marginBottom:8
+  padding: 0,
+  marginTop: 20,
+  marginBottom: 8,
 });
 
 const Input: React.FC<Props> = (props) => {
@@ -41,6 +42,7 @@ const Input: React.FC<Props> = (props) => {
     onChange,
     maxLength,
     topLable,
+    noOutLine,
     ...rest
   } = props as any;
   const isPassword = type === 'password';
@@ -86,13 +88,13 @@ const Input: React.FC<Props> = (props) => {
         onChange={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        inputProps={{ maxLength: maxLength || 20 }}
+        inputProps={{ maxLength: maxLength || 20, ...InputProps }}
         placeholder={placeholder}
         InputProps={adornment}
         helperText={error}
         sx={{
-          '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-            border: '2px solid #EEF2FA',
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: noOutLine ? 'none' : '2px solid #EEF2FA',
           },
           '& .MuiInputBase-root': {
             borderRadius: '8px',

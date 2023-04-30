@@ -3,6 +3,8 @@ import { Box, Drawer, List, ListItemIcon, ListItem, ListItemText } from '@mui/ma
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ImageIcon } from '../../utils/UtilsComponent';
 import {
+  DEPLOY_LOCATION,
+  MONITOR_DEPARTMENT,
   ROUTE_AGENCY,
   ROUTE_HOME,
   ROUTE_REGULATORY_AGENCY,
@@ -10,6 +12,7 @@ import {
   ROUTE_USER,
   ROUTE_VEHICLE_PROTECT,
   ROUTE_VITAL_VEHICLE,
+  ROUTE_WAREHOUSENODE,
   ROUTE_WAREHOUSESIM,
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
@@ -28,6 +31,12 @@ import vehicleVitalIcon from '../../assets/icons/vehicle-vital-icon.svg';
 import vehicleVitalActiveIcon from '../../assets/icons/vehicle-vital-active-icon.svg';
 import CarProtectIcon from '../../assets/icons/car-protect-icon.svg';
 import CarProtectActiveIcon from '../../assets/icons/car-protect-active-icon.svg';
+import MonitorDepartmentIcon from '../../assets/icons/monitor-department-icon.svg';
+import MonitorDepartmentActiveIcon from '../../assets/icons/monitor-department-active-icon.svg';
+import MapIcon from '../../assets/icons/map-icon.svg';
+import MapActiveIcon from '../../assets/icons/map-active-icon.svg';
+import NodeIcon from '../../assets/icons/node-icon.svg';
+import NodeActiveIcon from '../../assets/icons/node-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
@@ -58,12 +67,36 @@ const listFeature = [
     route: ROUTE_REGULATORY_AGENCY,
   },
   {
+    id: '68d536e2-eff0-4388-84ad-739c31867coo',
+    title: 'Đơn vị giám sát',
+    icon: <ImageIcon image={MonitorDepartmentIcon} />,
+    activeIcon: <ImageIcon image={MonitorDepartmentActiveIcon} />,
+    permission: ['monitor_department'],
+    route: MONITOR_DEPARTMENT,
+  },
+  {
+    id: '68d536e2-eff0-4388-84ad-739c31867cpp',
+    title: 'Vị trí triển khai',
+    icon: <ImageIcon image={MapIcon} />,
+    activeIcon: <ImageIcon image={MapActiveIcon} />,
+    permission: ['deploy_location'],
+    route: DEPLOY_LOCATION,
+  },
+  {
     id: '11115061-4494-4bdc-8a6e-5a59aadec58f',
     title: 'Nhân viên',
     icon: <ImageIcon image={usersIcon} />,
     activeIcon: <ImageIcon image={usersActiveIcon} />,
     permission: ['users'],
     route: ROUTE_USER,
+  },
+  {
+    id: '11115061-4494-4bdc-8a6e-5a59aadec500',
+    title: 'Kho Node',
+    icon: <ImageIcon image={NodeIcon} />,
+    activeIcon: <ImageIcon image={NodeActiveIcon} />,
+    permission: ['warehouse-node'],
+    route: ROUTE_WAREHOUSENODE,
   },
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671a5',

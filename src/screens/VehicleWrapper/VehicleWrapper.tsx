@@ -12,12 +12,11 @@ import EditIcon from '../../assets/icons/edit-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
-import ModalAttention from '../../common/modal/ModalAttention';
-import { defaultAttention } from '../../screens/Users/constants';
+import useModalConfirm from '../../hooks/useModalConfirm';
 import { IUser } from '../../services/auth.service';
 import { data } from './mockData';
-import VehicleAdd from './VehicleAdd';
 import ModalEditTags from './ModalEditTags';
+import VehicleAdd from './VehicleAdd';
 import VehicleEdit from './VehicleEdit';
 
 interface Props {
@@ -90,10 +89,10 @@ const ActionCellContent = ({
 
 export const VehicleWrapper: React.FC<Props> = ({ type }) => {
   const isProtect = type === 'protect';
-  const [modalAttention, setModalAttention] = useState(defaultAttention);
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalEditTag, setShowModalEditTag] = useState(false);
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
 
   const [columns] = useState([
     { name: 'name', title: 'Tên phương tiện' },
@@ -140,22 +139,19 @@ export const VehicleWrapper: React.FC<Props> = ({ type }) => {
     if (type === 'edit') {
       setShowModalEdit(true);
     } else if (type === 'delete') {
-      setModalAttention({
-        show: true,
+      showModalConfirm({
         type: 'warning',
         title: `Xoá phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'}`,
         content: `Bạn có chắc chắn muốn xoá phương tiện ${isProtect ? 'trọng yếu' : 'tuần tra'} này không?`,
-        textConfirm: 'Xoá phương tiện',
-        onSuccess: async () => {},
+        confirm: {
+          action: hideModalConfirm,
+          text: 'Xoá phương tiện',
+        },
+        cancel: {
+          action: hideModalConfirm,
+        },
       });
     }
-  };
-
-  const closeModalAttention = () => {
-    setModalAttention({
-      ...modalAttention,
-      show: false,
-    });
   };
 
   return (
@@ -163,7 +159,6 @@ export const VehicleWrapper: React.FC<Props> = ({ type }) => {
       <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
       <VehicleAdd isProtect={isProtect} show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <VehicleEdit isProtect={isProtect} show={showModalEdit} onClose={() => setShowModalEdit(false)} />
-      <ModalAttention {...modalAttention} onClose={closeModalAttention} onCancel={closeModalAttention} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}

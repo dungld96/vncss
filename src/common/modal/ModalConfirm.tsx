@@ -5,17 +5,7 @@ import Button from 'common/button/Button';
 import Success from '../../assets/img/Success.svg';
 import Failed from '../../assets/img/Failed.svg';
 import Warning from '../../assets/img/Warning.svg';
-
-interface Props {
-  show: boolean;
-  title: string;
-  content: string;
-  type?: string | 'success' | 'warning' | 'failed';
-  onClose?: () => void;
-  onCancel?: () => void;
-  onSuccess?: () => void;
-  textConfirm?: string;
-}
+import { ModalConfirmState } from '../../state/modules/modalConfirm/reducer';
 
 const DialogWrapper = styled.div({
   alignItems: 'center',
@@ -57,8 +47,8 @@ const IconStatusWrapper = styled.div({
   marginBottom: 20,
 });
 
-const ModalAttention: React.FC<Props> = (props) => {
-  const { show, title, content, onClose, type, onCancel, onSuccess, textConfirm } = props;
+const ModalConfirm: React.FC<ModalConfirmState> = (props) => {
+  const { show = false, title, content, confirm, cancel, type } = props;
   const renderIcon = () => {
     switch (type) {
       case 'success':
@@ -88,21 +78,13 @@ const ModalAttention: React.FC<Props> = (props) => {
         <Title>{title}</Title>
         <Content>{content}</Content>
         <Action>
-          {!!onCancel && (
-            <Button fullWidth color="primary" variant="outlined" onClick={() => onClose?.()}>
-              Quay lại
+          {!!cancel && (
+            <Button fullWidth color="primary" variant="outlined" onClick={cancel?.action}>
+              {cancel?.text || 'Quay lại'}
             </Button>
           )}
-          <Button
-            fullWidth
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              onClose?.();
-              onSuccess?.();
-            }}
-          >
-            {textConfirm || 'Đã hiểu'}
+          <Button fullWidth color="primary" variant="contained" onClick={confirm?.action}>
+            {confirm?.text || 'Đã hiểu'}
           </Button>
         </Action>
       </DialogWrapper>
@@ -110,4 +92,4 @@ const ModalAttention: React.FC<Props> = (props) => {
   );
 };
 
-export default ModalAttention;
+export default ModalConfirm;

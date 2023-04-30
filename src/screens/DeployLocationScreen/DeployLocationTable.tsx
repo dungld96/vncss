@@ -1,25 +1,23 @@
+import React, { useMemo, useState } from 'react';
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
-import React, { useMemo, useState } from 'react';
 import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
+import EditIcon2 from '../../assets/icons/edit-icon-2.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
-import LocationIcon from '../../assets/icons/location-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
-
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { IUser } from 'services/auth.service';
-import ExportIcon from '../../assets/icons/export-red-icon.svg';
-import { defaultValuesSim } from './constants';
-import { dataSim } from './mockData';
-import ModalAddSim from './ModalAddSim';
-import ModalEditSim from './ModalEditSim';
+import { IUser } from '../../services/auth.service';
+import { data } from './mockData';
+import ModalEditTags from '../../screens/VehicleWrapper/ModalEditTags';
+import ModalAdd from './ModalAdd';
+import ModalEdit from './ModalEdit';
 
 const ActionCellContent = ({
   cellProps,
@@ -65,123 +63,110 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <Divider sx={{ margin: '0 16px !important' }} />
         <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa thông tin</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa</ListItemText>
         </MenuItem>
         <Divider sx={{ margin: '0 16px !important' }} />
         <MenuItem onClick={() => onActionClick('delete', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>Xoá sim</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>
+            Xoá đơn vị
+          </ListItemText>
         </MenuItem>
       </Menu>
     </div>
   );
 };
 
-const WarehouseSimTable = () => {
-  const {showModalConfirm,hideModalConfirm} = useModalConfirm()
-  const [modalEditSim, setModalEditSim] = useState({
-    show: false,
-    initialValues: defaultValuesSim,
-  });
+export const DeployLocationTable: React.FC = () => {
   const [showModalAdd, setShowModalAdd] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showModalEditTag, setShowModalEditTag] = useState(false);
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
 
   const [columns] = useState([
-    { name: 'number', title: 'STT' },
-    { name: 'phoneNumber', title: 'Số điện thoại' },
-    { name: 'imei', title: 'Imei sim' },
-    { name: 'startDate', title: 'Ngày kích hoạt' },
-    { name: 'status', title: 'Trạng thái' },
-    { name: 'serial', title: 'Serial Gateway' },
-    { name: 'createdDate', title: 'Ngày tạo' },
+    { name: 'name', title: 'Tên phương tiện' },
+    { name: 'address', title: 'Địa chỉ' },
+    { name: 'businessType', title: 'Loại hình KD' },
+    { name: 'contacUser', title: 'Người liên hệ' },
+    { name: 'contacUserPhone', title: 'SĐT người liên hệ' },
+    { name: 'maintenanceDate', title: 'Ngày bảo trì' },
+    { name: 'tag', title: 'Thẻ tag' },
     { name: 'action', title: 'Hành động' },
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'number', width: 80, align: 'center' },
     { columnName: 'name', width: 200 },
-    { columnName: 'phone', align: 'center' },
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
-  const customField: CustomFieldType = {
-    status: {
+  const [customField] = useState<CustomFieldType>({
+    tag: {
       renderContent: ({ row }) => {
         return (
-          <Typography sx={{ color: row?.status ? '#27AE60' : '#8B8C9B', fontSize: '14px' }}>
-            {row?.status ? 'Online' : 'Offline'}
-          </Typography>
-        );
-      },
-    },
-    serial: {
-      renderContent: ({ row }) => {
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ fontSize: '14px' }}>{row?.serial}</Typography>
-            <IconButton>
-              <ImageIcon image={LocationIcon} />
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography
+              sx={{
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                fontSize: '14px',
+                color: '#1AA6EE',
+              }}
+            >
+              {row.tag.join(', ')}
+            </Typography>
+            <IconButton onClick={() => setShowModalEditTag(true)}>
+              <ImageIcon image={EditIcon2} />
             </IconButton>
           </Box>
         );
       },
     },
-  };
+  });
 
-  const handleClick = (type: string, row: string | any) => {
-    if (type === 'delete') {
+  const handleClick = (type: string, id: string | any) => {
+    if (type === 'edit') {
+      setShowModalEdit(true);
+    } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
-        title: 'Xoá sim',
-        content: 'Bạn có chắc chắn muốn xoá sim này không?',
-        confirm:{
-          action:hideModalConfirm,
-          text:'Xoá sim'
+        title: 'Xoá vị trí triển khai',
+        content: 'Bạn có chắc chắn muốn xoá vị trí này không?',
+        confirm: {
+          action: hideModalConfirm,
+          text: 'Xoá vị trí',
         },
-        cancel:{
-          action:hideModalConfirm
-        }
-      })
-    } else if (type === 'edit') {
-      setModalEditSim({
-        show: true,
-        initialValues: { ...row, status: row.status ? 1 : 0 },
+        cancel: {
+          action: hideModalConfirm,
+        },
       });
     }
   };
 
-
-  const dataTable = dataSim.map((item, index) => ({ ...item, number: index + 1 }));
-
   return (
     <>
-      <ModalAddSim show={showModalAdd} onClose={() => setShowModalAdd(false)} />
-      <ModalEditSim {...modalEditSim} onClose={() => setModalEditSim({ ...modalEditSim, show: false })} />
+      <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
+      <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <ModalEdit show={showModalEdit} onClose={() => setShowModalEdit(false)} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
-          placeholder="Tìm kiếm tên nhân viên"
+          placeholder="Tìm kiếm tên"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
-        <Box sx={{ display: 'flex' }}>
-          <Button onClick={() => {}}>
-            <ImageIcon image={ExportIcon} />
-            <Typography sx={{ marginLeft: '8px', fontWeight: '700', fontSize: '14px' }}>Xuất excel</Typography>
-          </Button>
-          <Button style={{ marginLeft: 16 }} variant="contained" onClick={() => setShowModalAdd(true)}>
-            <ImageIcon image={AddIcon} />
-            <Typography sx={{ marginLeft: '8px', fontWeight: '700', fontSize: '14px' }}>Thêm Sim</Typography>
-          </Button>
-        </Box>
+        <Button variant="contained" onClick={() => setShowModalAdd(true)}>
+          <ImageIcon image={AddIcon} />
+          <Box sx={{ marginLeft: '8px' }}>Thêm vị trí triển khai</Box>
+        </Button>
       </Box>
-      <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={dataTable} columns={columns}>
+      <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
+        <Grid rows={data} columns={columns}>
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={(props) =>
@@ -194,5 +179,3 @@ const WarehouseSimTable = () => {
     </>
   );
 };
-
-export default WarehouseSimTable;
