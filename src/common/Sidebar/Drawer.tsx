@@ -12,8 +12,9 @@ import {
   ROUTE_USER,
   ROUTE_VEHICLE_PROTECT,
   ROUTE_VITAL_VEHICLE,
-  ROUTE_WAREHOUSENODE,
+  ROUTE_WAREHOUSE_NODE,
   ROUTE_WAREHOUSESIM,
+  ROUTE_WAREHOUSE_GATEWAY,
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
@@ -37,6 +38,8 @@ import MapIcon from '../../assets/icons/map-icon.svg';
 import MapActiveIcon from '../../assets/icons/map-active-icon.svg';
 import NodeIcon from '../../assets/icons/node-icon.svg';
 import NodeActiveIcon from '../../assets/icons/node-active-icon.svg';
+import GatewayIcon from '../../assets/icons/gateway-icon.svg';
+import GatewayActiveIcon from '../../assets/icons/gateway-icon-active.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
@@ -91,12 +94,20 @@ const listFeature = [
     route: ROUTE_USER,
   },
   {
+    id: '11115061-4494-4bdc-8a6e-5a59aadec5ii',
+    title: 'Kho Gateway',
+    icon: <ImageIcon image={GatewayIcon} />,
+    activeIcon: <ImageIcon image={GatewayActiveIcon} />,
+    permission: ['warehouse-gateway'],
+    route: ROUTE_WAREHOUSE_GATEWAY,
+  },
+  {
     id: '11115061-4494-4bdc-8a6e-5a59aadec500',
     title: 'Kho Node',
     icon: <ImageIcon image={NodeIcon} />,
     activeIcon: <ImageIcon image={NodeActiveIcon} />,
     permission: ['warehouse-node'],
-    route: ROUTE_WAREHOUSENODE,
+    route: ROUTE_WAREHOUSE_NODE,
   },
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671a5',

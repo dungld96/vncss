@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Box, TextField, IconButton, InputAdornment } from '@mui/material';
+import { Box, TextField, IconButton, InputAdornment, Typography } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import styled from '@emotion/styled';
@@ -14,17 +14,9 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   maxLength?: number;
   topLable?: string;
   noOutLine?: boolean;
+  noMarginTop?: boolean;
   [key: string]: any;
 }
-
-const TopLabel = styled.p({
-  fontWeight: 400,
-  fontSize: '12px',
-  lineHeight: '20px',
-  padding: 0,
-  marginTop: 20,
-  marginBottom: 8,
-});
 
 const Input: React.FC<Props> = (props) => {
   const {
@@ -43,6 +35,7 @@ const Input: React.FC<Props> = (props) => {
     maxLength,
     topLable,
     noOutLine,
+    noMarginTop,
     ...rest
   } = props as any;
   const isPassword = type === 'password';
@@ -77,8 +70,22 @@ const Input: React.FC<Props> = (props) => {
   }, []);
 
   return (
-    <div>
-      {topLable && <TopLabel>{topLable}</TopLabel>}
+    <Box>
+      {topLable && (
+        <Typography
+          style={{
+            fontWeight: 400,
+            fontSize: '12px',
+            lineHeight: '20px',
+            padding: 0,
+            marginTop: noMarginTop ? undefined : 20,
+            marginBottom: 8,
+            cursor: 'pointer !important',
+          }}
+        >
+          {topLable}
+        </Typography>
+      )}
       <TextField
         {...rest}
         value={value}
@@ -116,7 +123,7 @@ const Input: React.FC<Props> = (props) => {
           },
         }}
       />
-    </div>
+    </Box>
   );
 };
 

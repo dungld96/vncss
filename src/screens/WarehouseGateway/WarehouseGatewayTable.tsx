@@ -34,13 +34,15 @@ import EditIcon from '../../assets/icons/edit-icon.svg';
 import ShopIcon from '../../assets/icons/shop-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import BackIcon from '../../assets/icons/back-icon.svg';
+import CalendarIcon from '../../assets/icons/calendar-icon.svg';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { data } from './mockData';
 import { listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
-import ModalAddNode from './ModalAddNode';
-import ModalEditNode from './ModalEditNode';
+import ModalAdd from './ModalAdd';
 import Select from 'common/Select/Select';
-import ModalChangeAgency from './ModalChangeAgency';
+import { Switch } from 'common/Switch/Switch';
+import ModalChangeAgency from 'screens/WarehouseNode/ModalChangeAgency';
+import ModalExtendGateway from './ModalExtendGateway';
 
 const ActionCellContent = ({
   cellProps,
@@ -86,11 +88,11 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('extend', cellProps.row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
-            <ImageIcon image={EditIcon} />
+            <ImageIcon image={CalendarIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Gia hạn thêm</ListItemText>
         </MenuItem>
         <Divider sx={{ margin: '0 16px !important' }} />
         <MenuItem onClick={() => onActionClick('change-agency', rowId)} sx={{ padding: '16px' }}>
@@ -105,7 +107,7 @@ const ActionCellContent = ({
             <ImageIcon image={BackIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>
-            Thu hồi Node
+            Thu hồi gateway
           </ListItemText>
         </MenuItem>
         <Divider sx={{ margin: '0 16px !important' }} />
@@ -120,23 +122,27 @@ const ActionCellContent = ({
   );
 };
 
-export const WarehouseNodeTable = () => {
+export const WarehouseGatewayTable = () => {
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalEdit, setShowModalEdit] = useState(false);
-
+  const [showModalExtend, setShowModalExtend] = useState(false);
   const [showModalChangeAgency, setShowModaChangeAgency] = useState(false);
+  const [ModalExtend, setModalExtend] = useState(false);
 
   const [columns] = useState([
     { name: 'type', title: 'Loại' },
     { name: 'description', title: 'Mô tả' },
     { name: 'serial', title: 'Serial' },
     { name: 'version', title: 'Phiên bản' },
-    { name: 'startDate', title: 'Ngày xuất xưởng' },
+    { name: 'DateOfManufacture', title: 'Ngày xuất xưởng' },
     { name: 'status', title: 'Trạng thái' },
+    { name: 'node', title: 'Node' },
+    { name: 'sim', title: 'Thẻ sim' },
+    { name: 'startDate', title: 'Ngày kích hoạt' },
+    { name: 'switchboard', title: 'Tổng đài' },
+    { name: 'subscriber', title: 'Thuê bao' },
     { name: 'agency', title: 'Đại lý' },
-    { name: 'gateway', title: 'Thuộc Gateway' },
     { name: 'action', title: 'Hành động' },
   ]);
 
@@ -154,12 +160,15 @@ export const WarehouseNodeTable = () => {
         </Typography>
       ),
     },
+    switchboard: {
+      renderContent: ({ row }) => (row.switchboard === null ? '--' : <Switch checked={row.switchboard} />),
+    },
   });
 
   const handleRecall = (id: string, more?: boolean) => {
     showModalConfirm({
-      title: 'Thu hồi gateway',
-      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Gateway này không?`,
+      title: 'Thu hồi node',
+      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Node này không?`,
       confirm: {
         action: async () => {
           hideModalConfirm();
@@ -173,8 +182,8 @@ export const WarehouseNodeTable = () => {
   };
 
   const handleClick = (type: string, id: string | any) => {
-    if (type === 'edit') {
-      setShowModalEdit(true);
+    if (type === 'extend') {
+      setModalExtend(true);
     } else if (type === 'change-agency') {
       setShowModaChangeAgency(true);
     } else if (type === 'recall') {
@@ -182,13 +191,13 @@ export const WarehouseNodeTable = () => {
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
-        title: 'Xoá node',
-        content: 'Bạn có chắc chắn muốn xoá node này không?',
+        title: 'Xoá gateway',
+        content: 'Bạn có chắc chắn muốn xoá gateway này không?',
         confirm: {
           action: async () => {
             hideModalConfirm();
           },
-          text: 'Xoá node',
+          text: 'Xoá gateway',
         },
         cancel: {
           action: hideModalConfirm,
@@ -210,14 +219,14 @@ export const WarehouseNodeTable = () => {
   const handleDeleteMultilUsers = () => {
     showModalConfirm({
       type: 'warning',
-      title: 'Xoá node',
-      content: 'Bạn có chắc chắn muốn xoá node này không?',
+      title: 'Xoá gateway',
+      content: 'Bạn có chắc chắn muốn xoá gateway này không?',
       confirm: {
         action: async () => {
           setSelection([]);
           hideModalConfirm();
         },
-        text: 'Xoá node',
+        text: 'Xoá gateway',
       },
       cancel: {
         action: hideModalConfirm,
@@ -225,12 +234,11 @@ export const WarehouseNodeTable = () => {
     });
   };
 
-  console.log(listStatusNode);
   return (
     <>
+      <ModalExtendGateway show={ModalExtend} onClose={() => setModalExtend(false)} />
       <ModalChangeAgency show={showModalChangeAgency} onClose={() => setShowModaChangeAgency(false)} />
-      <ModalEditNode show={showModalEdit} onClose={() => setShowModalEdit(false)} />
-      <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <Box
         sx={{
           display: 'flex',
@@ -265,7 +273,7 @@ export const WarehouseNodeTable = () => {
         </Box>
         <Button variant="contained" onClick={() => setShowModalAdd(true)}>
           <ImageIcon image={AddIcon} />
-          <Box sx={{ marginLeft: '8px' }}>Thêm mới Node</Box>
+          <Box sx={{ marginLeft: '8px' }}>Thêm mới Gateway</Box>
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
@@ -313,6 +321,13 @@ export const WarehouseNodeTable = () => {
                 <Typography variant="subtitle2">Đang chọn ({selection.length})</Typography>
               </Box>
               <Box display={'flex'} alignItems="center">
+                <ButtonBase
+                  sx={{ color: '#52535C', marginRight: '32px' }}
+                  startIcon={<ImageIcon image={CalendarIcon} />}
+                  onClick={() => setModalExtend(true)}
+                >
+                  Gia hạn
+                </ButtonBase>
                 <ButtonBase
                   sx={{ color: '#52535C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={ShopIcon} />}
