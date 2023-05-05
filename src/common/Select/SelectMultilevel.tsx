@@ -4,10 +4,8 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
-  Divider,
   FormHelperText,
   InputAdornment,
-  ListItemText,
   MenuItem,
   Popover,
   TextField,
@@ -42,14 +40,14 @@ export interface Props {
   [key: string]: any;
 }
 
-const Select: React.FC<Props> = ({
+const SelectMultilevel: React.FC<Props> = ({
   data = [],
   selected,
   setSelected,
   style = {},
   disabled,
   hideSelected = true,
-  maxHeight = 324,
+  maxHeight = 220,
   fullWidth,
   placeholder,
   error,
@@ -138,7 +136,7 @@ const Select: React.FC<Props> = ({
             ),
           }}
           sx={{
-            '& .MuiOutlinedInput-notchedOutline': {
+            '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
               border: '2px solid #EEF2FA',
             },
             '& .MuiInputBase-root': {
@@ -147,9 +145,6 @@ const Select: React.FC<Props> = ({
               color: '#1E2323',
               fontWeight: '500',
               fontSize: '14px',
-              '.Mui-focused': {
-                borderWidth: '1px',
-              },
             },
             '& .MuiFormHelperText-root': {
               color: '#ec0e0e',
@@ -180,8 +175,6 @@ const Select: React.FC<Props> = ({
         PaperProps={{
           style: {
             width: anchorRef.current?.getBoundingClientRect().width || 0,
-            borderRadius: '8px',
-            marginTop: '4px',
           },
         }}
         disableAutoFocus
@@ -190,31 +183,31 @@ const Select: React.FC<Props> = ({
         anchorEl={anchorRef.current}
       >
         <SimpleBar style={{ maxHeight }} autoHide={false}>
-          {newData.map((item) => {
-            const isActive = item.value === selected;
-            return (
-              <>
-                <MenuItem
-                  key={item.value}
-                  disabled={item.disabled}
-                  onClick={() => handleClickItem(item)}
-                  sx={{ padding: '16px' }}
-                >
-                  <ListItemText
-                    primaryTypographyProps={{ sx: { fontSize: '14px', color: isActive ? '#8F0A0C' : '#1E2323' } }}
-                  >
-                    {item.label}
-                  </ListItemText>
-                </MenuItem>
-
-                <Divider sx={{ margin: '0 16px !important' }} />
-              </>
-            );
-          })}
+          {newData.map((item) => (
+            <MenuItem
+              key={item.value}
+              disabled={item.disabled}
+              onClick={() => handleClickItem(item)}
+              // style={{
+              //   display:
+              //     (hideSelected && item.value === selected) || item.hide ? 'none' : undefined,
+              // }}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                }}
+              >
+                {item.label}
+              </div>
+            </MenuItem>
+          ))}
         </SimpleBar>
       </Popover>
     </Box>
   );
 };
 
-export default Select;
+export default SelectMultilevel;

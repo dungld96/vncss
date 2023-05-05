@@ -39,7 +39,13 @@ export const getTableCell = (
         height: '46px',
       }}
     >
-      {name === 'action' && actionCellContent ? actionCellContent : customRenderer ? customRenderer(props) : value}
+      {name === 'action' && actionCellContent
+        ? actionCellContent
+        : customRenderer
+        ? customRenderer(props)
+        : value
+        ? value
+        : '--'}
     </Table.Cell>
   );
 };

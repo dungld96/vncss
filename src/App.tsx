@@ -16,6 +16,7 @@ import MonitorDepartmentScreen from './screens/MonitorDepartment/MonitorDepartme
 import ModalConfirmContainer from './common/modal/ModalConfirmContainer';
 import DeployLocationScreen from './screens/DeployLocationScreen/DeployLocationScreen';
 import WarehouseNodeScreen from 'screens/WarehouseNode/WarehouseNodeScreen';
+import WarehouseGatewayScreen from 'screens/WarehouseGateway/WarehouseGatewayScreen';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="monitor-department" element={<MonitorDepartmentScreen />} />
             <Route path="depoy-location" element={<DeployLocationScreen />} />
             <Route path="warehouse-node" element={<WarehouseNodeScreen />} />
+            <Route path="warehouse-gateway" element={<WarehouseGatewayScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>

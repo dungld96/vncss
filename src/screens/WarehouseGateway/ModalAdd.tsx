@@ -112,7 +112,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
       }}
     >
       <Title>
-        {'Thêm mới Node'}
+        {'Thêm mới Gateway'}
         <CloseIcon onClick={() => onClose?.()} />
       </Title>
       <FormikProvider value={formik}>
