@@ -6,13 +6,12 @@ import Button from 'common/button/Button';
 import { Input } from 'common';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useUpdateCurrentUserMutation } from 'services/users.service';
-import { IUser } from 'services/auth.service';
+import { useUpdateCurrentUserMutation, CurrentUserRequestInterface } from 'services/users.service';
 
 interface Props {
   show: boolean;
   onClose: () => void;
-  initialValues: IUser;
+  initialValues: CurrentUserRequestInterface;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -34,7 +33,7 @@ const ModalProfileUser: React.FC<Props> = ({ show, onClose, initialValues }) => 
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await updateCurrentUser({ user: values }).unwrap();
+        await updateCurrentUser(values).unwrap();
         onClose();
       } catch (error) {
         console.error('rejected', error);
@@ -47,7 +46,8 @@ const ModalProfileUser: React.FC<Props> = ({ show, onClose, initialValues }) => 
       <FormikProvider value={formik}>
         <Form noValidate onSubmit={handleSubmit}>
           <ContentWrapper>
-            <Input style={{ width: 286 }} topLable="Tên người sử dụng" {...getFieldProps('name')} />
+            <Input style={{ width: 286 }} topLable="Tên người sử dụng" {...getFieldProps('firstName')} />
+            <Input style={{ width: 286 }} topLable="Họ người sử dụng" {...getFieldProps('lastName')} />
             <Input style={{ width: 286 }} topLable="Email" {...getFieldProps('email')} />
             <Input style={{ width: 286 }} topLable="Số điện thoại" {...getFieldProps('phone')} />
           </ContentWrapper>

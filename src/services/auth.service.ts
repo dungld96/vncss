@@ -3,10 +3,17 @@ import { ResponsiveInterface } from './http.service';
 import { queryRootConfig } from './http.service';
 import { usersApi } from './users.service';
 export interface IUser {
-  id: string | number;
-  name: string;
-  email: string;
+  id: string;
+  type: string;
+  sub_id: string;
+  role: string;
+  username: string;
   phone: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  status: string;
+  avatar: string;
 }
 
 interface AuthRequestInterface {
@@ -17,9 +24,7 @@ interface AuthRequestInterface {
 interface AuthResponsiveInterface extends ResponsiveInterface {
   data: {
     access_token: string;
-    expires_in: number;
     refresh_token: string;
-    user: IUser;
   };
 }
 
@@ -31,7 +36,7 @@ export const authApi = createApi({
       query(body) {
         try {
           return {
-            url: 'login',
+            url: 'auth/login',
             method: 'POST',
             body,
           };
@@ -43,11 +48,10 @@ export const authApi = createApi({
         try {
           const {
             data: {
-              data: { user, access_token },
+              data: { access_token },
             },
           } = await queryFulfilled;
           localStorage.setItem('access_token', JSON.stringify(access_token));
-          localStorage.setItem('current_user', JSON.stringify(user));
           await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
         } catch (error) {}
       },

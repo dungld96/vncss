@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import AvatarImage from '../../assets/img/avatar-ex.png';
 import { InnerProfileMenu } from './InnerProfileMenu';
-import { logout } from '../../state/modules/auth/reducer';
+import { logout } from '../../state/modules/auth/authReducer';
 import { useAppDispatch } from '../../state/store';
 
 export default function AppBarHeader() {

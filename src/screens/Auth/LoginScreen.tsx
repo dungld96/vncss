@@ -3,6 +3,8 @@ import KeyIcon from '@mui/icons-material/Key';
 import PersonIcon from '@mui/icons-material/Person';
 import { Box, Checkbox } from '@mui/material';
 import { Input } from 'common';
+import Field from 'common/input/Field';
+// import ModalAttention from '../../common/modal/ModalAttention';
 import Button from 'common/button/Button';
 import { Form, FormikProvider, useFormik } from 'formik';
 import useModalConfirm from 'hooks/useModalConfirm';
@@ -15,7 +17,7 @@ import { useLoginMutation } from '../../services/auth.service';
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
-  password: Yup.string().trim().min(8, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
+  password: Yup.string().trim().min(7, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
 });
 const AuthBox = styled(Box)({
   width: '100vw',
@@ -123,7 +125,7 @@ const LoginScreen = () => {
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors } = formik;
+  const { handleSubmit } = formik;
 
   // const closeModalAttention = () => {
   //   setModalAttention({
@@ -174,22 +176,20 @@ const LoginScreen = () => {
             <Box>
               <FormikProvider value={formik}>
                 <Form noValidate onSubmit={handleSubmit}>
-                  <Input
+                  <Field
                     topLable="Tên đăng nhập"
                     placeholder="Nhập mật khẩu"
-                    {...getFieldProps('username')}
+                    name="username"
                     fullWidth
                     iconStartAdorment={<IconPerson />}
-                    error={errors.username}
                   />
-                  <Input
+                  <Field
                     topLable="Mật khẩu"
                     placeholder="Nhập mật khẩu"
-                    {...getFieldProps('password')}
                     fullWidth
                     iconStartAdorment={<IconKey />}
-                    type={'password'}
-                    error={errors.password}
+                    type="password"
+                    name="password"
                   />
                   <Box
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}

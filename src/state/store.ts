@@ -3,8 +3,9 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { agenciesApi } from 'services/agencies.service';
 import { authApi } from '../services/auth.service';
 import { usersApi } from '../services/users.service';
-import authReducer from './modules/auth/reducer';
+import authReducer from './modules/auth/authReducer';
 import modalConfirmReducer from './modules/modalConfirm/reducer';
+import userReducer from './modules/user/userReducer';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     [agenciesApi.reducerPath]: agenciesApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
+    userState: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([authApi.middleware, usersApi.middleware, agenciesApi.middleware]),

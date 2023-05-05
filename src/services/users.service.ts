@@ -1,16 +1,19 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
-import { setCurrentUser } from '../state/modules/auth/reducer';
+import { setCurrentUser } from '../state/modules/auth/authReducer';
 import type { IUser } from './auth.service';
+import { setUsers } from 'state/modules/user/userReducer';
 
 export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
-  data: {
-    user: IUser;
-  };
+  data: IUser;
 }
 
 export interface CurrentUserRequestInterface {
-  user: IUser;
+  uuid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
 }
 export interface PasswordRequestInterface {
   current_password: string;
@@ -18,9 +21,7 @@ export interface PasswordRequestInterface {
 }
 
 export interface UsersResponsiveInterface extends ResponsiveInterface {
-  data: {
-    user: IUser[];
-  };
+  data: IUser[];
 }
 
 export const usersApi = createApi({
@@ -29,22 +30,26 @@ export const usersApi = createApi({
   tagTypes: ['Users', 'AllUsers'],
   endpoints: (build) => ({
     getCurrentUser: build.query<CurrentUserResponsiveInterface, null>({
-      query: () => ({ url: 'users/current-user' }),
+      query: () => ({ url: 'users/whoami' }),
       providesTags(result) {
         if (result) {
-          return [{ type: 'Users', id: result.data?.user.id }];
+          return [{ type: 'Users', id: result.data?.id }];
         }
         return [{ type: 'Users', id: 'LIST' }];
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: {
-              data: { user },
-            },
+            data: { data },
           } = await queryFulfilled;
-          localStorage.setItem('current_user', JSON.stringify(user));
-          dispatch(setCurrentUser({ currentUser: user }));
+          const currentUser = {
+            ...data,
+            firstName: data.first_name,
+            lastName: data.last_name,
+          };
+
+          localStorage.setItem('current_user', JSON.stringify(currentUser));
+          dispatch(setCurrentUser({ currentUser: currentUser }));
         } catch (error) {}
       },
     }),
@@ -52,15 +57,15 @@ export const usersApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `users/${body.user.id}`,
+            url: `users/${body.uuid}`,
             method: 'PUT',
-            body,
+            body: { ...body, first_name: body.firstName, last_name: body.lastName },
           };
         } catch (error: any) {
           throw new error.message();
         }
       },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Users', id: data.user.id }]),
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Users', id: data.uuid }]),
     }),
     changePassword: build.mutation<any, PasswordRequestInterface>({
       query: (body) => {
@@ -82,6 +87,20 @@ export const usersApi = createApi({
           return [{ type: 'AllUsers' }];
         }
         return [{ type: 'AllUsers' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data },
+          } = await queryFulfilled;
+
+          const dataParse = data.map((item) => ({
+            ...item,
+            name: `${item.first_name} ${item.last_name}`,
+            roleName: parseRoleName(item.role),
+          }));
+          dispatch(setUsers({ users: dataParse }));
+        } catch (error) {}
       },
     }),
     addlUser: build.mutation<any, any>({
@@ -128,12 +147,25 @@ export const usersApi = createApi({
   }),
 });
 
+export const parseRoleName = (role: string) => {
+  switch (role) {
+    case 'manager':
+      return 'Quản trị viên';
+    case 'technician':
+      return 'Nhân viên kỹ thuật';
+
+    default:
+      return 'Nhân Viên';
+  }
+};
+
 export const {
   useGetCurrentUserQuery,
   useUpdateCurrentUserMutation,
   useChangePasswordMutation,
   useGetAllUsersQuery,
+  useLazyGetAllUsersQuery,
   useChangeDetailUserMutation,
   useAddlUserMutation,
-  useDeletelUserMutation
+  useDeletelUserMutation,
 } = usersApi;

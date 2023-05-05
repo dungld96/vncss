@@ -1,6 +1,7 @@
 import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Button as ButtonBase,
@@ -27,7 +28,8 @@ import { ImageIcon } from '../../utils/UtilsComponent';
 import { Input } from 'common';
 import Button from 'common/button/Button';
 import { IUser } from 'services/auth.service';
-import { useDeletelUserMutation, useGetAllUsersQuery } from 'services/users.service';
+import { useDeletelUserMutation } from 'services/users.service';
+import { selectUsers } from '../../state/modules/user/userReducer';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
@@ -119,17 +121,14 @@ export const UsersTable = () => {
   });
   const [modalChangePass, setModalChangePass] = useState({ show: false });
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-
-  const { data } = useGetAllUsersQuery(null) as any;
-  const users = data?.data?.users;
+  const users = useSelector(selectUsers);
 
   const [columns] = useState([
     { name: 'name', title: 'Họ tên' },
     { name: 'email', title: 'Email' },
     { name: 'phone', title: 'Số điện thoại' },
     { name: 'username', title: 'Tài khoản' },
-    // { name: 'password', title: 'Mật khẩu' },
-    { name: 'confirmed', title: 'Chức vụ' },
+    { name: 'roleName', title: 'Chức vụ' },
     { name: 'action', title: 'Hành động' },
   ]);
 

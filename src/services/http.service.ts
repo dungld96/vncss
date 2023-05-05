@@ -1,11 +1,11 @@
 import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { Mutex } from 'async-mutex';
-import { logout } from '../state/modules/auth/reducer';
+import { logout } from '../state/modules/auth/authReducer';
 
-export const BASE_URL = 'https://api.vncss.net';
+export const BASE_URL = 'https://stg-api.sesaco.vn/v1';
 export interface ResponsiveInterface {
-  message: string;
-  status: string;
+  error: string;
+  success: string;
 }
 
 // Create a new mutex
@@ -31,18 +31,19 @@ const customFetchBase: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryEr
   // wait until the mutex is available without locking it
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
-  if ((result.data as any).status === 'error' && (result.data as any).code === 'SS103') {
+  if (result.error && result.error.status === 401) {
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
-
       try {
         // const refreshResult = await baseQuery({ credentials: 'include', url: 'auth/refresh' }, api, extraOptions);
         // if (refreshResult.data) {
         //   // Retry the initial query
         //   result = await baseQuery(args, api, extraOptions);
         // } else {
-        //   api.dispatch(logout());
-        //   window.location.href = '/login';
+        api.dispatch(logout());
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('current_user');
+        window.location.href = '/login';
         // }
       } finally {
         // release must be called once the mutex should be released again.

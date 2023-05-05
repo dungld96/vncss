@@ -10,6 +10,7 @@ import ModalChangePassword from './ModalChangePassword';
 import { useAuth } from 'hooks/useAuth';
 import { IUser } from 'services/auth.service';
 import { useGetCurrentArgencyQuery } from 'services/agencies.service';
+import { CurrentUserRequestInterface } from 'services/users.service';
 
 const ProfileContainer = styled.div({
   width: '100%',
@@ -140,7 +141,7 @@ const Profile: React.FC = () => {
   const inputRef = useRef<any>();
   const [modalUser, setModalUser] = useState({
     show: false,
-    initialValues: { id: '', name: '', email: '', phone: '' },
+    initialValues: { uuid: '', firstName: '', lastName: '', email: '', phone: '' },
   });
   const [modalStore, setModalStore] = useState({ show: false, initialValues: { id: '', name: '', address: '' } });
   const [modalChangePass, setModalChangePass] = useState({ show: false });
@@ -157,8 +158,9 @@ const Profile: React.FC = () => {
     setModalUser({
       show: true,
       initialValues: {
-        id: currentUser.id,
-        name: currentUser.name,
+        uuid: currentUser.uuid,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
         email: currentUser.email,
         phone: currentUser.phone,
       },

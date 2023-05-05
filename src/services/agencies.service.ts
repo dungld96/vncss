@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
-import { setCurrentUser } from '../state/modules/auth/reducer';
+import { setCurrentUser } from '../state/modules/auth/authReducer';
 import type { IUser } from './auth.service';
 import { IAgency } from 'screens/Agencies/mockData';
 

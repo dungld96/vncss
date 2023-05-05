@@ -14,7 +14,7 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     return <FullScreenLoader />;
   }
 
-  return token || data?.data?.user ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />;
+  return token || data ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 export default RequireUser;
