@@ -57,7 +57,7 @@ export const usersApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `users/${body.uuid}`,
+            url: 'users',
             method: 'PUT',
             body: { ...body, first_name: body.firstName, last_name: body.lastName },
           };
@@ -109,7 +109,7 @@ export const usersApi = createApi({
           return {
             url: 'users',
             method: 'POST',
-            body,
+            body: body.user,
           };
         } catch (error: any) {
           throw new error.message();
@@ -121,9 +121,9 @@ export const usersApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `users/${body.user.id}`,
+            url: 'users',
             method: 'PUT',
-            body,
+            body: body.user,
           };
         } catch (error: any) {
           throw new error.message();

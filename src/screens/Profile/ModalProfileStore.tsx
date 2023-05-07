@@ -1,5 +1,5 @@
 import Modal from 'common/modal/Modal';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
 import Button from 'common/button/Button';
@@ -36,7 +36,11 @@ const ModalProfileStore: React.FC<Props> = ({ show, onClose, initialValues }) =>
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors } = formik;
+  const { handleSubmit, getFieldProps, resetForm, values, errors } = formik;
+  useEffect(() => {
+    if (!show) return;
+    resetForm();
+  }, [show]);
   return (
     <Modal size="sm" show={show} close={onClose} title="Sửa thông tin đại lý">
       <FormikProvider value={formik}>

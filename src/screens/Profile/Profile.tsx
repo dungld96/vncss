@@ -9,7 +9,7 @@ import ModalProfileStore from './ModalProfileStore';
 import ModalChangePassword from './ModalChangePassword';
 import { useAuth } from 'hooks/useAuth';
 import { IUser } from 'services/auth.service';
-import { useGetCurrentArgencyQuery } from 'services/agencies.service';
+import { useGetArgencyQuery } from 'services/agencies.service';
 import { CurrentUserRequestInterface } from 'services/users.service';
 
 const ProfileContainer = styled.div({
@@ -150,9 +150,10 @@ const Profile: React.FC = () => {
     auth: { currentUser },
   } = useAuth() as any;
 
-  const { data: agency } = useGetCurrentArgencyQuery({ id: currentUser?.agency_id });
+  const { data: agency } = useGetArgencyQuery({ id: currentUser?.agency_id || 2 });
+  console.log(agency);
 
-  const currentAgency: any = agency?.data?.agency;
+  const currentAgency: any = agency?.data;
 
   const showModalUser = () => {
     setModalUser({
@@ -207,13 +208,13 @@ const Profile: React.FC = () => {
               </IconChange>
               <input ref={inputRef} type="file" accept="image/x-png,image/jpeg" style={{ display: 'none' }} />
             </AvatarWrapper>
-            <FullName>{currentUser?.name}</FullName>
+            <FullName>{`${currentUser?.firstName} ${currentUser?.lastName}`}</FullName>
           </Stack>
           <ProfileInfor>
             <InforUser>
               <RenderTitle title={'Thông tin'} action={showModalUser} />
               <RenderInfor label="Tên đăng nhập" infor={currentUser?.username} />
-              <RenderInfor label="Tên người sử dụng" infor={currentUser?.name} />
+              <RenderInfor label="Tên người sử dụng" infor={`${currentUser?.firstName} ${currentUser?.lastName}`} />
               <RenderInfor label="Email" infor={currentUser?.email} />
               <RenderInfor label="Số điện thoại" infor={currentUser?.phone} />
               <RenderInfor

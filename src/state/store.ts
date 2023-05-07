@@ -6,6 +6,7 @@ import { usersApi } from '../services/users.service';
 import authReducer from './modules/auth/authReducer';
 import modalConfirmReducer from './modules/modalConfirm/reducer';
 import userReducer from './modules/user/userReducer';
+import agencyReducer from './modules/agency/agencyReducer';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
+    agencyState: agencyReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([authApi.middleware, usersApi.middleware, agenciesApi.middleware]),
