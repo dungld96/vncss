@@ -2,7 +2,8 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
 import { setCurrentUser } from '../state/modules/auth/authReducer';
 import type { IUser } from './auth.service';
-import { setUsers } from 'state/modules/user/userReducer';
+import { setUsers, setCursors } from 'state/modules/user/userReducer';
+import { CursorsType } from '../configs/constant';
 
 export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
   data: IUser;
@@ -22,6 +23,7 @@ export interface PasswordRequestInterface {
 
 export interface UsersResponsiveInterface extends ResponsiveInterface {
   data: IUser[];
+  cursors: CursorsType;
 }
 
 export const usersApi = createApi({
@@ -80,8 +82,8 @@ export const usersApi = createApi({
         }
       },
     }),
-    getAllUsers: build.query<UsersResponsiveInterface, null>({
-      query: () => ({ url: 'users' }),
+    getAllUsers: build.query<UsersResponsiveInterface, any>({
+      query: (params) => ({ url: 'users', params }),
       providesTags(result) {
         if (result) {
           return [{ type: 'AllUsers' }];
@@ -91,7 +93,7 @@ export const usersApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data },
+            data: { data, cursors },
           } = await queryFulfilled;
 
           const dataParse = data.map((item) => ({
@@ -100,6 +102,14 @@ export const usersApi = createApi({
             roleName: parseRoleName(item.role),
           }));
           dispatch(setUsers({ users: dataParse }));
+          dispatch(
+            setCursors({
+              cursors: {
+                before: cursors.before || undefined,
+                after: cursors.after || undefined,
+              },
+            })
+          );
         } catch (error) {}
       },
     }),

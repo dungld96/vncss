@@ -17,7 +17,7 @@ import { useLoginMutation } from '../../services/auth.service';
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
-  password: Yup.string().trim().min(7, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
+  password: Yup.string().trim().min(6, 'Mật khẩu tối thiểu 6 kí tự').required('Mật khẩu không được để trống'),
 });
 const AuthBox = styled(Box)({
   width: '100vw',

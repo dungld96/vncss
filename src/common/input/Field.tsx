@@ -149,7 +149,7 @@ const FormikWrappedField = ({ slow, name, validate, ...rest }: FormikWrappedFiel
     return (
       <FormikField name={name} validate={validate}>
         {({ field, form }: FormikFieldProps<FormikValues>) => {
-          const error = getIn(form.errors, field.name);
+          const error = form.touched? getIn(form.errors, field.name):'';
           return <Input name={name} field={field} error={error} {...rest} />;
         }}
       </FormikField>
@@ -158,7 +158,7 @@ const FormikWrappedField = ({ slow, name, validate, ...rest }: FormikWrappedFiel
   return (
     <FastField name={name} validate={validate}>
       {({ field, form }: FormikFieldProps<FormikValues>) => {
-        const error = getIn(form.errors, field.name);
+        const error = form.touched? getIn(form.errors, field.name):'';
         return <Input name={name} field={field} error={error} {...rest} />;
       }}
     </FastField>

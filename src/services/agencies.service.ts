@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setAgencies } from '../state/modules/agency/agencyReducer';
+import { CursorsType } from 'configs/constant';
+import { setAgencies, setCursors } from '../state/modules/agency/agencyReducer';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
 
 export interface IAgency {
@@ -18,6 +19,7 @@ export interface CurrentAgencyResponsiveInterface extends ResponsiveInterface {
 }
 export interface AgenciesResponsiveInterface extends ResponsiveInterface {
   data: IAgency[];
+  cursors: CursorsType;
 }
 
 export interface AgencyRequestInterface {
@@ -39,8 +41,8 @@ export const agenciesApi = createApi({
         return [{ type: 'Agencies', id: 'LIST' }];
       },
     }),
-    getAllAgencies: build.query<AgenciesResponsiveInterface, { id: string }>({
-      query: (body) => ({ url: `agencies/${body.id}/list` }),
+    getAllAgencies: build.query<AgenciesResponsiveInterface, { id: string,params?:any }>({
+      query: (body) => ({ url: `agencies/${body.id}/list`,params:body.params }),
       providesTags(result) {
         if (result) {
           return [{ type: 'AllAgencies' }];
@@ -50,7 +52,7 @@ export const agenciesApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data },
+            data: { data,cursors },
           } = await queryFulfilled;
           console.log(data);
           const dataParse = data.map((item) => ({
@@ -60,6 +62,14 @@ export const agenciesApi = createApi({
             parentId: item.parent_id || null,
           }));
           dispatch(setAgencies({ agencies: dataParse }));
+          dispatch(
+            setCursors({
+              cursors: {
+                before: cursors.before || undefined,
+                after: cursors.after || undefined,
+              },
+            })
+          );
         } catch (error) {}
       },
     }),

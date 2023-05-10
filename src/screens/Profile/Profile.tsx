@@ -150,7 +150,9 @@ const Profile: React.FC = () => {
     auth: { currentUser },
   } = useAuth() as any;
 
-  const { data: agency } = useGetArgencyQuery({ id: currentUser?.agency_id || 2 });
+  console.log(currentUser)
+
+  const { data: agency } = useGetArgencyQuery({ id: currentUser?.sub_id });
   console.log(agency);
 
   const currentAgency: any = agency?.data;
