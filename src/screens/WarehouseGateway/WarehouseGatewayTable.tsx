@@ -43,6 +43,8 @@ import Select from 'common/Select/Select';
 import { Switch } from 'common/Switch/Switch';
 import ModalChangeAgency from 'screens/WarehouseNode/ModalChangeAgency';
 import ModalExtendGateway from './ModalExtendGateway';
+import { useSelector } from 'react-redux';
+import { selectAgencies } from 'state/modules/gateway/gatewayReducer';
 
 const ActionCellContent = ({
   cellProps,
@@ -126,9 +128,10 @@ export const WarehouseGatewayTable = () => {
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalExtend, setShowModalExtend] = useState(false);
   const [showModalChangeAgency, setShowModaChangeAgency] = useState(false);
   const [ModalExtend, setModalExtend] = useState(false);
+
+  const data = useSelector(selectAgencies);
 
   const [columns] = useState([
     { name: 'type', title: 'Loại' },

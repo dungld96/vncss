@@ -11,12 +11,12 @@ interface Props {
 }
 
 const Pagination: React.FC<Props> = ({ setPaginate, paginate }) => {
-  if(!paginate.after && !paginate.before) return null
+  if (!paginate.after && !paginate.before) return null;
   return (
     <Box display="flex" alignItems="center" justifyContent="center" marginTop="16px">
       <Button
         sx={{
-          margin: '0 16px',
+          margin: '0 8px',
           background: '#FFFFFF',
           borderRadius: '5px',
           minWidth: '30px',
@@ -30,7 +30,7 @@ const Pagination: React.FC<Props> = ({ setPaginate, paginate }) => {
       </Button>
       <Button
         sx={{
-          margin: '0 16px',
+          margin: '0 8px',
           background: '#FFFFFF',
           borderRadius: '5px',
           minWidth: '30px',

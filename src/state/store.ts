@@ -3,23 +3,32 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { agenciesApi } from 'services/agencies.service';
 import { authApi } from '../services/auth.service';
 import { usersApi } from '../services/users.service';
+import { gatewaysApi } from '../services/gateway.service';
 import authReducer from './modules/auth/authReducer';
 import modalConfirmReducer from './modules/modalConfirm/reducer';
 import userReducer from './modules/user/userReducer';
 import agencyReducer from './modules/agency/agencyReducer';
+import gatewayReducer from './modules/gateway/gatewayReducer';
 
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
     [agenciesApi.reducerPath]: agenciesApi.reducer,
+    [gatewaysApi.reducerPath]: gatewaysApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
     agencyState: agencyReducer,
+    gatewayState: gatewayReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({}).concat([authApi.middleware, usersApi.middleware, agenciesApi.middleware]),
+    getDefaultMiddleware({}).concat([
+      authApi.middleware,
+      usersApi.middleware,
+      agenciesApi.middleware,
+      gatewaysApi.middleware,
+    ]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
