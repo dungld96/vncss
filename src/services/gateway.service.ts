@@ -91,6 +91,7 @@ export const gatewaysApi = createApi({
             url: `agencies/2/gateways/upload`,
             method: 'POST',
             body: body,
+            formData: true,
           };
         } catch (error: any) {
           throw new error.message();

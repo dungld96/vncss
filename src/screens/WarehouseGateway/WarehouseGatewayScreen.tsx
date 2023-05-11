@@ -11,7 +11,6 @@ const WarehouseGatewayScreen = () => {
   const [paginate, setPaginate] = React.useState<CursorsType>({});
 
   const cursors = useSelector(selectCursors);
-  console.log('🚀 ~ file: WarehouseGatewayScreen.tsx:14 ~ WarehouseGatewayScreen ~ cursors:', cursors);
 
   React.useEffect(() => {
     trigger({ id: 2, params: { limit: 2, ...paginate } });

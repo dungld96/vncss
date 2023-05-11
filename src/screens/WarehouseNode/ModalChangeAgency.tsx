@@ -8,13 +8,18 @@ import { listStatusNodeLess } from './constants';
 import { MAX_FILE_SIZE } from 'configs/constant';
 import Modal from '../../common/modal/Modal';
 import Button from '../../common/button/Button';
+import { useMoveGatewayMutation } from '../../services/gateway.service';
 
 interface Props {
+  type: 'gateway' | 'node';
   show: boolean;
   onClose?: () => void;
+  ids?: (string | number)[];
 }
 
-const ModalChangeAgency: React.FC<Props> = ({ show, onClose }) => {
+const ModalChangeAgency: React.FC<Props> = ({ type, show, onClose, ids }) => {
+  const [moveGateway] = useMoveGatewayMutation();
+
   const formik = useFormik({
     initialValues: {
       argency: 'all',
@@ -22,8 +27,10 @@ const ModalChangeAgency: React.FC<Props> = ({ show, onClose }) => {
     enableReinitialize: true,
 
     validationSchema: Yup.object().shape({}),
-    onSubmit: async (values) => {
-      console.log(values);
+    onSubmit: async ({ argency }) => {
+      if (type === 'gateway') {
+        await moveGateway({ gateway_ids: ids, agency_id: argency }).unwrap();
+      }
     },
   });
   const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
