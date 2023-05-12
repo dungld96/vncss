@@ -1,7 +1,8 @@
-import Modal from '../../common/modal/Modal';
 import React, { useEffect } from 'react';
 import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
+import { useSelector } from 'react-redux';
+import Modal from '../../common/modal/Modal';
 import Button from '../../common/button/Button';
 import { Input } from '../../common';
 import { Form, FormikProvider, useFormik } from 'formik';
@@ -11,6 +12,7 @@ import { ImageIcon } from 'utils/UtilsComponent';
 import KeyIcon from '../../assets/icons/key-icon.svg';
 import { listRole, UserType } from './constants';
 import { useAddlUserMutation, useChangeDetailUserMutation } from 'services/users.service';
+import { selectAuth } from '../../state/modules/auth/authReducer';
 import Select from '../../common/Select/Select';
 import FormikWrappedField from '../../common/input/Field';
 
@@ -49,6 +51,8 @@ const validationPassword = {
 const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
   const [addUser] = useAddlUserMutation();
   const [editUser] = useChangeDetailUserMutation();
+  const { currentUser } = useSelector(selectAuth);
+
   const isUpdate = type === 'update';
   const formik = useFormik({
     initialValues,
@@ -57,12 +61,18 @@ const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues 
       ...Schema,
       ...(!isUpdate ? validationPassword : {}),
     }),
-    onSubmit: async ({ id, email, phone, username, password, role, first_name, last_name }) => {
+    onSubmit: async (values) => {
       if (isUpdate) {
-        await editUser({ user: { id,  first_name, last_name, email, phone, username } }).unwrap();
+        await editUser({ user: { ...values } }).unwrap();
         onClose();
       } else {
-        await addUser({ user: {  email, phone, username, password, role, first_name, last_name } }).unwrap();
+        await addUser({
+          user: {
+            ...values,
+            type: currentUser?.type,
+            sub_id: currentUser?.sub_id,
+          },
+        }).unwrap();
         onClose();
       }
     },
@@ -73,6 +83,7 @@ const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues 
     if (!show) return;
     resetForm();
   }, [show]);
+
   return (
     <Modal size="sm" show={show} close={onClose} title={isUpdate ? 'Chỉnh sửa thông tin' : 'Thêm nhân viên mới'}>
       <FormikProvider value={formik}>

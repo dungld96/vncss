@@ -3,23 +3,23 @@ import { CursorsType } from 'configs/constant';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLazyGetAllUsersQuery } from 'services/users.service';
-import { selectCursors } from 'state/modules/user/userReducer';
+import { selectUsersState } from 'state/modules/user/userReducer';
 import { UsersTable } from './UsersTable';
 
 export default function UsersScreen() {
   const [trigger] = useLazyGetAllUsersQuery();
   const [paginate, setPaginate] = useState<CursorsType>({});
 
-  const cursors = useSelector(selectCursors);
+  const { limit, cursors } = useSelector(selectUsersState);
 
   useEffect(() => {
-    trigger({ limit: 2, ...paginate });
-  }, [trigger, paginate]);
+    trigger({ limit, ...paginate });
+  }, [trigger, limit, paginate]);
 
   return (
     <div>
       <UsersTable />
-      <Pagination paginate={cursors} setPaginate={setPaginate}/>
+      <Pagination paginate={cursors} setPaginate={setPaginate} />
     </div>
   );
 }

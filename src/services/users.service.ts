@@ -2,7 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
 import { setCurrentUser } from '../state/modules/auth/authReducer';
 import type { IUser } from './auth.service';
-import { setUsers, setCursors } from 'state/modules/user/userReducer';
+import { setUsers } from 'state/modules/user/userReducer';
 import { CursorsType } from '../configs/constant';
 
 export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
@@ -101,9 +101,9 @@ export const usersApi = createApi({
             name: `${item.first_name} ${item.last_name}`,
             roleName: parseRoleName(item.role),
           }));
-          dispatch(setUsers({ users: dataParse }));
           dispatch(
-            setCursors({
+            setUsers({
+              users: dataParse,
               cursors: {
                 before: cursors.before || undefined,
                 after: cursors.after || undefined,
