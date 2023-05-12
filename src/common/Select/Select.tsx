@@ -190,12 +190,12 @@ const Select: React.FC<Props> = ({
         anchorEl={anchorRef.current}
       >
         <SimpleBar style={{ maxHeight }} autoHide={false}>
-          {newData.map((item) => {
+          {newData.map((item, index) => {
             const isActive = item.value === selected;
             return (
               <>
                 <MenuItem
-                  key={item.value}
+                  key={item.value + index}
                   disabled={item.disabled}
                   onClick={() => handleClickItem(item)}
                   sx={{ padding: '16px' }}

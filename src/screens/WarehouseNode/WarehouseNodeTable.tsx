@@ -126,7 +126,10 @@ export const WarehouseNodeTable = () => {
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
 
-  const [showModalChangeAgency, setShowModaChangeAgency] = useState(false);
+  const [modalChangeAgency, setModaChangeAgency] = useState({
+    show: false,
+    ids:['']
+  });
 
   const [columns] = useState([
     { name: 'type', title: 'Loại' },
@@ -176,7 +179,8 @@ export const WarehouseNodeTable = () => {
     if (type === 'edit') {
       setShowModalEdit(true);
     } else if (type === 'change-agency') {
-      setShowModaChangeAgency(true);
+      console.log(id)
+      // setModaChangeAgency();
     } else if (type === 'recall') {
       handleRecall(id);
     } else if (type === 'delete') {
@@ -225,10 +229,11 @@ export const WarehouseNodeTable = () => {
     });
   };
 
-  console.log(listStatusNode);
+  console.log(selection)
+
   return (
     <>
-      <ModalChangeAgency show={showModalChangeAgency} onClose={() => setShowModaChangeAgency(false)} />
+      <ModalChangeAgency type='node' {...modalChangeAgency} onClose={() => setModaChangeAgency({...modalChangeAgency,show:false})} />
       <ModalEditNode show={showModalEdit} onClose={() => setShowModalEdit(false)} />
       <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <Box
@@ -316,7 +321,7 @@ export const WarehouseNodeTable = () => {
                 <ButtonBase
                   sx={{ color: '#52535C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={ShopIcon} />}
-                  onClick={() => setShowModaChangeAgency(true)}
+                  onClick={() => setModaChangeAgency({...modalChangeAgency,show:false})}
                 >
                   Chuyển
                 </ButtonBase>

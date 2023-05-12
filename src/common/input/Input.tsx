@@ -18,15 +18,6 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   [key: string]: any;
 }
 
-const TopLabel = styled.p({
-  fontWeight: 400,
-  fontSize: '12px',
-  lineHeight: '20px',
-  padding: 0,
-  marginTop: 20,
-  marginBottom: 8,
-});
-
 const Input: React.FC<Props> = (props) => {
   const {
     fullWidth,

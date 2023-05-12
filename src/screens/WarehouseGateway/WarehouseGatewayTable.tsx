@@ -43,6 +43,11 @@ import Select from 'common/Select/Select';
 import { Switch } from 'common/Switch/Switch';
 import ModalChangeAgency from 'screens/WarehouseNode/ModalChangeAgency';
 import ModalExtendGateway from './ModalExtendGateway';
+import { useSelector } from 'react-redux';
+import { selectAgencies } from 'state/modules/gateway/gatewayReducer';
+
+import dayjs, { Dayjs } from 'dayjs';
+import { useAchieveGatewayMutation } from 'services/gateway.service';
 
 const ActionCellContent = ({
   cellProps,
@@ -123,23 +128,29 @@ const ActionCellContent = ({
 };
 
 export const WarehouseGatewayTable = () => {
+  const [achieveGateway] = useAchieveGatewayMutation();
+
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalExtend, setShowModalExtend] = useState(false);
-  const [showModalChangeAgency, setShowModaChangeAgency] = useState(false);
+  const [modalChangeAgency, setModaChangeAgency] = useState<{ show: boolean; ids: (string | number)[] }>({
+    show: false,
+    ids: [''],
+  });
   const [ModalExtend, setModalExtend] = useState(false);
 
+  const data = useSelector(selectAgencies);
+
   const [columns] = useState([
-    { name: 'type', title: 'Loại' },
+    { name: 'gateway_type_id', title: 'Loại' },
     { name: 'description', title: 'Mô tả' },
     { name: 'serial', title: 'Serial' },
-    { name: 'version', title: 'Phiên bản' },
-    { name: 'DateOfManufacture', title: 'Ngày xuất xưởng' },
+    { name: 'hardware_version', title: 'Phiên bản' },
+    { name: 'mfg', title: 'Ngày xuất xưởng' },
     { name: 'status', title: 'Trạng thái' },
     { name: 'node', title: 'Node' },
     { name: 'sim', title: 'Thẻ sim' },
-    { name: 'startDate', title: 'Ngày kích hoạt' },
+    { name: 'date', title: 'Ngày kích hoạt' },
     { name: 'switchboard', title: 'Tổng đài' },
     { name: 'subscriber', title: 'Thuê bao' },
     { name: 'agency', title: 'Đại lý' },
@@ -154,23 +165,33 @@ export const WarehouseGatewayTable = () => {
 
   const [customField] = useState<CustomFieldType>({
     status: {
-      renderContent: ({ row }) => (
-        <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
-          {mappingStatusNode[row.status]}
-        </Typography>
-      ),
+      renderContent: ({ row }) => {
+        return (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
+            {mappingStatusNode[row.status]}
+          </Typography>
+        );
+      },
+    },
+    mfg: {
+      renderContent: ({ row }) => {
+        return (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
+        );
+      },
     },
     switchboard: {
       renderContent: ({ row }) => (row.switchboard === null ? '--' : <Switch checked={row.switchboard} />),
     },
   });
 
-  const handleRecall = (id: string, more?: boolean) => {
+  const handleRecall = (id: (string | number)[], more?: boolean) => {
     showModalConfirm({
       title: 'Thu hồi node',
       content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Node này không?`,
       confirm: {
         action: async () => {
+          await achieveGateway({ gateway_ids: id }).unwrap();
           hideModalConfirm();
         },
         text: 'Thu hồi',
@@ -185,9 +206,12 @@ export const WarehouseGatewayTable = () => {
     if (type === 'extend') {
       setModalExtend(true);
     } else if (type === 'change-agency') {
-      setShowModaChangeAgency(true);
+      setModaChangeAgency({
+        ids: [id],
+        show: true,
+      });
     } else if (type === 'recall') {
-      handleRecall(id);
+      handleRecall([id]);
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
@@ -237,7 +261,11 @@ export const WarehouseGatewayTable = () => {
   return (
     <>
       <ModalExtendGateway show={ModalExtend} onClose={() => setModalExtend(false)} />
-      <ModalChangeAgency show={showModalChangeAgency} onClose={() => setShowModaChangeAgency(false)} />
+      <ModalChangeAgency
+        type="gateway"
+        {...modalChangeAgency}
+        onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
+      />
       <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <Box
         sx={{
@@ -331,14 +359,19 @@ export const WarehouseGatewayTable = () => {
                 <ButtonBase
                   sx={{ color: '#52535C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={ShopIcon} />}
-                  onClick={() => setShowModaChangeAgency(true)}
+                  onClick={() =>
+                    setModaChangeAgency({
+                      ids: [...selection],
+                      show: true,
+                    })
+                  }
                 >
                   Chuyển
                 </ButtonBase>
                 <ButtonBase
                   sx={{ color: '#E5401C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={BackIcon} />}
-                  onClick={() => handleRecall(selection.join(','), true)}
+                  onClick={() => handleRecall(selection, true)}
                 >
                   Thu hồi
                 </ButtonBase>

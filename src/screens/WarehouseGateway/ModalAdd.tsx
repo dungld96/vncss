@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../../common';
@@ -10,6 +10,7 @@ import styled from '@emotion/styled';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
 import { listStatusNodeLess } from './constants';
 import { MAX_FILE_SIZE } from '../../configs/constant';
+import { useCreateGatewayMutation, useImportGatewayMutation } from 'services/gateway.service';
 
 interface Props {
   show: boolean;
@@ -62,10 +63,14 @@ const Title = styled(DialogTitle)({
 });
 
 const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
-  const [value, setValue] = useState(0);
+  const [addGateway] = useCreateGatewayMutation();
+  const [importGateway] = useImportGatewayMutation();
+  const [tab, setTab] = useState(0);
+  const [file, setFile] = useState<any>(null);
 
   const formik = useFormik({
     initialValues: {
+      id: '',
       type: 'none',
       description: '',
       serial: '',
@@ -76,13 +81,27 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
     enableReinitialize: true,
     validationSchema: Yup.object().shape({}),
     onSubmit: async (values) => {
-      console.log(values);
+      const body = {
+        id: values.id,
+        gateway_type_id: values.type,
+        serial: values.serial,
+        firmware_version: values.version,
+        hardware_version: values.version,
+        status: values.status,
+        mfg: values.startDate,
+      };
+      if (tab === 0) {
+        await addGateway(body).unwrap();
+        onClose?.();
+      } else if (tab === 1) {
+        await importGateway(file).unwrap()
+      }
     },
   });
   const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
   const handleUploadFile = useCallback((e: any) => {
@@ -91,8 +110,17 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
       return;
     }
 
-    console.log(file);
+    setFile(file);
   }, []);
+
+  let disable = false;
+  switch (tab) {
+    case 0:
+      disable = !isValid || !dirty;
+      break;
+    case 1:
+      disable = !file;
+  }
 
   useEffect(() => {
     if (!show) return;
@@ -118,7 +146,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
       <FormikProvider value={formik}>
         <Form noValidate onSubmit={handleSubmit}>
           <Box sx={{ borderBottom: 1, borderColor: '#EEF2FA', marginBottom: '18px' }}>
-            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+            <Tabs value={tab} onChange={handleChange} aria-label="basic tabs example">
               <Tab
                 sx={{
                   textTransform: 'initial',
@@ -139,7 +167,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
               />
             </Tabs>
           </Box>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={tab} index={0}>
             <DialogContent
               sx={{
                 padding: 0,
@@ -154,8 +182,11 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 style={{ width: 286 }}
                 fullWidth
                 topLable="Loại sản phẩm"
-                data={[{ value: 'none', label: 'Chọn loại sản phẩm' }, ...listStatusNodeLess]}
-                selected={0}
+                data={[
+                  { value: 'none', label: 'Chọn loại sản phẩm' },
+                  { value: '123abc', label: '123abc' },
+                ]}
+                selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
               />
               <Input
@@ -164,7 +195,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 placeholder="Nhập mô tả"
                 {...getFieldProps('description')}
               />
-              <Input style={{ width: 286 }} topLable="Serial" placeholder="Nhập serial" {...getFieldProps('serial')} />
+              <Input style={{ width: 286 }} maxLength={100} topLable="Serial" placeholder="Nhập serial" {...getFieldProps('serial')} />
               <Input
                 style={{ width: 286 }}
                 topLable="Phiên bản"
@@ -177,20 +208,26 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 fullWidth
                 topLable="Trạng thái"
                 data={[{ value: 'none', label: 'Chọn trạng thái' }, ...listStatusNodeLess]}
-                selected={0}
+                selected={values.status}
                 setSelected={(status) => setFieldValue('status', status)}
               />
             </DialogContent>
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={tab} index={1}>
             <Box sx={{ marginBottom: '32px' }}>
-              <DragDropFile
-                multiple={true}
-                fileTypes={['xls', 'xlsx', 'csv']}
-                onChange={handleUploadFile}
-                title="Chọn file chứa danh sách của bạn"
-                dropzoneHeigth={274}
-              />
+              {!file ? (
+                <DragDropFile
+                  multiple={true}
+                  fileTypes={['xls', 'xlsx', 'csv']}
+                  onChange={handleUploadFile}
+                  title="Chọn file chứa danh sách của bạn"
+                  dropzoneHeigth={274}
+                />
+              ) : (
+                <Box height={'276px'}>
+                  <Chip label={file?.name} onDelete={() => setFile(null)} />
+                </Box>
+              )}
             </Box>
           </TabPanel>
 
@@ -198,7 +235,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
+            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={disable}>
               Thêm mới
             </Button>
           </DialogActions>

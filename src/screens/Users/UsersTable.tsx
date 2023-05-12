@@ -210,7 +210,7 @@ export const UsersTable = () => {
           onClick={() => setModalUser({ show: true, type: 'create', initialValues: defaultValueUser })}
         >
           <ImageIcon image={AddIcon} />
-          <Box sx={{ marginLeft: '8px' }}>Thêm mới nhân viên</Box>
+          <Typography sx={{ marginLeft: '8px' }}>Thêm mới nhân viên</Typography>
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
