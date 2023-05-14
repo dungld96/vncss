@@ -6,26 +6,32 @@ import { CursorsType } from '../../../configs/constant';
 type GatewayState = {
   gateways: any[];
   cursors: CursorsType;
+  limit: number;
 };
 
-const initialState: GatewayState = { gateways: [], cursors: {} };
+const initialState: GatewayState = { gateways: [], cursors: {}, limit: 10 };
 
 const slice = createSlice({
   name: 'gatewayState',
   initialState: initialState,
   reducers: {
-    setGateways: (state, { payload: { gateways } }: PayloadAction<{ gateways: any[] }>) => {
+    setGateways: (
+      state,
+      { payload: { gateways, cursors } }: PayloadAction<{ gateways: any[]; cursors: CursorsType }>
+    ) => {
       state.gateways = gateways;
-    },
-    setCursors: (state, { payload: { cursors } }: PayloadAction<{ cursors: CursorsType }>) => {
       state.cursors = cursors;
+    },
+    setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
+      state.limit = limit;
     },
   },
 });
 
-export const { setGateways, setCursors } = slice.actions;
+export const { setGateways, setLimit } = slice.actions;
 
 export default slice.reducer;
 
-export const selectAgencies = (state: RootState) => state.gatewayState.gateways;
+export const selectGatewayState = (state: RootState) => state.gatewayState;
+export const selectGateway = (state: RootState) => state.gatewayState.gateways;
 export const selectCursors = (state: RootState) => state.gatewayState.cursors;

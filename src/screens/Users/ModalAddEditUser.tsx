@@ -87,7 +87,7 @@ const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues 
   return (
     <Modal size="sm" show={show} close={onClose} title={isUpdate ? 'Chỉnh sửa thông tin' : 'Thêm nhân viên mới'}>
       <FormikProvider value={formik}>
-        <Form noValidate onSubmit={handleSubmit}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <ContentWrapper>
             <FormikWrappedField
               style={{ width: 286 }}

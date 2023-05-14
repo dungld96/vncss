@@ -45,10 +45,13 @@ const Input: React.FC<Props> = (props) => {
     onChange,
     maxLength,
     topLable,
+    onFocus,
     ...rest
   } = props;
   const isPassword = type === 'password';
   const [passwordShown, setPasswordShown] = useState(!isPassword);
+
+  const [isFocusing, setIsFocusing] = useState(false)
 
   const IconEye = styled(passwordShown ? VisibilityIcon : VisibilityOffIcon)({
     color: '#C5C6D2',
@@ -70,7 +73,13 @@ const Input: React.FC<Props> = (props) => {
     ),
   };
 
+  const handleFocus = useCallback((e: any) => {
+    setIsFocusing(true)
+    onFocus?.(e)
+  }, [])
+
   const handleBlur = (e: any) => {
+    setIsFocusing(false)
     if (onBlur) {
       onBlur(e);
     }
@@ -89,6 +98,8 @@ const Input: React.FC<Props> = (props) => {
     [onChange]
   );
 
+  const helperText = !isFocusing && error !== true ? error : undefined
+
   return (
     <div>
       {topLable && <TopLabel>{topLable}</TopLabel>}
@@ -100,10 +111,11 @@ const Input: React.FC<Props> = (props) => {
         type={isPassword ? (passwordShown ? 'text' : 'password') : type}
         onChange={onChangeCallbackFn}
         onBlur={handleBlur}
-        inputProps={{ maxLength: maxLength || 20 }}
+        inputProps={{ maxLength: maxLength || 100 }}
         placeholder={placeholder}
         InputProps={adornment}
-        helperText={error}
+        helperText={helperText}
+        onFocus={handleFocus}
         sx={{
           '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
             border: '2px solid #EEF2FA',
@@ -139,6 +151,7 @@ interface FormikValues {
 interface ExtendedFieldConfig {
   topLable?: string;
   slow?: boolean;
+  maxLength?:number
   iconStartAdorment?: ReactNode;
 }
 
@@ -158,7 +171,7 @@ const FormikWrappedField = ({ slow, name, validate, ...rest }: FormikWrappedFiel
   return (
     <FastField name={name} validate={validate}>
       {({ field, form }: FormikFieldProps<FormikValues>) => {
-        const error = form.touched? getIn(form.errors, field.name):'';
+        const error = (form.touched[name] || form.isSubmitting)? getIn(form.errors, field.name):'';
         return <Input name={name} field={field} error={error} {...rest} />;
       }}
     </FastField>

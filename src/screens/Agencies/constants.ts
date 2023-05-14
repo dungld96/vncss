@@ -5,6 +5,7 @@ export interface AgencyType extends IAgency {
   phone: string;
   password: string;
   confirm_password: string;
+  parent_uuid?: string;
 }
 export const defaultValueUser: AgencyType = {
   id: '',

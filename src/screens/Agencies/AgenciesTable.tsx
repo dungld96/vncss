@@ -25,6 +25,7 @@ import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { AgencyType, defaultValueUser } from './constants';
 import ModalAddEdit from './ModalAddEdit';
+import { useDeleteAgencyMutation } from 'services/agencies.service';
 
 const getChildRows = (row: IAgency, rootRows: IAgency[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
@@ -102,6 +103,7 @@ const ActionCellContent = ({
 
 export const AgenciesTable = () => {
   const agencies = useSelector(selectAgencies);
+  const [deleteAgency] = useDeleteAgencyMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
@@ -137,10 +139,10 @@ export const AgenciesTable = () => {
         content: 'Bạn có chắc chắn muốn xoá đại lý này không?',
         confirm: {
           action: async () => {
-            // await deleteUser({ id }).unwrap();
+            await deleteAgency({ id: row.id }).unwrap();
             hideModalConfirm();
           },
-          text: 'Xoá nhân viên',
+          text: 'Xoá đại lý',
         },
         cancel: {
           action: hideModalConfirm,

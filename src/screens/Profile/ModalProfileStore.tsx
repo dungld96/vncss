@@ -29,7 +29,7 @@ const ModalProfileStore: React.FC<Props> = ({ show, onClose, initialValues }) =>
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await updateAgency({ agency: values }).unwrap();
+        await updateAgency({ ...values }).unwrap();
         onClose();
       } catch (error) {
         console.error('rejected', error);

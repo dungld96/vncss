@@ -12,8 +12,9 @@ import KeyIcon from '../../assets/icons/key-icon.svg';
 import { useAddlUserMutation, useChangeDetailUserMutation } from 'services/users.service';
 import Select from '../../common/Select/Select';
 import FormikWrappedField from 'common/input/Field';
-import { IAgency } from '../../services/agencies.service';
+import { IAgency, useAddlAgencyMutation, useUpdateAgencyMutation } from '../../services/agencies.service';
 import { AgencyType } from './constants';
+import { useAuth } from 'hooks/useAuth';
 
 interface Props {
   show: boolean;
@@ -34,7 +35,6 @@ const ContentWrapper = styled(DialogContent)({
 const Schema = {
   name: Yup.string().required('Tên đại lý không được để trống'),
   address: Yup.string().required('Địa chỉ không được để trống'),
-  last_name: Yup.string().required('Họ nhân viên không được để trống'),
   phone: Yup.string().required('Số điện thoại không được để trống'),
 };
 
@@ -48,9 +48,13 @@ const validationPassword = {
 };
 
 const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
-  const [addUser] = useAddlUserMutation();
-  const [editUser] = useChangeDetailUserMutation();
+  const [addAgency] = useAddlAgencyMutation();
+  const [updateAgency, {}] = useUpdateAgencyMutation();
   const isUpdate = type === 'update';
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
@@ -58,16 +62,30 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
       ...Schema,
       ...(!isUpdate ? validationPassword : {}),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async ({ id, name, username, address, password, parent_id, phone }) => {
       if (isUpdate) {
+        await updateAgency({
+          id,
+          name,
+          phone,
+          address,
+        }).unwrap();
         onClose();
       } else {
+        await addAgency({
+          name,
+          username,
+          password,
+          address,
+          phone,
+          parent_uuid: currentUser?.sub_id,
+        }).unwrap();
         onClose();
       }
     },
   });
   const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
-
+  console.log(errors);
   useEffect(() => {
     if (!show) return;
     resetForm();
