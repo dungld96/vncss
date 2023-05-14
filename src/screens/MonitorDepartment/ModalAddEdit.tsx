@@ -1,15 +1,14 @@
-import Modal from 'common/modal/Modal';
-import React, { useEffect } from 'react';
-import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'common/button/Button';
-import { Input } from 'common';
+import { DialogActions, DialogContent } from '@mui/material';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
+import Select from '../../common/Select/Select';
 import { Form, FormikProvider, useFormik } from 'formik';
+import React, { useEffect } from 'react';
+import { ImageIcon } from '../../utils/UtilsComponent';
 import * as Yup from 'yup';
-import { ImageIcon } from 'utils/UtilsComponent';
 import KeyIcon from '../../assets/icons/key-icon.svg';
-import { useAddlUserMutation, useChangeDetailUserMutation } from 'services/users.service';
-import Select from 'common/Select/Select';
 
 interface Props {
   show: boolean;
@@ -27,11 +26,6 @@ const ContentWrapper = styled(DialogContent)({
   marginBottom: 32,
 });
 
-const Schema = {};
-
-const validationPassword = {
-  password: Yup.string().min(8, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
-};
 
 const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
   const isUpdate = type === 'update';
@@ -41,7 +35,7 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
     validationSchema: Yup.object().shape({}),
     onSubmit: async (value) => {},
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm } = formik;
+  const { handleSubmit, isValid, dirty, resetForm } = formik;
 
   useEffect(() => {
     if (!show) return;

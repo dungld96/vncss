@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   IconButton,
   Table,
@@ -7,11 +6,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  Typography
 } from '@mui/material';
-import { ImageIcon } from '../../utils/UtilsComponent';
+import { useState } from 'react';
 import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
-import { Input } from 'common';
+import { Input } from '../../common';
+import { ImageIcon } from '../../utils/UtilsComponent';
 
 const randomId = () => Math.random().toString(36);
 

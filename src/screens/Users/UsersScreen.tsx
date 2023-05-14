@@ -1,9 +1,9 @@
-import Pagination from 'common/pagination/Pagination';
-import { CursorsType } from 'configs/constant';
+import Pagination from '../../common/pagination/Pagination';
+import { CursorsType } from '../../configs/constant';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyGetAllUsersQuery } from 'services/users.service';
-import { selectUsersState } from 'state/modules/user/userReducer';
+import { useLazyGetAllUsersQuery } from '../../services/users.service';
+import { selectUsersState } from '../../state/modules/user/userReducer';
 import { UsersTable } from './UsersTable';
 
 export default function UsersScreen() {

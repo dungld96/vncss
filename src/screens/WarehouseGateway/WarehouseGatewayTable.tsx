@@ -25,28 +25,28 @@ import {
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import Select from 'common/Select/Select';
-import { Switch } from 'common/Switch/Switch';
 import { useSelector } from 'react-redux';
-import ModalChangeAgency from 'screens/WarehouseNode/ModalChangeAgency';
-import { IUser } from 'services/auth.service';
-import { selectGateway } from 'state/modules/gateway/gatewayReducer';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import BackIcon from '../../assets/icons/back-icon.svg';
 import CalendarIcon from '../../assets/icons/calendar-icon.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import ShopIcon from '../../assets/icons/shop-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Select from '../../common/Select/Select';
+import { Switch } from '../../common/Switch/Switch';
 import useModalConfirm from '../../hooks/useModalConfirm';
+import ModalChangeAgency from '../../screens/WarehouseNode/ModalChangeAgency';
+import { IUser } from '../../services/auth.service';
+import { selectGateway } from '../../state/modules/gateway/gatewayReducer';
 import { listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
 import ModalAdd from './ModalAdd';
 import ModalExtendGateway from './ModalExtendGateway';
 
 import dayjs from 'dayjs';
-import { useAchieveGatewayMutation, useDeleteGatewayMutation } from 'services/gateway.service';
-import { useAuth } from 'hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
+import { useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
 
 const ActionCellContent = ({
   cellProps,

@@ -1,12 +1,12 @@
-import Modal from 'common/modal/Modal';
-import React from 'react';
-import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'common/button/Button';
-import { Input } from 'common';
+import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import React from 'react';
 import * as Yup from 'yup';
-import { useUpdateCurrentUserMutation, CurrentUserRequestInterface } from 'services/users.service';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
+import { CurrentUserRequestInterface, useUpdateCurrentUserMutation } from '../../services/users.service';
 
 interface Props {
   show: boolean;
@@ -40,7 +40,7 @@ const ModalProfileUser: React.FC<Props> = ({ show, onClose, initialValues }) => 
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors } = formik;
+  const { handleSubmit, getFieldProps } = formik;
   return (
     <Modal size="sm" show={show} close={onClose} title="Sửa thông tin người dùng">
       <FormikProvider value={formik}>

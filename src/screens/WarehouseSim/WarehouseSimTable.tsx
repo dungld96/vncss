@@ -5,17 +5,17 @@ import React, { useMemo, useState } from 'react';
 import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
 import LocationIcon from '../../assets/icons/location-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
 
-import useModalConfirm from '../../hooks/useModalConfirm';
-import { IUser } from 'services/auth.service';
 import ExportIcon from '../../assets/icons/export-red-icon.svg';
+import useModalConfirm from '../../hooks/useModalConfirm';
+import { IUser } from '../../services/auth.service';
 import { defaultValuesSim } from './constants';
 import { dataSim } from './mockData';
 import ModalAddSim from './ModalAddSim';
@@ -85,7 +85,7 @@ const ActionCellContent = ({
 };
 
 const WarehouseSimTable = () => {
-  const {showModalConfirm,hideModalConfirm} = useModalConfirm()
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalEditSim, setModalEditSim] = useState({
     show: false,
     initialValues: defaultValuesSim,
@@ -140,14 +140,14 @@ const WarehouseSimTable = () => {
         type: 'warning',
         title: 'Xoá sim',
         content: 'Bạn có chắc chắn muốn xoá sim này không?',
-        confirm:{
-          action:hideModalConfirm,
-          text:'Xoá sim'
+        confirm: {
+          action: hideModalConfirm,
+          text: 'Xoá sim',
         },
-        cancel:{
-          action:hideModalConfirm
-        }
-      })
+        cancel: {
+          action: hideModalConfirm,
+        },
+      });
     } else if (type === 'edit') {
       setModalEditSim({
         show: true,
@@ -155,7 +155,6 @@ const WarehouseSimTable = () => {
       });
     }
   };
-
 
   const dataTable = dataSim.map((item, index) => ({ ...item, number: index + 1 }));
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { DeployLocationTable } from './DeployLocationTable';
 
 const DeployLocationScreen = () => {

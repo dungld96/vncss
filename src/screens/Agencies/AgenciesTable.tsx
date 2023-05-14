@@ -1,31 +1,32 @@
-import React, { useState, useMemo } from 'react';
-import { Paper, IconButton, ListItemIcon, Menu, MenuItem, ListItemText, Divider, Box, Typography } from '@mui/material';
-import { MoreHoriz } from '@mui/icons-material';
-import { TreeDataState, CustomTreeData } from '@devexpress/dx-react-grid';
+import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
+import { MoreHoriz } from '@mui/icons-material';
+import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import {
-  TableTreeCell,
-  getTableCell,
-  TableHeaderContent,
-  TableHeaderCell,
   ExpandButtonTableTree,
+  getTableCell,
+  TableHeaderCell,
+  TableHeaderContent,
+  TableTreeCell,
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import EditIcon from '../../assets/icons/edit-icon.svg';
-import DeleteIcon from '../../assets/icons/delete-icon.svg';
-import KeyIcon from '../../assets/icons/key-icon.svg';
-import AddIcon from '../../assets/icons/add-circle.svg';
-import SearchIcon from '../../assets/icons/search-icon.svg';
-import { IAgency, agencies } from './mockData';
 import { useSelector } from 'react-redux';
-import { selectAgencies } from '../../state/modules/agency/agencyReducer';
+import { useDeleteAgencyMutation } from 'services/agencies.service';
+import AddIcon from '../../assets/icons/add-circle.svg';
+import DeleteIcon from '../../assets/icons/delete-icon.svg';
+import EditIcon from '../../assets/icons/edit-icon.svg';
+import KeyIcon from '../../assets/icons/key-icon.svg';
+import SearchIcon from '../../assets/icons/search-icon.svg';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { AgencyType, defaultValueUser } from './constants';
+import { selectAgencies } from '../../state/modules/agency/agencyReducer';
+import { AgencyType, defaultInitialValue } from './constants';
+import { IAgency } from './mockData';
 import ModalAddEdit from './ModalAddEdit';
-import { useDeleteAgencyMutation } from 'services/agencies.service';
+import { useAuth } from '../../hooks/useAuth';
 
 const getChildRows = (row: IAgency, rootRows: IAgency[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
@@ -103,13 +104,18 @@ const ActionCellContent = ({
 
 export const AgenciesTable = () => {
   const agencies = useSelector(selectAgencies);
+  console.log(agencies);
+
   const [deleteAgency] = useDeleteAgencyMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
     type: 'create',
-    initialValues: defaultValueUser,
+    initialValues: defaultInitialValue,
   });
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const [columns] = useState([
     { name: 'name', title: 'Tên' },
@@ -151,6 +157,14 @@ export const AgenciesTable = () => {
     }
   };
 
+  const handelAddAgency = () => {
+    setModalAddEdit({
+      type: 'create',
+      initialValues: { ...defaultInitialValue, parent_id: currentUser?.sub_id },
+      show: true,
+    });
+  };
+
   return (
     <>
       <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
@@ -160,7 +174,7 @@ export const AgenciesTable = () => {
           placeholder="Tìm kiếm tên đại lý"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
-        <Button variant="contained" onClick={() => setModalAddEdit({ ...modalAddEdit, show: true })}>
+        <Button variant="contained" onClick={handelAddAgency}>
           <ImageIcon image={AddIcon} />
           <Typography sx={{ marginLeft: '8px' }}>Thêm mới đại lý</Typography>
         </Button>

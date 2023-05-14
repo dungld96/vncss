@@ -1,12 +1,12 @@
-import Modal from 'common/modal/Modal';
-import React, { useEffect } from 'react';
-import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'common/button/Button';
-import { Input } from 'common';
+import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
-import { useUpdateAgencyMutation } from 'services/agencies.service';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
+import { useUpdateAgencyMutation } from '../../services/agencies.service';
 
 const ContentWrapper = styled(DialogContent)({
   padding: 0,
@@ -36,7 +36,7 @@ const ModalProfileStore: React.FC<Props> = ({ show, onClose, initialValues }) =>
       }
     },
   });
-  const { handleSubmit, getFieldProps, resetForm, values, errors } = formik;
+  const { handleSubmit, getFieldProps, resetForm } = formik;
   useEffect(() => {
     if (!show) return;
     resetForm();

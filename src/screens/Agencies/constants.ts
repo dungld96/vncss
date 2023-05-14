@@ -7,7 +7,7 @@ export interface AgencyType extends IAgency {
   confirm_password: string;
   parent_uuid?: string;
 }
-export const defaultValueUser: AgencyType = {
+export const defaultInitialValue: AgencyType = {
   id: '',
   name: '',
   username: '',

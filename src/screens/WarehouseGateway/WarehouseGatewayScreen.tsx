@@ -1,10 +1,10 @@
-import Pagination from 'common/pagination/Pagination';
-import { CursorsType } from 'configs/constant';
-import { useAuth } from 'hooks/useAuth';
+import Pagination from '../../common/pagination/Pagination';
+import { CursorsType } from '../../configs/constant';
+import { useAuth } from '../../hooks/useAuth';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyGetListGatewayQuery } from 'services/gateway.service';
-import { selectGatewayState } from 'state/modules/gateway/gatewayReducer';
+import { useLazyGetListGatewayQuery } from '../../services/gateway.service';
+import { selectGatewayState } from '../../state/modules/gateway/gatewayReducer';
 import { WarehouseGatewayTable } from './WarehouseGatewayTable';
 
 const WarehouseGatewayScreen = () => {

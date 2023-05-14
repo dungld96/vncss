@@ -1,13 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import { Input } from '../../common';
-import Select from '../../common/Select/Select';
-import { listStatusNodeLess } from './constants';
-import { MAX_FILE_SIZE } from 'configs/constant';
-import Modal from '../../common/modal/Modal';
 import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
 
 interface Props {
   show: boolean;
@@ -27,7 +24,7 @@ const ModalExtendGateway: React.FC<Props> = ({ show, onClose }) => {
       console.log(values);
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, isValid, dirty, resetForm } = formik;
 
   useEffect(() => {
     if (!show) return;

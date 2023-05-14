@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setGateways } from 'state/modules/gateway/gatewayReducer';
+import { setGateways } from '../state/modules/gateway/gatewayReducer';
 import { queryRootConfig } from './http.service';
 
 export const gatewaysApi = createApi({

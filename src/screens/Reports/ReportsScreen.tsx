@@ -1,4 +1,3 @@
-import React from 'react';
 import ReportsTable from './ReportsTable';
 
 const ReportsScreen = () => {

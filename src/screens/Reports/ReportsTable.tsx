@@ -1,14 +1,14 @@
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
-import { Box, Paper, Popover, Typography } from '@mui/material';
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import { useState, useRef } from 'react';
+import { Box, Paper, Typography } from '@mui/material';
+import { useState } from 'react';
 import { ImageIcon } from 'utils/UtilsComponent';
-import SearchIcon from '../../assets/icons/search-icon.svg';
 import ExportIcon from '../../assets/icons/export-icon.svg';
+import SearchIcon from '../../assets/icons/search-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
 import { TableHeaderCell, TableHeaderContent, TableRowContent } from '../../common/DxTable/DxTableCommon';
-import { reports } from './mockData';
 import FilterBox from './FilterBox';
+import { reports } from './mockData';
 
 const ReportsTable = () => {
   const [columns] = useState([
@@ -41,7 +41,7 @@ const ReportsTable = () => {
       </Box>
       <Paper sx={{ boxShadow: 'none' }}>
         <Grid rows={reports} columns={columns}>
-          <Table columnExtensions={tableColumnExtensions} cellComponent={TableRowContent}/>
+          <Table columnExtensions={tableColumnExtensions} cellComponent={TableRowContent} />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
         </Grid>
       </Paper>
