@@ -1,16 +1,14 @@
-import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Avatar, Stack } from '@mui/material';
+import React, { useRef, useState } from 'react';
 import DefaultAvatar from '../../assets/img/avatar.svg';
 
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import ModalProfileUser from './ModalProfileUser';
-import ModalProfileStore from './ModalProfileStore';
+import { useAuth } from '../../hooks/useAuth';
+import { useGetArgencyQuery } from '../../services/agencies.service';
 import ModalChangePassword from './ModalChangePassword';
-import { useAuth } from 'hooks/useAuth';
-import { IUser } from 'services/auth.service';
-import { useGetArgencyQuery } from 'services/agencies.service';
-import { CurrentUserRequestInterface } from 'services/users.service';
+import ModalProfileStore from './ModalProfileStore';
+import ModalProfileUser from './ModalProfileUser';
 
 const ProfileContainer = styled.div({
   width: '100%',
@@ -150,10 +148,7 @@ const Profile: React.FC = () => {
     auth: { currentUser },
   } = useAuth() as any;
 
-  console.log(currentUser)
-
   const { data: agency } = useGetArgencyQuery({ id: currentUser?.sub_id });
-  console.log(agency);
 
   const currentAgency: any = agency?.data;
 

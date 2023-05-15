@@ -18,15 +18,11 @@ const slice = createSlice({
     setAgencies: (state, { payload: { agencies } }: PayloadAction<{ agencies: IAgency[] }>) => {
       state.agencies = agencies;
     },
-    setCursors: (state, { payload: { cursors } }: PayloadAction<{ cursors: CursorsType }>) => {
-      state.cursors = cursors;
-    },
   },
 });
 
-export const { setAgencies, setCursors } = slice.actions;
+export const { setAgencies } = slice.actions;
 
 export default slice.reducer;
 
 export const selectAgencies = (state: RootState) => state.agencyState.agencies;
-export const selectCursors = (state: RootState) => state.agencyState.cursors;

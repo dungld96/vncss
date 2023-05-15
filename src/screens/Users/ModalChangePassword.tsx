@@ -33,9 +33,7 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
     },
     enableReinitialize: true,
     validationSchema,
-    onSubmit: async ({ current_password, new_password }) => {
-      console.log('first');
-    },
+    onSubmit: async ({ current_password, new_password }) => {},
   });
 
   const { handleSubmit, getFieldProps, values, errors } = formik;

@@ -1,32 +1,32 @@
-import React, { useState, useMemo } from 'react';
-import { Paper, IconButton, ListItemIcon, Menu, MenuItem, ListItemText, Typography, Divider } from '@mui/material';
-import { MoreHoriz } from '@mui/icons-material';
-import { TreeDataState, CustomTreeData } from '@devexpress/dx-react-grid';
+import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
+import { MoreHoriz } from '@mui/icons-material';
+import { Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import {
-  TableTreeCell,
-  getTableCell,
-  TableHeaderContent,
-  TableHeaderCell,
-  ExpandButtonTableTree,
   CustomFieldType,
+  ExpandButtonTableTree,
+  getTableCell,
+  TableHeaderCell,
+  TableHeaderContent,
+  TableTreeCell,
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import KeyIcon from '../../assets/icons/key-icon.svg';
 import GroupIcon from '../../assets/icons/group-icon.svg';
+import KeyIcon from '../../assets/icons/key-icon.svg';
 
+import { Box } from '@mui/system';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
-import { Box } from '@mui/system';
-import Button from 'common/button/Button';
-import ModalChangePassword from 'screens/Users/ModalChangePassword';
-import { Regulatory, regulatoryAgencies } from 'screens/RegulatoryAgencies/mockData';
 import { Input } from '../../common';
-import ModalAddEdit from './ModalAddEdit';
+import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
+import { Regulatory, regulatoryAgencies } from '../../screens/RegulatoryAgencies/mockData';
+import ModalChangePassword from '../../screens/Users/ModalChangePassword';
+import ModalAddEdit from './ModalAddEdit';
 
 const getChildRows = (row: Regulatory, rootRows: Regulatory[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));

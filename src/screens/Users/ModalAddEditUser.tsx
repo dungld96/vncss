@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
-import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import { useSelector } from 'react-redux';
-import Modal from '../../common/modal/Modal';
-import Button from '../../common/button/Button';
-import { Input } from '../../common';
+import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
-import * as Yup from 'yup';
-import { IUser } from 'services/auth.service';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { ImageIcon } from 'utils/UtilsComponent';
+import * as Yup from 'yup';
 import KeyIcon from '../../assets/icons/key-icon.svg';
-import { listRole, UserType } from './constants';
-import { useAddlUserMutation, useChangeDetailUserMutation } from 'services/users.service';
-import { selectAuth } from '../../state/modules/auth/authReducer';
-import Select from '../../common/Select/Select';
+import Button from '../../common/button/Button';
 import FormikWrappedField from '../../common/input/Field';
+import Modal from '../../common/modal/Modal';
+import Select from '../../common/Select/Select';
+import { useAddlUserMutation, useChangeDetailUserMutation } from '../../services/users.service';
+import { selectAuth } from '../../state/modules/auth/authReducer';
+import { listRole, UserType } from './constants';
 
 interface Props {
   show: boolean;
@@ -77,7 +75,7 @@ const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues 
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue } = formik;
 
   useEffect(() => {
     if (!show) return;
@@ -87,7 +85,7 @@ const ModalAddEditUser: React.FC<Props> = ({ show, type, onClose, initialValues 
   return (
     <Modal size="sm" show={show} close={onClose} title={isUpdate ? 'Chỉnh sửa thông tin' : 'Thêm nhân viên mới'}>
       <FormikProvider value={formik}>
-        <Form noValidate onSubmit={handleSubmit}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <ContentWrapper>
             <FormikWrappedField
               style={{ width: 286 }}

@@ -2,7 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
 import { setCurrentUser } from '../state/modules/auth/authReducer';
 import type { IUser } from './auth.service';
-import { setUsers } from 'state/modules/user/userReducer';
+import { setUsers } from '../state/modules/user/userReducer';
 import { CursorsType } from '../configs/constant';
 
 export interface CurrentUserResponsiveInterface extends ResponsiveInterface {

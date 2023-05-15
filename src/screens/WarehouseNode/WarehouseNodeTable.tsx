@@ -179,8 +179,6 @@ export const WarehouseNodeTable = () => {
     if (type === 'edit') {
       setShowModalEdit(true);
     } else if (type === 'change-agency') {
-      console.log(id)
-      // setModaChangeAgency();
     } else if (type === 'recall') {
       handleRecall(id);
     } else if (type === 'delete') {
@@ -228,8 +226,6 @@ export const WarehouseNodeTable = () => {
       },
     });
   };
-
-  console.log(selection)
 
   return (
     <>

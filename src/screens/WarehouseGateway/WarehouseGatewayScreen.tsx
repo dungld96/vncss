@@ -1,19 +1,24 @@
-import Pagination from 'common/pagination/Pagination';
-import { CursorsType } from 'configs/constant';
+import Pagination from '../../common/pagination/Pagination';
+import { CursorsType } from '../../configs/constant';
+import { useAuth } from '../../hooks/useAuth';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyGetListGatewayQuery } from 'services/gateway.service';
-import { selectCursors } from 'state/modules/gateway/gatewayReducer';
+import { useLazyGetListGatewayQuery } from '../../services/gateway.service';
+import { selectGatewayState } from '../../state/modules/gateway/gatewayReducer';
 import { WarehouseGatewayTable } from './WarehouseGatewayTable';
 
 const WarehouseGatewayScreen = () => {
   const [trigger] = useLazyGetListGatewayQuery();
   const [paginate, setPaginate] = React.useState<CursorsType>({});
 
-  const cursors = useSelector(selectCursors);
+  const { cursors, limit } = useSelector(selectGatewayState);
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   React.useEffect(() => {
-    trigger({ id: 2, params: { limit: 2, ...paginate } });
+    trigger({ id: currentUser?.sub_id, params: { limit, ...paginate } });
   }, [trigger, paginate]);
 
   return (

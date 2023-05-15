@@ -2,12 +2,10 @@ import styled from '@emotion/styled';
 import KeyIcon from '@mui/icons-material/Key';
 import PersonIcon from '@mui/icons-material/Person';
 import { Box, Checkbox } from '@mui/material';
-import { Input } from 'common';
-import Field from 'common/input/Field';
-// import ModalAttention from '../../common/modal/ModalAttention';
-import Button from 'common/button/Button';
+import Field from '../../common/input/Field';
+import Button from '../../common/button/Button';
 import { Form, FormikProvider, useFormik } from 'formik';
-import useModalConfirm from 'hooks/useModalConfirm';
+import useModalConfirm from '../../hooks/useModalConfirm';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -95,16 +93,9 @@ const LabelCopyRight = styled.p({
   marginBottom: 24,
 });
 
-const initForm = {
-  show: false,
-  title: '',
-  content: '',
-  type: '',
-};
 const LoginScreen = () => {
-  const [modalAttention, setModalAttention] = useState(initForm);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const [loginUser, { isLoading, isError, error, isSuccess }] = useLoginMutation();
+  const [loginUser, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -127,12 +118,6 @@ const LoginScreen = () => {
   });
   const { handleSubmit } = formik;
 
-  // const closeModalAttention = () => {
-  //   setModalAttention({
-  //     ...modalAttention,
-  //     show: false,
-  //   });
-  // };
   const handleForgotPass = () => {
     showModalConfirm({
       title: 'Quên mật khẩu',

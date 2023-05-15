@@ -1,10 +1,9 @@
-import { Box, Button as ButtonBase, Popover, Popper, Typography } from '@mui/material';
-import Button from 'common/button/Button';
-import Select from 'common/Select/Select';
-import React from 'react';
-import { useState, useRef } from 'react';
-import { ImageIcon } from 'utils/UtilsComponent';
+import { Box, Button as ButtonBase, Popover, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import FilterIcon from '../../assets/icons/filter-icon.svg';
+import Button from '../../common/button/Button';
+import Select from '../../common/Select/Select';
+import { ImageIcon } from '../../utils/UtilsComponent';
 import { selectAgencies } from './mockData';
 
 const FilterBox = () => {

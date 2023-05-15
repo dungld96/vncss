@@ -1,16 +1,14 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
-import Modal from 'common/modal/Modal';
-import { Form, FormikProvider, useFormik } from 'formik';
-import { SimType } from './mockData';
-import * as Yup from 'yup';
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import Select from 'common/Select/Select';
-import { listStatus } from './constants';
-import CloseIcon from '@mui/icons-material/Close';
 import styled from '@emotion/styled';
-import DragDropFile from 'common/DragDropFile/DragDropFile';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import { Form, FormikProvider, useFormik } from 'formik';
+import React, { useCallback, useEffect, useState } from 'react';
+import * as Yup from 'yup';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import DragDropFile from '../../common/DragDropFile/DragDropFile';
+import Select from '../../common/Select/Select';
+import { listStatus } from './constants';
 
 const MAX_FILE_SIZE = 5242880;
 
@@ -80,7 +78,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
       console.log(values);
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, isValid, dirty, resetForm, setFieldValue } = formik;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);

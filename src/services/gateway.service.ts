@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setCursors, setGateways } from 'state/modules/gateway/gatewayReducer';
+import { setGateways } from '../state/modules/gateway/gatewayReducer';
 import { queryRootConfig } from './http.service';
+
 export const gatewaysApi = createApi({
   ...queryRootConfig,
   reducerPath: 'gatewaysApi',
@@ -16,9 +17,9 @@ export const gatewaysApi = createApi({
           const {
             data: { data, cursor },
           } = await queryFulfilled;
-          dispatch(setGateways({ gateways: data }));
           dispatch(
-            setCursors({
+            setGateways({
+              gateways: data,
               cursors: {
                 before: cursor.before || undefined,
                 after: cursor.after || undefined,
@@ -32,7 +33,7 @@ export const gatewaysApi = createApi({
       query: (body) => {
         try {
           return {
-            url: 'agencies/2/gateways',
+            url: `agencies/${body.parent_uuid}/gateways`,
             method: 'POST',
             body: body,
           };
@@ -46,7 +47,7 @@ export const gatewaysApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `agencies/2/gateways/${body.id}`,
+            url: `agencies/${body.parent_uuid}/gateways/${body.id}`,
             method: 'PUT',
             body: body,
           };
@@ -60,9 +61,9 @@ export const gatewaysApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `agencies/2/gateways/achieve`,
+            url: `agencies/${body.parent_uuid}/gateways/achieve`,
             method: 'POST',
-            body: body,
+            body: { gateway_ids: body.gateway_ids },
           };
         } catch (error: any) {
           throw new error.message();
@@ -74,7 +75,7 @@ export const gatewaysApi = createApi({
       query: (body) => {
         try {
           return {
-            url: `agencies/2/gateways/move`,
+            url: `agencies/${body.parent_uuid}/gateways/move`,
             method: 'POST',
             body: body,
           };
@@ -84,11 +85,27 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
-    importGateway: build.mutation<any, any>({
+    deleteGateway: build.mutation<null, { id: string; parent_uuid: string }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/2/gateways/upload`,
+            url: `agencies/${body.parent_uuid}/gateways/${body.id}`,
+            method: 'DELETE',
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
+    }),
+    importGateway: build.mutation<null, any>({
+      query: ({ file, parent_uuid }) => {
+        const body = new FormData();
+        body.append('Content-Type', file.type);
+        body.append('file', file);
+        try {
+          return {
+            url: `agencies/${parent_uuid}/gateways/upload`,
             method: 'POST',
             body: body,
             formData: true,
@@ -110,4 +127,5 @@ export const {
   useLazyGetListGatewayQuery,
   useMoveGatewayMutation,
   useUpdateGatewayMutation,
+  useDeleteGatewayMutation,
 } = gatewaysApi;

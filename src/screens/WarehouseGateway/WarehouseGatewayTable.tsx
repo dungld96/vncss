@@ -25,29 +25,28 @@ import {
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import { IUser } from 'services/auth.service';
+import { useSelector } from 'react-redux';
 import AddIcon from '../../assets/icons/add-circle.svg';
-import DeleteIcon from '../../assets/icons/delete-icon.svg';
-import EditIcon from '../../assets/icons/edit-icon.svg';
-import ShopIcon from '../../assets/icons/shop-icon.svg';
-import SearchIcon from '../../assets/icons/search-icon.svg';
 import BackIcon from '../../assets/icons/back-icon.svg';
 import CalendarIcon from '../../assets/icons/calendar-icon.svg';
+import DeleteIcon from '../../assets/icons/delete-icon.svg';
+import SearchIcon from '../../assets/icons/search-icon.svg';
+import ShopIcon from '../../assets/icons/shop-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Select from '../../common/Select/Select';
+import { Switch } from '../../common/Switch/Switch';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { data } from './mockData';
+import ModalChangeAgency from '../../screens/WarehouseNode/ModalChangeAgency';
+import { IUser } from '../../services/auth.service';
+import { selectGateway } from '../../state/modules/gateway/gatewayReducer';
 import { listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
 import ModalAdd from './ModalAdd';
-import Select from 'common/Select/Select';
-import { Switch } from 'common/Switch/Switch';
-import ModalChangeAgency from 'screens/WarehouseNode/ModalChangeAgency';
 import ModalExtendGateway from './ModalExtendGateway';
-import { useSelector } from 'react-redux';
-import { selectAgencies } from 'state/modules/gateway/gatewayReducer';
 
-import dayjs, { Dayjs } from 'dayjs';
-import { useAchieveGatewayMutation } from 'services/gateway.service';
+import dayjs from 'dayjs';
+import { useAuth } from '../../hooks/useAuth';
+import { useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
 
 const ActionCellContent = ({
   cellProps,
@@ -120,7 +119,9 @@ const ActionCellContent = ({
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>Xoá Node</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>
+            Xoá gateway
+          </ListItemText>
         </MenuItem>
       </Menu>
     </div>
@@ -129,6 +130,7 @@ const ActionCellContent = ({
 
 export const WarehouseGatewayTable = () => {
   const [achieveGateway] = useAchieveGatewayMutation();
+  const [deleteGateway] = useDeleteGatewayMutation();
 
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
@@ -139,7 +141,10 @@ export const WarehouseGatewayTable = () => {
   });
   const [ModalExtend, setModalExtend] = useState(false);
 
-  const data = useSelector(selectAgencies);
+  const data = useSelector(selectGateway);
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const [columns] = useState([
     { name: 'gateway_type_id', title: 'Loại' },
@@ -150,10 +155,10 @@ export const WarehouseGatewayTable = () => {
     { name: 'status', title: 'Trạng thái' },
     { name: 'node', title: 'Node' },
     { name: 'sim', title: 'Thẻ sim' },
-    { name: 'date', title: 'Ngày kích hoạt' },
-    { name: 'switchboard', title: 'Tổng đài' },
+    { name: 'active_at', title: 'Ngày kích hoạt' },
+    { name: 'enable_callcenter', title: 'Tổng đài' },
     { name: 'subscriber', title: 'Thuê bao' },
-    { name: 'agency', title: 'Đại lý' },
+    { name: 'agency_id', title: 'Đại lý' },
     { name: 'action', title: 'Hành động' },
   ]);
 
@@ -180,18 +185,27 @@ export const WarehouseGatewayTable = () => {
         );
       },
     },
-    switchboard: {
-      renderContent: ({ row }) => (row.switchboard === null ? '--' : <Switch checked={row.switchboard} />),
+    active_at: {
+      renderContent: ({ row }) => {
+        return (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
+            {dayjs(row?.active_at)?.format('DD/MM/YYYY')}
+          </Typography>
+        );
+      },
+    },
+    enable_callcenter: {
+      renderContent: ({ row }) => (row.enable_callcenter === null ? '--' : <Switch checked={row.enable_callcenter} />),
     },
   });
 
-  const handleRecall = (id: (string | number)[], more?: boolean) => {
+  const handleRecall = (ids: (string | number)[], more?: boolean) => {
     showModalConfirm({
-      title: 'Thu hồi node',
-      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Node này không?`,
+      title: 'Thu hồi gateway',
+      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Gateway này không?`,
       confirm: {
         action: async () => {
-          await achieveGateway({ gateway_ids: id }).unwrap();
+          await achieveGateway({ gateway_ids: ids, parent_uuid: currentUser?.sub_id || '' }).unwrap();
           hideModalConfirm();
         },
         text: 'Thu hồi',
@@ -219,6 +233,7 @@ export const WarehouseGatewayTable = () => {
         content: 'Bạn có chắc chắn muốn xoá gateway này không?',
         confirm: {
           action: async () => {
+            await deleteGateway({ id, parent_uuid: currentUser?.sub_id || '' }).unwrap();
             hideModalConfirm();
           },
           text: 'Xoá gateway',
@@ -247,6 +262,7 @@ export const WarehouseGatewayTable = () => {
       content: 'Bạn có chắc chắn muốn xoá gateway này không?',
       confirm: {
         action: async () => {
+          await deleteGateway({ id: selection.join(','), parent_uuid: currentUser?.sub_id || '' }).unwrap();
           setSelection([]);
           hideModalConfirm();
         },

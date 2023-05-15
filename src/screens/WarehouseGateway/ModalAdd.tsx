@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
 import CloseIcon from '@mui/icons-material/Close';
@@ -11,6 +10,9 @@ import DragDropFile from '../../common/DragDropFile/DragDropFile';
 import { listStatusNodeLess } from './constants';
 import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useCreateGatewayMutation, useImportGatewayMutation } from 'services/gateway.service';
+import FormikWrappedField from '../../common/input/Field';
+import DatePickers from '../../common/datePicker/DatePicker';
+import { useAuth } from '../../hooks/useAuth';
 
 interface Props {
   show: boolean;
@@ -62,11 +64,21 @@ const Title = styled(DialogTitle)({
   },
 });
 
+const validationSchema = Yup.object().shape({
+  serial: Yup.string().required('Serial không được để trống'),
+  version: Yup.string().required('Phiên bản không được để trống'),
+  startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
+});
+
 const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
   const [addGateway] = useCreateGatewayMutation();
   const [importGateway] = useImportGatewayMutation();
   const [tab, setTab] = useState(0);
   const [file, setFile] = useState<any>(null);
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const formik = useFormik({
     initialValues: {
@@ -75,30 +87,30 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
       description: '',
       serial: '',
       version: '',
-      startDate: '17/03/2023',
+      startDate: '',
       status: 'none',
     },
     enableReinitialize: true,
-    validationSchema: Yup.object().shape({}),
+    validationSchema,
     onSubmit: async (values) => {
       const body = {
         id: values.id,
         gateway_type_id: values.type,
         serial: values.serial,
-        firmware_version: values.version,
         hardware_version: values.version,
         status: values.status,
         mfg: values.startDate,
+        description: values.description,
+        parent_uuid: currentUser?.sub_id,
       };
       if (tab === 0) {
         await addGateway(body).unwrap();
         onClose?.();
-      } else if (tab === 1) {
-        await importGateway(file).unwrap()
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue, touched, isSubmitting } =
+    formik;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -113,6 +125,11 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
     setFile(file);
   }, []);
 
+  const handleImport = async () => {
+    if (tab === 0) return;
+    await importGateway({ file }).unwrap();
+  };
+
   let disable = false;
   switch (tab) {
     case 0:
@@ -125,6 +142,8 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
   useEffect(() => {
     if (!show) return;
     resetForm();
+    setTab(0);
+    setFile(null);
   }, [show]);
 
   return (
@@ -184,32 +203,37 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 topLable="Loại sản phẩm"
                 data={[
                   { value: 'none', label: 'Chọn loại sản phẩm' },
-                  { value: '123abc', label: '123abc' },
+                  { value: '123abc', label: 'GW-001 - Gateway Sample' },
                 ]}
                 selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
               />
-              <Input
+              <FormikWrappedField
                 style={{ width: 286 }}
                 topLable="Mô tả"
                 placeholder="Nhập mô tả"
                 {...getFieldProps('description')}
               />
-              <Input style={{ width: 286 }} maxLength={100} topLable="Serial" placeholder="Nhập serial" {...getFieldProps('serial')} />
-              <Input
+              <FormikWrappedField
+                style={{ width: 286 }}
+                topLable="Serial"
+                placeholder="Nhập serial"
+                {...getFieldProps('serial')}
+              />
+              <FormikWrappedField
                 style={{ width: 286 }}
                 topLable="Phiên bản"
                 placeholder="Nhập phiên bản"
                 {...getFieldProps('version')}
               />
-              <Input style={{ width: 286 }} topLable="Ngày xuất xưởng" {...getFieldProps('startDate')} />
-              <Select
+              <DatePickers
+                {...getFieldProps('startDate')}
+                date={values.startDate}
                 style={{ width: 286 }}
-                fullWidth
-                topLable="Trạng thái"
-                data={[{ value: 'none', label: 'Chọn trạng thái' }, ...listStatusNodeLess]}
-                selected={values.status}
-                setSelected={(status) => setFieldValue('status', status)}
+                topLable="Ngày xuất xưởng"
+                onChange={(date) => setFieldValue('startDate', date)}
+                showError={touched.startDate || isSubmitting}
+                error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
               />
             </DialogContent>
           </TabPanel>
@@ -235,7 +259,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={disable}>
+            <Button type="submit" style={{ width: 131 }} disabled={disable} variant="contained" onClick={() => handleImport()}>
               Thêm mới
             </Button>
           </DialogActions>

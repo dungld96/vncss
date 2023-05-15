@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
-import Modal from 'common/modal/Modal';
-import { Button, DialogActions, Divider, FormControlLabel, Typography } from '@mui/material';
+import { Button, DialogActions, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import Modal from 'common/modal/Modal';
+import React from 'react';
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 import { Input } from '../../common';
 import Select from '../../common/Select/Select';
 import { dataTag } from '../../common/TableTag/dataSelectTag';
 import TableTag from '../../common/TableTag/TableTag';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
-import { ImageIcon } from '../../utils/UtilsComponent';
-import AddIcon from '../../assets/icons/add-circle-red.svg';
-import { Switch } from 'common/Switch/Switch';
 import UsersReceiveNoti from './UsersReceiveNoti';
 
 interface Props {
@@ -18,12 +15,7 @@ interface Props {
   onClose: () => void;
 }
 
-const randomId = () => Math.random().toString(36);
-
 const ModalEdit: React.FC<Props> = ({ show, onClose }) => {
-  const [listUsersReceiveNoti, setListUsersReceiveNoti] = useState([
-    { id: randomId(), userName: '', service: '', userPhone: '' },
-  ]);
   return (
     <Modal
       style={{

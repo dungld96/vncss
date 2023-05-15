@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
@@ -13,9 +13,9 @@ import SearchIcon from '../../assets/icons/search-icon.svg';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
+import ModalEditTags from '../../screens/VehicleWrapper/ModalEditTags';
 import { IUser } from '../../services/auth.service';
 import { data } from './mockData';
-import ModalEditTags from '../../screens/VehicleWrapper/ModalEditTags';
 import ModalAdd from './ModalAdd';
 import ModalEdit from './ModalEdit';
 

@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
 import { DialogActions, DialogContent } from '@mui/material';
-import Modal from 'common/modal/Modal';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
+import Select from '../../common/Select/Select';
 import { Form, FormikProvider, useFormik } from 'formik';
-import { SimType } from './mockData';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import Select from 'common/Select/Select';
 import { listStatus } from './constants';
+import { SimType } from './mockData';
 
 interface Props {
   show: boolean;
@@ -24,7 +24,7 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
       console.log(values);
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue } = formik;
 
   useEffect(() => {
     if (!show) return;

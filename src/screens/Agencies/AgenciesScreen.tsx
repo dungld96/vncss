@@ -1,18 +1,11 @@
-import Pagination from '../../common/pagination/Pagination';
-import { CursorsType } from 'configs/constant';
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useLazyGetAllAgenciesQuery } from 'services/agencies.service';
-import { selectCursors } from '../../state/modules/agency/agencyReducer';
+import { useEffect } from 'react';
+import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
 
-import { AgenciesTable } from './AgenciesTable';
 import { useAuth } from '../../hooks/useAuth';
+import { AgenciesTable } from './AgenciesTable';
 
 export default function AgenciesScreen() {
   const [trigger] = useLazyGetAllAgenciesQuery();
-  const [paginate, setPaginate] = useState<CursorsType>({});
-
-  const cursors = useSelector(selectCursors);
 
   const {
     auth: { currentUser },
@@ -20,13 +13,12 @@ export default function AgenciesScreen() {
 
   useEffect(() => {
     if (currentUser) {
-      trigger({ id: currentUser?.sub_id, params: { limit: 2, ...paginate } });
+      trigger({ id: currentUser?.sub_id });
     }
-  }, [trigger, paginate, currentUser]);
+  }, [trigger, currentUser]);
   return (
     <div>
       <AgenciesTable />
-      <Pagination paginate={cursors} setPaginate={setPaginate} />
     </div>
   );
 }

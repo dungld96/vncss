@@ -1,15 +1,12 @@
-import React from 'react';
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { Divider, Typography } from '@mui/material';
+import { Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { Input } from '../../common';
-import Select from '../../common/Select/Select';
-import { dataTag } from '../../common/TableTag/dataSelectTag';
-import TableTag from '../../common/TableTag/TableTag';
+import React from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { ImageIcon } from '../../utils/UtilsComponent';
 import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
+import { dataTag } from '../../common/TableTag/dataSelectTag';
+import TableTag from '../../common/TableTag/TableTag';
+import { ImageIcon } from '../../utils/UtilsComponent';
 
 interface Props {
   maxHeight?: string | number;

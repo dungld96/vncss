@@ -1,4 +1,3 @@
-import React from 'react';
 import { MonitorDepartmentTable } from './MonitorDepartmentTable';
 
 const MonitorDepartmentScreen = () => {

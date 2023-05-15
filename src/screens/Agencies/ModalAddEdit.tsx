@@ -1,19 +1,20 @@
-import Modal from 'common/modal/Modal';
-import React, { useEffect } from 'react';
-import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'common/button/Button';
-import { Input } from 'common';
+import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import React, { useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { IUser } from 'services/auth.service';
-import { ImageIcon } from 'utils/UtilsComponent';
 import KeyIcon from '../../assets/icons/key-icon.svg';
-import { useAddlUserMutation, useChangeDetailUserMutation } from 'services/users.service';
+import Button from '../../common/button/Button';
+import FormikWrappedField from '../../common/input/Field';
+import Modal from '../../common/modal/Modal';
 import Select from '../../common/Select/Select';
-import FormikWrappedField from 'common/input/Field';
-import { IAgency } from '../../services/agencies.service';
+import { useAuth } from '../../hooks/useAuth';
+import { useAddlAgencyMutation, useUpdateAgencyMutation } from '../../services/agencies.service';
+import { selectAgencies } from '../../state/modules/agency/agencyReducer';
+import { ImageIcon } from '../../utils/UtilsComponent';
 import { AgencyType } from './constants';
+import { unionBy } from 'lodash';
 
 interface Props {
   show: boolean;
@@ -34,7 +35,6 @@ const ContentWrapper = styled(DialogContent)({
 const Schema = {
   name: Yup.string().required('Tên đại lý không được để trống'),
   address: Yup.string().required('Địa chỉ không được để trống'),
-  last_name: Yup.string().required('Họ nhân viên không được để trống'),
   phone: Yup.string().required('Số điện thoại không được để trống'),
 };
 
@@ -48,9 +48,15 @@ const validationPassword = {
 };
 
 const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
-  const [addUser] = useAddlUserMutation();
-  const [editUser] = useChangeDetailUserMutation();
+  const [addAgency] = useAddlAgencyMutation();
+  const [updateAgency, {}] = useUpdateAgencyMutation();
   const isUpdate = type === 'update';
+
+  const agencies = useSelector(selectAgencies);
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
@@ -58,24 +64,49 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
       ...Schema,
       ...(!isUpdate ? validationPassword : {}),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async ({ id, name, username, address, parent_id, password, phone }) => {
       if (isUpdate) {
+        await updateAgency({
+          id,
+          name,
+          phone,
+          address,
+        }).unwrap();
         onClose();
       } else {
+        await addAgency({
+          name,
+          username,
+          password,
+          address,
+          phone,
+          parent_id,
+          parent_uuid: currentUser?.sub_id,
+        }).unwrap();
         onClose();
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue } = formik;
 
   useEffect(() => {
     if (!show) return;
     resetForm();
   }, [show]);
+
+  const listArgencies = useMemo(() => {
+    const newAgencies = agencies.map((agency) => ({
+      value: agency.id,
+      label: agency.name,
+    }));
+    const currentAgency = [{ value: currentUser?.sub_id, label: 'Đại lí hiện tại' }];
+    return unionBy(newAgencies, currentAgency, 'value');
+  }, [agencies]);
+
   return (
     <Modal size="sm" show={show} close={onClose} title={isUpdate ? 'Sửa thông tin đại lý' : 'Thêm mới đại lý'}>
       <FormikProvider value={formik}>
-        <Form noValidate onSubmit={handleSubmit}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <ContentWrapper>
             <FormikWrappedField
               style={{ width: 286 }}
@@ -126,11 +157,11 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
             <Select
               style={{ width: 286 }}
               fullWidth
-              placeholder="Chọn chức vụ"
-              topLable="Chức vụ"
-              data={[{ value: null, label: 'Không có' }]}
+              placeholder="Chọn đại lý cấp trên"
+              topLable="Đại lý cấp trên"
+              data={listArgencies}
               selected={values.parent_id}
-              setSelected={(role) => setFieldValue('role', role)}
+              setSelected={(parent_id) => setFieldValue('parent_id', parent_id)}
             />
           </ContentWrapper>
 

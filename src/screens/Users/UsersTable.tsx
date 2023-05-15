@@ -1,7 +1,6 @@
 import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
 import {
   Box,
   Button as ButtonBase,
@@ -16,6 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   getTableCell,
   TableHeaderCell,
@@ -25,17 +25,17 @@ import {
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
-import { IUser } from 'services/auth.service';
-import { useDeletelUserMutation } from 'services/users.service';
-import { selectUsers } from '../../state/modules/user/userReducer';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
 import KeyIcon from '../../assets/icons/key-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
+import { IUser } from '../../services/auth.service';
+import { useDeletelUserMutation } from '../../services/users.service';
+import { selectUsers } from '../../state/modules/user/userReducer';
 import { defaultValueUser } from './constants';
 import ModalAddEditUser from './ModalAddEditUser';
 import ModalChangePassword from './ModalChangePassword';

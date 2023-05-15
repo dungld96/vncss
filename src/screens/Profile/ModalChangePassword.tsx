@@ -1,14 +1,14 @@
-import Modal from 'common/modal/Modal';
-import React from 'react';
-import { DialogActions, DialogContent } from '@mui/material';
 import styled from '@emotion/styled';
-import Button from 'common/button/Button';
-import { Input } from 'common';
-import KeyIcon from '../../assets/icons/key-icon.svg';
+import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import React from 'react';
 import * as Yup from 'yup';
-import { useChangePasswordMutation } from 'services/users.service';
-import { ImageIcon } from 'utils/UtilsComponent';
+import KeyIcon from '../../assets/icons/key-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
+import { useChangePasswordMutation } from '../../services/users.service';
+import { ImageIcon } from '../../utils/UtilsComponent';
 
 interface Props {
   show: boolean;
@@ -44,7 +44,7 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
     },
   });
 
-  const { handleSubmit, getFieldProps, values, errors } = formik;
+  const { handleSubmit, getFieldProps } = formik;
 
   return (
     <Modal size="sm" show={show} close={onClose} title="Sửa thông tin đại lý">

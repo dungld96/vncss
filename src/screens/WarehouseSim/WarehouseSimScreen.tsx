@@ -1,10 +1,11 @@
-import React from 'react'
-import WarehouseSimTable from './WarehouseSimTable'
+import WarehouseSimTable from './WarehouseSimTable';
 
 const WarehouseSimScreen = () => {
   return (
-    <div><WarehouseSimTable/></div>
-  )
-}
+    <div>
+      <WarehouseSimTable />
+    </div>
+  );
+};
 
-export default WarehouseSimScreen
+export default WarehouseSimScreen;

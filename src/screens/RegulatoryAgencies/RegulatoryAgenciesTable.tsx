@@ -1,25 +1,25 @@
-import React, { useState, useMemo } from 'react';
-import { Paper, IconButton, ListItemIcon, Menu, MenuItem, ListItemText, Typography } from '@mui/material';
-import { MoreHoriz } from '@mui/icons-material';
-import { TreeDataState, CustomTreeData } from '@devexpress/dx-react-grid';
+import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
+import { MoreHoriz } from '@mui/icons-material';
+import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import {
-  TableTreeCell,
-  getTableCell,
-  TableHeaderContent,
-  TableHeaderCell,
-  ExpandButtonTableTree,
   CustomFieldType,
+  ExpandButtonTableTree,
+  getTableCell,
+  TableHeaderCell,
+  TableHeaderContent,
+  TableTreeCell,
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import KeyIcon from '../../assets/icons/key-icon.svg';
-import GroupIcon from '../../assets/icons/group-icon.svg';
-import { Regulatory, regulatoryAgencies } from './mockData';
 import { Box } from '@mui/system';
-import Select from 'common/Select/Select';
-import Button from 'common/button/Button';
-import ModalChangePassword from 'screens/Users/ModalChangePassword';
+import GroupIcon from '../../assets/icons/group-icon.svg';
+import KeyIcon from '../../assets/icons/key-icon.svg';
+import Button from '../../common/button/Button';
+import Select from '../../common/Select/Select';
+import ModalChangePassword from '../../screens/Users/ModalChangePassword';
+import { Regulatory, regulatoryAgencies } from './mockData';
 
 const getChildRows = (row: Regulatory, rootRows: Regulatory[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
