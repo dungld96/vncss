@@ -7,22 +7,22 @@ export const nodesApi = createApi({
   reducerPath: 'nodesApi',
   tagTypes: ['Node'],
   endpoints: (build) => ({
-    getListNode: build.query<any, any>({
-      query: (body) => ({ url: `agencies/${body.id}/node`, params: body.params }),
+    getListNode: build.query<any, { agency_id?: string; params: any }>({
+      query: (body) => ({ url: `agencies/${body.agency_id}/nodes`, params: body.params }),
       providesTags() {
         return [{ type: 'Node' }];
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursor },
+            data: { data, cursors },
           } = await queryFulfilled;
           dispatch(
             setNodes({
               nodes: data,
               cursors: {
-                before: cursor.before || undefined,
-                after: cursor.after || undefined,
+                before: cursors.before || undefined,
+                after: cursors.after || undefined,
               },
             })
           );
@@ -30,12 +30,12 @@ export const nodesApi = createApi({
       },
     }),
     createNode: build.mutation<any, any>({
-      query: (body) => {
+      query: ({ node, parent_uuid }) => {
         try {
           return {
-            url: 'agencies/2/node',
+            url: `agencies/${parent_uuid}/nodes`,
             method: 'POST',
-            body: body,
+            body: node,
           };
         } catch (error: any) {
           throw new error.message();
@@ -44,12 +44,12 @@ export const nodesApi = createApi({
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
     updateNode: build.mutation<any, any>({
-      query: (body) => {
+      query: ({ node, parent_uuid }) => {
         try {
           return {
-            url: `agencies/2/node/${body.id}`,
+            url: `agencies/${parent_uuid}/nodes/${node.id}`,
             method: 'PUT',
-            body: body,
+            body: node,
           };
         } catch (error: any) {
           throw new error.message();
@@ -57,13 +57,13 @@ export const nodesApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
-    achieveNode: build.mutation<any, any>({
+    achieveNode: build.mutation<any, { parent_uuid?: string; node_ids: (string | number)[] }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/2/node/achieve`,
+            url: `agencies/${body.parent_uuid}/nodes/achieve`,
             method: 'POST',
-            body: body,
+            body: { node_ids: body.node_ids },
           };
         } catch (error: any) {
           throw new error.message();
@@ -71,13 +71,13 @@ export const nodesApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
-    moveNode: build.mutation<any, any>({
-      query: (body) => {
+    moveNode: build.mutation<any, { node_ids?: (string | number)[]; agency_id: string; parent_uuid?: string }>({
+      query: ({ agency_id, node_ids, parent_uuid }) => {
         try {
           return {
-            url: `agencies/2/node/move`,
+            url: `agencies/${parent_uuid}/nodes/move`,
             method: 'POST',
-            body: body,
+            body: { node_ids, agency_id },
           };
         } catch (error: any) {
           throw new error.message();
@@ -85,11 +85,11 @@ export const nodesApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
-    deleteNode: build.mutation<null, { id: string }>({
+    deleteNode: build.mutation<null, { id: string; parent_uuid?: string }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/2/node/${body.id}`,
+            url: `agencies/${body.parent_uuid}/nodes/${body.id}`,
             method: 'DELETE',
           };
         } catch (error: any) {
@@ -99,13 +99,13 @@ export const nodesApi = createApi({
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
     importNode: build.mutation<null, any>({
-      query: (file) => {
+      query: ({ file, parent_uuid }) => {
         const body = new FormData();
         body.append('Content-Type', file.type);
         body.append('file', file);
         try {
           return {
-            url: `agencies/2/node/upload`,
+            url: `agencies/${parent_uuid}/nodes/upload`,
             method: 'POST',
             body: body,
             formData: true,
@@ -119,4 +119,13 @@ export const nodesApi = createApi({
   }),
 });
 
-export const {} = nodesApi;
+export const {
+  useAchieveNodeMutation,
+  useCreateNodeMutation,
+  useDeleteNodeMutation,
+  useGetListNodeQuery,
+  useImportNodeMutation,
+  useLazyGetListNodeQuery,
+  useMoveNodeMutation,
+  useUpdateNodeMutation,
+} = nodesApi;

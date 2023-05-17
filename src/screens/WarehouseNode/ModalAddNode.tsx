@@ -1,15 +1,17 @@
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import { Input } from '../../common';
 import Button from '../../common/button/Button';
+import DatePickers from '../../common/datePicker/DatePicker';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
+import FormikWrappedField from '../../common/input/Field';
 import Select from '../../common/Select/Select';
 import { MAX_FILE_SIZE } from '../../configs/constant';
-import { listStatusNodeLess } from './constants';
+import { useAuth } from '../../hooks/useAuth';
+import { useCreateNodeMutation, useImportNodeMutation } from '../../services/node.service';
 
 interface Props {
   show: boolean;
@@ -61,28 +63,58 @@ const Title = styled(DialogTitle)({
   },
 });
 
+const validationSchema = Yup.object().shape({
+  serial: Yup.string().required('Serial không được để trống'),
+  version: Yup.string().required('Phiên bản không được để trống'),
+  startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
+});
+
 const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
-  const [value, setValue] = useState(0);
+  const [addNode] = useCreateNodeMutation()
+  const [importNode] = useImportNodeMutation()
+
+  const [tab, setTab] = useState(0);
+  const [file, setFile] = useState<any>(null);
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const formik = useFormik({
     initialValues: {
+      id: '',
       type: 'none',
       description: '',
       serial: '',
       version: '',
-      startDate: '17/03/2023',
+      startDate: '',
       status: 'none',
     },
     enableReinitialize: true,
-    validationSchema: Yup.object().shape({}),
+    validationSchema,
     onSubmit: async (values) => {
-      console.log(values);
+      const body = {
+        id: values.id,
+        node_type_id: values.type,
+        serial: values.serial,
+        version: values.version,
+        mfg: values.startDate,
+        description: values.description,
+      };
+      if (tab === 0) {
+        await addNode({
+          parent_uuid: currentUser?.sub_id,
+          node: body,
+        }).unwrap();
+        onClose?.();
+      }
     },
   });
-  const { handleSubmit, getFieldProps, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, isValid, dirty, resetForm, setFieldValue, values, touched, isSubmitting } =
+    formik;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
   const handleUploadFile = useCallback((e: any) => {
@@ -91,12 +123,28 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
       return;
     }
 
-    console.log(file);
+    setFile(file);
   }, []);
+
+  let disable = false;
+  switch (tab) {
+    case 0:
+      disable = !isValid || !dirty;
+      break;
+    case 1:
+      disable = !file;
+  }
+
+  const handleImport = async () => {
+    if (tab === 0) return;
+    await importNode({ file }).unwrap();
+  };
 
   useEffect(() => {
     if (!show) return;
     resetForm();
+    setTab(0);
+    setFile(null);
   }, [show]);
 
   return (
@@ -118,7 +166,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
       <FormikProvider value={formik}>
         <Form noValidate onSubmit={handleSubmit}>
           <Box sx={{ borderBottom: 1, borderColor: '#EEF2FA', marginBottom: '18px' }}>
-            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+            <Tabs value={tab} onChange={handleChange} aria-label="basic tabs example">
               <Tab
                 sx={{
                   textTransform: 'initial',
@@ -139,7 +187,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
               />
             </Tabs>
           </Box>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={tab} index={0}>
             <DialogContent
               sx={{
                 padding: 0,
@@ -154,43 +202,65 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 style={{ width: 286 }}
                 fullWidth
                 topLable="Loại sản phẩm"
-                data={[{ value: 'none', label: 'Chọn loại sản phẩm' }, ...listStatusNodeLess]}
-                selected={0}
+                data={[
+                  { value: 'none', label: 'Chọn loại sản phẩm' },
+                  { value: 'snh-srb', label: 'Node Sample' },
+                ]}
+                selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
               />
-              <Input
+              <FormikWrappedField
                 style={{ width: 286 }}
                 topLable="Mô tả"
                 placeholder="Nhập mô tả"
                 {...getFieldProps('description')}
               />
-              <Input style={{ width: 286 }} topLable="Serial" placeholder="Nhập serial" {...getFieldProps('serial')} />
-              <Input
+              <FormikWrappedField
+                style={{ width: 286 }}
+                topLable="Serial"
+                placeholder="Nhập serial"
+                {...getFieldProps('serial')}
+              />
+              <FormikWrappedField
                 style={{ width: 286 }}
                 topLable="Phiên bản"
                 placeholder="Nhập phiên bản"
                 {...getFieldProps('version')}
               />
-              <Input style={{ width: 286 }} topLable="Ngày xuất xưởng" {...getFieldProps('startDate')} />
-              <Select
+              <DatePickers
+                {...getFieldProps('startDate')}
+                date={values.startDate}
+                style={{ width: 286 }}
+                topLable="Ngày xuất xưởng"
+                onChange={(date) => setFieldValue('startDate', date)}
+                showError={touched.startDate || isSubmitting}
+                error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
+              />
+              {/* <Select
                 style={{ width: 286 }}
                 fullWidth
                 topLable="Trạng thái"
                 data={[{ value: 'none', label: 'Chọn trạng thái' }, ...listStatusNodeLess]}
-                selected={0}
+                selected={values.status}
                 setSelected={(status) => setFieldValue('status', status)}
-              />
+              /> */}
             </DialogContent>
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={tab} index={1}>
             <Box sx={{ marginBottom: '32px' }}>
-              <DragDropFile
-                multiple={true}
-                fileTypes={['xls', 'xlsx', 'csv']}
-                onChange={handleUploadFile}
-                title="Chọn file chứa danh sách của bạn"
-                dropzoneHeigth={274}
-              />
+              {!file ? (
+                <DragDropFile
+                  multiple={true}
+                  fileTypes={['xls', 'xlsx', 'csv']}
+                  onChange={handleUploadFile}
+                  title="Chọn file chứa danh sách của bạn"
+                  dropzoneHeigth={274}
+                />
+              ) : (
+                <Box height={'276px'}>
+                  <Chip label={file?.name} onDelete={() => setFile(null)} />
+                </Box>
+              )}
             </Box>
           </TabPanel>
 
@@ -198,7 +268,13 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
+            <Button
+              type="submit"
+              style={{ width: 131 }}
+              variant="contained"
+              disabled={disable}
+              onClick={() => handleImport()}
+            >
               Thêm mới
             </Button>
           </DialogActions>

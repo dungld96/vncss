@@ -25,22 +25,26 @@ import {
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-import { Input } from 'common';
-import Button from 'common/button/Button';
+import dayjs from 'dayjs';
+import { useSelector } from 'react-redux';
 import { IUser } from 'services/auth.service';
 import AddIcon from '../../assets/icons/add-circle.svg';
+import BackIcon from '../../assets/icons/back-icon.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
-import ShopIcon from '../../assets/icons/shop-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
-import BackIcon from '../../assets/icons/back-icon.svg';
+import ShopIcon from '../../assets/icons/shop-icon.svg';
+import { Input } from '../../common';
+import Button from '../../common/button/Button';
+import Select from '../../common/Select/Select';
+import { useAuth } from '../../hooks/useAuth';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { data } from './mockData';
+import { useAchieveNodeMutation, useDeleteNodeMutation } from '../../services/node.service';
+import { selectNode } from '../../state/modules/node/nodeReducer';
 import { listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
 import ModalAddNode from './ModalAddNode';
-import ModalEditNode from './ModalEditNode';
-import Select from 'common/Select/Select';
 import ModalChangeAgency from './ModalChangeAgency';
+import ModalEditNode from './ModalEditNode';
 
 const ActionCellContent = ({
   cellProps,
@@ -86,7 +90,7 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('edit', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
@@ -121,31 +125,37 @@ const ActionCellContent = ({
 };
 
 export const WarehouseNodeTable = () => {
+  const [achieveNode] = useAchieveNodeMutation();
+  const [deleteNode] = useDeleteNodeMutation();
+
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
 
-  const [modalChangeAgency, setModaChangeAgency] = useState({
+  const [modalChangeAgency, setModaChangeAgency] = useState<{ show: boolean; ids: (string | number)[] }>({
     show: false,
-    ids:['']
+    ids: [''],
   });
 
+  const data = useSelector(selectNode);
+  const {
+    auth: { currentUser },
+  } = useAuth();
+
   const [columns] = useState([
-    { name: 'type', title: 'Loại' },
+    { name: 'node_type_id', title: 'Loại' },
     { name: 'description', title: 'Mô tả' },
     { name: 'serial', title: 'Serial' },
     { name: 'version', title: 'Phiên bản' },
-    { name: 'startDate', title: 'Ngày xuất xưởng' },
+    { name: 'mfg', title: 'Ngày xuất xưởng' },
     { name: 'status', title: 'Trạng thái' },
-    { name: 'agency', title: 'Đại lý' },
+    { name: 'agency_id', title: 'Đại lý' },
     { name: 'gateway', title: 'Thuộc Gateway' },
     { name: 'action', title: 'Hành động' },
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'name', width: 200 },
-    { columnName: 'phone', align: 'center' },
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
@@ -157,14 +167,22 @@ export const WarehouseNodeTable = () => {
         </Typography>
       ),
     },
+    mfg: {
+      renderContent: ({ row }) => {
+        return (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
+        );
+      },
+    },
   });
 
-  const handleRecall = (id: string, more?: boolean) => {
+  const handleRecall = (ids: (string | number)[], more?: boolean) => {
     showModalConfirm({
-      title: 'Thu hồi gateway',
-      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Gateway này không?`,
+      title: 'Thu hồi node',
+      content: `Bạn có chắc chắn muốn thu hồi ${more ? 'các' : ''} Node này không?`,
       confirm: {
         action: async () => {
+          await achieveNode({ node_ids: ids, parent_uuid: currentUser?.sub_id || '' }).unwrap();
           hideModalConfirm();
         },
         text: 'Thu hồi',
@@ -175,27 +193,45 @@ export const WarehouseNodeTable = () => {
     });
   };
 
+  const handleDeleteNodes = (id: string, more?: boolean) => {
+    showModalConfirm({
+      type: 'warning',
+      title: 'Xoá node',
+      content: 'Bạn có chắc chắn muốn xoá node này không?',
+      confirm: {
+        action: async () => {
+          try {
+            await deleteNode({ id, parent_uuid: currentUser?.sub_id || '' }).unwrap();
+            hideModalConfirm();
+            more && setSelection([]);
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        text: 'Xoá node',
+      },
+      cancel: {
+        action: hideModalConfirm,
+      },
+    });
+  };
+
+  const handelMove = (ids: (string | number)[], more?: boolean) => {
+    setModaChangeAgency({
+      ids,
+      show: true,
+    });
+  };
+
   const handleClick = (type: string, id: string | any) => {
     if (type === 'edit') {
       setShowModalEdit(true);
     } else if (type === 'change-agency') {
+      handelMove([id]);
     } else if (type === 'recall') {
-      handleRecall(id);
+      handleRecall([id]);
     } else if (type === 'delete') {
-      showModalConfirm({
-        type: 'warning',
-        title: 'Xoá node',
-        content: 'Bạn có chắc chắn muốn xoá node này không?',
-        confirm: {
-          action: async () => {
-            hideModalConfirm();
-          },
-          text: 'Xoá node',
-        },
-        cancel: {
-          action: hideModalConfirm,
-        },
-      });
+      handleDeleteNodes(id);
     }
   };
 
@@ -209,27 +245,14 @@ export const WarehouseNodeTable = () => {
     setSelection(selectedRowIds);
   };
 
-  const handleDeleteMultilUsers = () => {
-    showModalConfirm({
-      type: 'warning',
-      title: 'Xoá node',
-      content: 'Bạn có chắc chắn muốn xoá node này không?',
-      confirm: {
-        action: async () => {
-          setSelection([]);
-          hideModalConfirm();
-        },
-        text: 'Xoá node',
-      },
-      cancel: {
-        action: hideModalConfirm,
-      },
-    });
-  };
-
   return (
     <>
-      <ModalChangeAgency type='node' {...modalChangeAgency} onClose={() => setModaChangeAgency({...modalChangeAgency,show:false})} />
+      <ModalChangeAgency
+        type="node"
+        onSuccess={() => setSelection([])}
+        {...modalChangeAgency}
+        onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
+      />
       <ModalEditNode show={showModalEdit} onClose={() => setShowModalEdit(false)} />
       <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <Box
@@ -317,21 +340,21 @@ export const WarehouseNodeTable = () => {
                 <ButtonBase
                   sx={{ color: '#52535C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={ShopIcon} />}
-                  onClick={() => setModaChangeAgency({...modalChangeAgency,show:false})}
+                  onClick={() => handelMove([...selection])}
                 >
                   Chuyển
                 </ButtonBase>
                 <ButtonBase
                   sx={{ color: '#E5401C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={BackIcon} />}
-                  onClick={() => handleRecall(selection.join(','), true)}
+                  onClick={() => handleRecall(selection, true)}
                 >
                   Thu hồi
                 </ButtonBase>
                 <ButtonBase
                   sx={{ color: '#E5401C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={DeleteIcon} />}
-                  onClick={handleDeleteMultilUsers}
+                  onClick={() => handleDeleteNodes(selection.join(','), true)}
                 >
                   Xóa
                 </ButtonBase>

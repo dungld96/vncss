@@ -3,12 +3,15 @@ import { setAgencies } from '../state/modules/agency/agencyReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
 export interface IAgency {
-  id: string;
+  id?: string;
   parent_id?: string | null;
   name: string;
   address: string;
-  level: string | number;
-  user: {
+  level?: string | number;
+  username?: string;
+  password?: string;
+  phone?: string;
+  user?: {
     phone: string;
     username: string;
   };
@@ -21,14 +24,8 @@ export interface AgenciesResponsiveInterface extends ResponsiveInterface {
 }
 
 export interface AgencyRequestInterface {
-  id?: string;
-  name: string;
-  username?: string;
-  password?: string;
-  phone: string;
-  parent_id?: string | null;
   parent_uuid?: string;
-  address: string;
+  agency: IAgency;
 }
 
 export const agenciesApi = createApi({
@@ -36,7 +33,7 @@ export const agenciesApi = createApi({
   reducerPath: 'agenciesApi',
   tagTypes: ['Agencies', 'AllAgencies'],
   endpoints: (build) => ({
-    getArgency: build.query<CurrentAgencyResponsiveInterface, { id: string }>({
+    getAgency: build.query<CurrentAgencyResponsiveInterface, { id: string }>({
       query: (body) => ({ url: `agencies/${body.id}` }),
       providesTags(result) {
         if (result) {
@@ -60,8 +57,8 @@ export const agenciesApi = createApi({
           } = await queryFulfilled;
           const dataParse = data.map((item) => ({
             ...item,
-            phone: item.user.phone,
-            username: item.user.username,
+            phone: item.user?.phone,
+            username: item.user?.username,
             parentId: item.parent_id || null,
           }));
           dispatch(
@@ -73,12 +70,12 @@ export const agenciesApi = createApi({
       },
     }),
     addlAgency: build.mutation<CurrentAgencyResponsiveInterface, AgencyRequestInterface>({
-      query: (body) => {
+      query: ({ parent_uuid, agency }) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}`,
+            url: `agencies/${parent_uuid}`,
             method: 'POST',
-            body: body,
+            body: agency,
           };
         } catch (error: any) {
           throw new error.message();
@@ -86,19 +83,37 @@ export const agenciesApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AllAgencies' }]),
     }),
-    updateAgency: build.mutation<CurrentAgencyResponsiveInterface, AgencyRequestInterface>({
-      query: (body) => {
+    updateCurrentAgency: build.mutation<CurrentAgencyResponsiveInterface, AgencyRequestInterface>({
+      query: ({ agency }) => {
         try {
           return {
-            url: `agencies/${body.id}`,
+            url: `agencies/${agency.id}`,
             method: 'PUT',
-            body: body,
+            body: agency,
           };
         } catch (error: any) {
           throw new error.message();
         }
       },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Agencies', id: data.id }]),
+      invalidatesTags: (result, error, data) => {
+        return error ? [] : [{ type:  'Agencies', id: data.agency.id }];
+      },
+    }),
+    updateAgency: build.mutation<CurrentAgencyResponsiveInterface, AgencyRequestInterface>({
+      query: ({ agency }) => {
+        try {
+          return {
+            url: `agencies/${agency.id}`,
+            method: 'PUT',
+            body: agency,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => {
+        return error ? [] : [{ type:  'AllAgencies' }];
+      },
     }),
     deleteAgency: build.mutation<null, { id: string }>({
       query: (body) => {
@@ -117,10 +132,11 @@ export const agenciesApi = createApi({
 });
 
 export const {
-  useGetArgencyQuery,
+  useGetAgencyQuery,
   useUpdateAgencyMutation,
   useGetAllAgenciesQuery,
   useLazyGetAllAgenciesQuery,
   useAddlAgencyMutation,
   useDeleteAgencyMutation,
+  useUpdateCurrentAgencyMutation
 } = agenciesApi;

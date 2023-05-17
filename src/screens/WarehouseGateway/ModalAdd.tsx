@@ -7,7 +7,6 @@ import Select from '../../common/Select/Select';
 import CloseIcon from '@mui/icons-material/Close';
 import styled from '@emotion/styled';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
-import { listStatusNodeLess } from './constants';
 import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useCreateGatewayMutation, useImportGatewayMutation } from 'services/gateway.service';
 import FormikWrappedField from '../../common/input/Field';
@@ -98,13 +97,14 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
         gateway_type_id: values.type,
         serial: values.serial,
         hardware_version: values.version,
-        status: values.status,
         mfg: values.startDate,
         description: values.description,
-        parent_uuid: currentUser?.sub_id,
       };
       if (tab === 0) {
-        await addGateway(body).unwrap();
+        await addGateway({
+          parent_uuid: currentUser?.sub_id,
+          gateway: body,
+        }).unwrap();
         onClose?.();
       }
     },
@@ -127,7 +127,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
 
   const handleImport = async () => {
     if (tab === 0) return;
-    await importGateway({ file }).unwrap();
+    await importGateway({ file, parent_uuid: currentUser?.sub_id }).unwrap();
   };
 
   let disable = false;
@@ -259,7 +259,13 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} disabled={disable} variant="contained" onClick={() => handleImport()}>
+            <Button
+              type="submit"
+              style={{ width: 131 }}
+              disabled={disable}
+              variant="contained"
+              onClick={() => handleImport()}
+            >
               Thêm mới
             </Button>
           </DialogActions>

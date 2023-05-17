@@ -18,7 +18,7 @@ const WarehouseGatewayScreen = () => {
   } = useAuth();
 
   React.useEffect(() => {
-    trigger({ id: currentUser?.sub_id, params: { limit, ...paginate } });
+    trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
   }, [trigger, paginate]);
 
   return (

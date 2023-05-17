@@ -22,7 +22,7 @@ const slice = createSlice({
       return { ...payload, show: true };
     },
     hideModalConfirm: (state) => {
-      return { ...state, show: false };
+      return { ...initialState };
     },
   },
 });

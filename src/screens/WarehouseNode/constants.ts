@@ -1,9 +1,9 @@
 export const LIST_STATUS_NODE = {
   ALL: '0',
-  ACTIVE: '1',
-  WARRANTY: '2',
-  SAVE: '3',
-  FREE: '4',
+  ACTIVE: 'activated',
+  WARRANTY: 'repared',
+  SAVE: 'stock',
+  FREE: 'free',
 };
 
 const { ALL, ACTIVE, FREE, WARRANTY, SAVE } = LIST_STATUS_NODE;
