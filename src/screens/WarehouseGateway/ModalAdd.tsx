@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import styled from '@emotion/styled';
+import CloseIcon from '@mui/icons-material/Close';
 import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
-import * as Yup from 'yup';
-import Button from '../../common/button/Button';
-import Select from '../../common/Select/Select';
-import CloseIcon from '@mui/icons-material/Close';
-import styled from '@emotion/styled';
-import DragDropFile from '../../common/DragDropFile/DragDropFile';
-import { MAX_FILE_SIZE } from '../../configs/constant';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useCreateGatewayMutation, useImportGatewayMutation } from 'services/gateway.service';
-import FormikWrappedField from '../../common/input/Field';
+import * as Yup from 'yup';
+import DragDropFile from '../../common/DragDropFile/DragDropFile';
+import Select from '../../common/Select/Select';
+import Button from '../../common/button/Button';
 import DatePickers from '../../common/datePicker/DatePicker';
+import FormikWrappedField from '../../common/input/Field';
+import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
 
 interface Props {
@@ -133,7 +133,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
   let disable = false;
   switch (tab) {
     case 0:
-      disable = !isValid || !dirty;
+      disable = !isValid || !dirty || values.type === 'none';
       break;
     case 1:
       disable = !file;
@@ -207,6 +207,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 ]}
                 selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
+                error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
               />
               <FormikWrappedField
                 style={{ width: 286 }}

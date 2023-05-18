@@ -29,3 +29,12 @@ export const listStatusNode = Object.keys(mappingStatusNode).map((item) => ({
 }));
 
 export const listStatusNodeLess = listStatusNode.slice(1);
+
+export const defaultInitialValues = {
+  id: '',
+  type: 'none',
+  description: '',
+  serial: '',
+  version: '',
+  startDate: '',
+};

@@ -1,36 +1,65 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import { DialogActions, DialogContent } from '@mui/material';
+import DatePickers from '../../common/datePicker/DatePicker';
+import FormikWrappedField from '../../common/input/Field';
 import { Form, FormikProvider, useFormik } from 'formik';
+import { useAuth } from '../../hooks/useAuth';
+import React, { useEffect } from 'react';
+import { useUpdateNodeMutation } from '../../services/node.service';
 import * as Yup from 'yup';
-import { Input } from '../../common';
 import Select from '../../common/Select/Select';
-import { listStatusNodeLess } from './constants';
-import { MAX_FILE_SIZE } from 'configs/constant';
-import Modal from '../../common/modal/Modal';
 import Button from '../../common/button/Button';
+import Modal from '../../common/modal/Modal';
 
+interface ValuesType {
+  id?: string;
+  type: string;
+  description?: string;
+  serial: string;
+  version: string;
+  startDate: string;
+}
 interface Props {
   show: boolean;
   onClose?: () => void;
+  initialValues: ValuesType;
 }
 
-const ModalEditNode: React.FC<Props> = ({ show, onClose }) => {
+const validationSchema = Yup.object().shape({
+  serial: Yup.string().required('Serial không được để trống'),
+  version: Yup.string().required('Phiên bản không được để trống'),
+  startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
+});
+
+const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues }) => {
+  const [editNode] = useUpdateNodeMutation();
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
+
   const formik = useFormik({
-    initialValues: {
-      type: 'none',
-      description: '',
-      serial: '',
-      version: '',
-      startDate: '17/03/2023',
-      status: 'none',
-    },
+    initialValues,
     enableReinitialize: true,
-    validationSchema: Yup.object().shape({}),
+    validationSchema,
     onSubmit: async (values) => {
-      console.log(values);
+      const body = {
+        id: values.id,
+        node_type_id: values.type,
+        serial: values.serial,
+        version: values.version,
+        mfg: values.startDate,
+        description: values.description,
+      };
+      try {
+        await editNode({ parent_uuid: currentUser?.sub_id, node: body }).unwrap();
+        onClose?.();
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
-  const { handleSubmit, getFieldProps, values, errors, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue, touched, isSubmitting } =
+    formik;
 
   useEffect(() => {
     if (!show) return;
@@ -54,26 +83,40 @@ const ModalEditNode: React.FC<Props> = ({ show, onClose }) => {
               style={{ width: 286 }}
               fullWidth
               topLable="Loại sản phẩm"
-              data={[{ value: 'none', label: 'Chọn loại sản phẩm' }, ...listStatusNodeLess]}
-              selected={0}
+              data={[
+                { value: 'none', label: 'Chọn loại sản phẩm' },
+                { value: 'snh-srb', label: 'Node Sample' },
+              ]}
+              selected={values.type}
               setSelected={(type) => setFieldValue('type', type)}
+              error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
             />
-            <Input style={{ width: 286 }} topLable="Mô tả" placeholder="Nhập mô tả" {...getFieldProps('description')} />
-            <Input style={{ width: 286 }} topLable="Serial" placeholder="Nhập serial" {...getFieldProps('serial')} />
-            <Input
+            <FormikWrappedField
+              style={{ width: 286 }}
+              topLable="Mô tả"
+              placeholder="Nhập mô tả"
+              {...getFieldProps('description')}
+            />
+            <FormikWrappedField
+              style={{ width: 286 }}
+              topLable="Serial"
+              placeholder="Nhập serial"
+              {...getFieldProps('serial')}
+            />
+            <FormikWrappedField
               style={{ width: 286 }}
               topLable="Phiên bản"
               placeholder="Nhập phiên bản"
               {...getFieldProps('version')}
             />
-            <Input style={{ width: 286 }} topLable="Ngày xuất xưởng" {...getFieldProps('startDate')} />
-            <Select
+            <DatePickers
+              {...getFieldProps('startDate')}
+              date={values.startDate}
               style={{ width: 286 }}
-              fullWidth
-              topLable="Trạng thái"
-              data={[{ value: 'none', label: 'Chọn trạng thái' }, ...listStatusNodeLess]}
-              selected={0}
-              setSelected={(status) => setFieldValue('status', status)}
+              topLable="Ngày xuất xưởng"
+              onChange={(date) => setFieldValue('startDate', date)}
+              showError={touched.startDate || isSubmitting}
+              error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
             />
           </DialogContent>
           <DialogActions sx={{ padding: 0 }}>

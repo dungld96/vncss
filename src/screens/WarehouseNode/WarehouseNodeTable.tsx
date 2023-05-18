@@ -41,7 +41,7 @@ import { useAuth } from '../../hooks/useAuth';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { useAchieveNodeMutation, useDeleteNodeMutation } from '../../services/node.service';
 import { selectNode } from '../../state/modules/node/nodeReducer';
-import { listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
+import { defaultInitialValues, listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
 import ModalAddNode from './ModalAddNode';
 import ModalChangeAgency from './ModalChangeAgency';
 import ModalEditNode from './ModalEditNode';
@@ -90,7 +90,7 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => onActionClick('edit', rowId)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
@@ -131,7 +131,10 @@ export const WarehouseNodeTable = () => {
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [modalEdit, setModalEdit] = useState({
+    show: false,
+    initialValues: defaultInitialValues,
+  });
 
   const [modalChangeAgency, setModaChangeAgency] = useState<{ show: boolean; ids: (string | number)[] }>({
     show: false,
@@ -223,15 +226,28 @@ export const WarehouseNodeTable = () => {
     });
   };
 
-  const handleClick = (type: string, id: string | any) => {
+  const handleUpdateNode = (item: any) => {
+    const newValues = {
+      id: item.id,
+      type: item.node_type_id,
+      description: item.description || '',
+      serial: item.serial,
+      version: item.version,
+      startDate: dayjs(item.mfg)?.format('DD/MM/YYYY'),
+    };
+
+    setModalEdit({ show: true, initialValues: newValues });
+  };
+
+  const handleClick = (type: string, item: string | any) => {
     if (type === 'edit') {
-      setShowModalEdit(true);
+      handleUpdateNode(item);
     } else if (type === 'change-agency') {
-      handelMove([id]);
+      handelMove([item]);
     } else if (type === 'recall') {
-      handleRecall([id]);
+      handleRecall([item]);
     } else if (type === 'delete') {
-      handleDeleteNodes(id);
+      handleDeleteNodes(item);
     }
   };
 
@@ -253,7 +269,7 @@ export const WarehouseNodeTable = () => {
         {...modalChangeAgency}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
-      <ModalEditNode show={showModalEdit} onClose={() => setShowModalEdit(false)} />
+      <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} />
       <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <Box
         sx={{

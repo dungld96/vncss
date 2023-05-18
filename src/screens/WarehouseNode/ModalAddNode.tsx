@@ -70,8 +70,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
-  const [addNode] = useCreateNodeMutation()
-  const [importNode] = useImportNodeMutation()
+  const [addNode] = useCreateNodeMutation();
+  const [importNode] = useImportNodeMutation();
 
   const [tab, setTab] = useState(0);
   const [file, setFile] = useState<any>(null);
@@ -129,7 +129,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
   let disable = false;
   switch (tab) {
     case 0:
-      disable = !isValid || !dirty;
+      disable = !isValid || !dirty || values.type === 'none';
       break;
     case 1:
       disable = !file;
@@ -208,6 +208,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 ]}
                 selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
+                error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
               />
               <FormikWrappedField
                 style={{ width: 286 }}
