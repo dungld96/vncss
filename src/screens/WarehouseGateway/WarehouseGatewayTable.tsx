@@ -14,7 +14,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   CustomFieldType,
   getTableCell,
@@ -40,12 +40,13 @@ import useModalConfirm from '../../hooks/useModalConfirm';
 import ModalChangeAgency from '../../screens/WarehouseNode/ModalChangeAgency';
 import { IUser } from '../../services/auth.service';
 import { selectGateway } from '../../state/modules/gateway/gatewayReducer';
-import { listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
+import { listStatusGateway, mappingStatusGateway, mappingStatusGatewayColor } from './constants';
 import ModalAdd from './ModalAdd';
 import ModalExtendGateway from './ModalExtendGateway';
 
 import dayjs from 'dayjs';
 import { useAuth } from '../../hooks/useAuth';
+import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
 import { useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
 
 const ActionCellContent = ({
@@ -131,6 +132,7 @@ const ActionCellContent = ({
 export const WarehouseGatewayTable = () => {
   const [achieveGateway] = useAchieveGatewayMutation();
   const [deleteGateway] = useDeleteGatewayMutation();
+  const [trigger] = useLazyGetAllAgenciesQuery();
 
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
@@ -163,8 +165,6 @@ export const WarehouseGatewayTable = () => {
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'name', width: 200 },
-    { columnName: 'phone', align: 'center' },
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
@@ -172,8 +172,8 @@ export const WarehouseGatewayTable = () => {
     status: {
       renderContent: ({ row }) => {
         return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
-            {mappingStatusNode[row.status]}
+          <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusGatewayColor[row.status]}` }}>
+            {mappingStatusGateway[row.status]}
           </Typography>
         );
       },
@@ -216,32 +216,22 @@ export const WarehouseGatewayTable = () => {
     });
   };
 
+  const handelMove = (ids: (string | number)[], more?: boolean) => {
+    setModaChangeAgency({
+      ids,
+      show: true,
+    });
+  };
+
   const handleClick = (type: string, id: string | any) => {
     if (type === 'extend') {
       setModalExtend(true);
     } else if (type === 'change-agency') {
-      setModaChangeAgency({
-        ids: [id],
-        show: true,
-      });
+      handelMove([id]);
     } else if (type === 'recall') {
       handleRecall([id]);
     } else if (type === 'delete') {
-      showModalConfirm({
-        type: 'warning',
-        title: 'Xoá gateway',
-        content: 'Bạn có chắc chắn muốn xoá gateway này không?',
-        confirm: {
-          action: async () => {
-            await deleteGateway({ id, parent_uuid: currentUser?.sub_id || '' }).unwrap();
-            hideModalConfirm();
-          },
-          text: 'Xoá gateway',
-        },
-        cancel: {
-          action: hideModalConfirm,
-        },
-      });
+      handleDeleteGatways(id);
     }
   };
 
@@ -251,20 +241,24 @@ export const WarehouseGatewayTable = () => {
   };
 
   const handleSelectionChange = (selectedRowIndices: (number | string)[]) => {
-    const selectedRowIds = selectedRowIndices.map((index) => data[Number(index)]?.id);
+    const selectedRowIds = selectedRowIndices.map((index) => data[Number(index)]?.id || '');
     setSelection(selectedRowIds);
   };
 
-  const handleDeleteMultilUsers = () => {
+  const handleDeleteGatways = (id: string, more?: boolean) => {
     showModalConfirm({
       type: 'warning',
       title: 'Xoá gateway',
       content: 'Bạn có chắc chắn muốn xoá gateway này không?',
       confirm: {
         action: async () => {
-          await deleteGateway({ id: selection.join(','), parent_uuid: currentUser?.sub_id || '' }).unwrap();
-          setSelection([]);
-          hideModalConfirm();
+          try {
+            await deleteGateway({ id, parent_uuid: currentUser?.sub_id || '' }).unwrap();
+            hideModalConfirm();
+            more && setSelection([]);
+          } catch (error) {
+            console.log(error);
+          }
         },
         text: 'Xoá gateway',
       },
@@ -274,10 +268,17 @@ export const WarehouseGatewayTable = () => {
     });
   };
 
+  useEffect(() => {
+    if (currentUser) {
+      trigger({ id: currentUser?.sub_id });
+    }
+  }, [trigger, currentUser]);
+
   return (
     <>
       <ModalExtendGateway show={ModalExtend} onClose={() => setModalExtend(false)} />
       <ModalChangeAgency
+        onSuccess={() => setSelection([])}
         type="gateway"
         {...modalChangeAgency}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
@@ -310,7 +311,7 @@ export const WarehouseGatewayTable = () => {
           />
           <Select noMarginTop topLable="Đại lý" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
           <Select noMarginTop topLable="Loại thiết bị" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
-          <Select noMarginTop topLable="Trạng thái" data={listStatusNode} selected="0" />
+          <Select noMarginTop topLable="Trạng thái" data={listStatusGateway} selected="0" />
           <Button style={{ width: 90 }} variant="contained">
             Lọc
           </Button>
@@ -375,12 +376,7 @@ export const WarehouseGatewayTable = () => {
                 <ButtonBase
                   sx={{ color: '#52535C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={ShopIcon} />}
-                  onClick={() =>
-                    setModaChangeAgency({
-                      ids: [...selection],
-                      show: true,
-                    })
-                  }
+                  onClick={() => handelMove([...selection])}
                 >
                   Chuyển
                 </ButtonBase>
@@ -394,7 +390,7 @@ export const WarehouseGatewayTable = () => {
                 <ButtonBase
                   sx={{ color: '#E5401C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={DeleteIcon} />}
-                  onClick={handleDeleteMultilUsers}
+                  onClick={() => handleDeleteGatways(selection.join(','), true)}
                 >
                   Xóa
                 </ButtonBase>

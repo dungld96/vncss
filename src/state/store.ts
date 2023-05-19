@@ -32,6 +32,7 @@ export const store = configureStore({
       usersApi.middleware,
       agenciesApi.middleware,
       gatewaysApi.middleware,
+      nodesApi.middleware,
     ]),
 });
 

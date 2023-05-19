@@ -104,7 +104,6 @@ const ActionCellContent = ({
 
 export const AgenciesTable = () => {
   const agencies = useSelector(selectAgencies);
-  console.log(agencies);
 
   const [deleteAgency] = useDeleteAgencyMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
@@ -145,7 +144,7 @@ export const AgenciesTable = () => {
         content: 'Bạn có chắc chắn muốn xoá đại lý này không?',
         confirm: {
           action: async () => {
-            await deleteAgency({ id: row.id }).unwrap();
+            await deleteAgency({ id: row.id || '' }).unwrap();
             hideModalConfirm();
           },
           text: 'Xoá đại lý',

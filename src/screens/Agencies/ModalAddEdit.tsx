@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import { unionBy } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -10,17 +11,15 @@ import FormikWrappedField from '../../common/input/Field';
 import Modal from '../../common/modal/Modal';
 import Select from '../../common/Select/Select';
 import { useAuth } from '../../hooks/useAuth';
-import { useAddlAgencyMutation, useUpdateAgencyMutation } from '../../services/agencies.service';
+import { IAgency, useAddlAgencyMutation, useUpdateAgencyMutation } from '../../services/agencies.service';
 import { selectAgencies } from '../../state/modules/agency/agencyReducer';
 import { ImageIcon } from '../../utils/UtilsComponent';
-import { AgencyType } from './constants';
-import { unionBy } from 'lodash';
 
 interface Props {
   show: boolean;
   onClose: () => void;
   type: string;
-  initialValues: AgencyType;
+  initialValues: IAgency;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -67,20 +66,19 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
     onSubmit: async ({ id, name, username, address, parent_id, password, phone }) => {
       if (isUpdate) {
         await updateAgency({
-          id,
-          name,
-          phone,
-          address,
+          agency: { id, name, phone, address },
         }).unwrap();
         onClose();
       } else {
         await addAgency({
-          name,
-          username,
-          password,
-          address,
-          phone,
-          parent_id,
+          agency: {
+            name,
+            username,
+            password,
+            address,
+            phone,
+            parent_id,
+          },
           parent_uuid: currentUser?.sub_id,
         }).unwrap();
         onClose();
@@ -100,7 +98,7 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
       label: agency.name,
     }));
     const currentAgency = [{ value: currentUser?.sub_id, label: 'Đại lí hiện tại' }];
-    return unionBy(newAgencies, currentAgency, 'value');
+    return unionBy(currentAgency, newAgencies, 'value');
   }, [agencies]);
 
   return (

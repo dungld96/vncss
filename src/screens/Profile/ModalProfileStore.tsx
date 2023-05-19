@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import Modal from '../../common/modal/Modal';
-import { useUpdateAgencyMutation } from '../../services/agencies.service';
+import { useUpdateCurrentAgencyMutation } from '../../services/agencies.service';
 
 const ContentWrapper = styled(DialogContent)({
   padding: 0,
@@ -22,14 +22,14 @@ interface Props {
 const validationSchema = Yup.object().shape({});
 
 const ModalProfileStore: React.FC<Props> = ({ show, onClose, initialValues }) => {
-  const [updateAgency, {}] = useUpdateAgencyMutation();
+  const [updateAgency, {}] = useUpdateCurrentAgencyMutation();
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await updateAgency({ ...values }).unwrap();
+        await updateAgency({ agency: values }).unwrap();
         onClose();
       } catch (error) {
         console.error('rejected', error);

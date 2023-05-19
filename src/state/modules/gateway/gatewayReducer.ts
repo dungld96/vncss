@@ -2,9 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
 import { CursorsType } from '../../../configs/constant';
+import { IGateway } from '../../../services/gateway.service';
 
 type GatewayState = {
-  gateways: any[];
+  gateways: IGateway[];
   cursors: CursorsType;
   limit: number;
 };
@@ -17,7 +18,7 @@ const slice = createSlice({
   reducers: {
     setGateways: (
       state,
-      { payload: { gateways, cursors } }: PayloadAction<{ gateways: any[]; cursors: CursorsType }>
+      { payload: { gateways, cursors } }: PayloadAction<{ gateways: IGateway[]; cursors: CursorsType }>
     ) => {
       state.gateways = gateways;
       state.cursors = cursors;

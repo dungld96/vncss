@@ -1,14 +1,49 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { CursorsType } from '../configs/constant';
 import { setGateways } from '../state/modules/gateway/gatewayReducer';
-import { queryRootConfig } from './http.service';
+import { queryRootConfig, ResponsiveInterface } from './http.service';
+
+export interface IGateway {
+  id?: string;
+  agency_id?: string;
+  gateway_type_id: string;
+  name?: string;
+  sim?: string;
+  serial: string;
+  hardware_version: string;
+  firmware_version?: string;
+  mfg: Date | string;
+  alert?: number;
+  blocking?: boolean;
+  testing?: boolean;
+  state?: null;
+  status?: string;
+  secure_code?: string;
+  enable_callcenter?: boolean;
+  description?: string;
+}
+
+export interface DeltailGatewayResponsiveInterface extends ResponsiveInterface {
+  data: IGateway;
+}
+
+export interface GatewaysResponsiveInterface extends ResponsiveInterface {
+  data: IGateway[];
+  cursor: CursorsType;
+}
+
+export interface GatewayRequestInterface {
+  parent_uuid?: string;
+  gateway: IGateway;
+}
 
 export const gatewaysApi = createApi({
   ...queryRootConfig,
   reducerPath: 'gatewaysApi',
   tagTypes: ['Gateway'],
   endpoints: (build) => ({
-    getListGateway: build.query<any, any>({
-      query: (body) => ({ url: `agencies/${body.id}/gateways`, params: body.params }),
+    getListGateway: build.query<GatewaysResponsiveInterface, { agency_id?: string; params: any }>({
+      query: (body) => ({ url: `agencies/${body.agency_id}/gateways`, params: body.params }),
       providesTags(result) {
         return [{ type: 'Gateway' }];
       },
@@ -29,13 +64,13 @@ export const gatewaysApi = createApi({
         } catch (error) {}
       },
     }),
-    createGateway: build.mutation<any, any>({
-      query: (body) => {
+    createGateway: build.mutation<DeltailGatewayResponsiveInterface, GatewayRequestInterface>({
+      query: ({ gateway, parent_uuid }) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/gateways`,
+            url: `agencies/${parent_uuid}/gateways`,
             method: 'POST',
-            body: body,
+            body: gateway,
           };
         } catch (error: any) {
           throw new error.message();
@@ -43,13 +78,13 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
-    updateGateway: build.mutation<any, any>({
-      query: (body) => {
+    updateGateway: build.mutation<DeltailGatewayResponsiveInterface, GatewayRequestInterface>({
+      query: ({ gateway, parent_uuid }) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/gateways/${body.id}`,
+            url: `agencies/${parent_uuid}/gateways/${gateway.id}`,
             method: 'PUT',
-            body: body,
+            body: gateway,
           };
         } catch (error: any) {
           throw new error.message();
@@ -57,7 +92,7 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
-    achieveGateway: build.mutation<any, any>({
+    achieveGateway: build.mutation<any, { parent_uuid?: string; gateway_ids: (string | number)[] }>({
       query: (body) => {
         try {
           return {
@@ -71,13 +106,13 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
-    moveGateway: build.mutation<any, any>({
-      query: (body) => {
+    moveGateway: build.mutation<any, { gateway_ids?: (string | number)[]; agency_id: string; parent_uuid?: string }>({
+      query: ({ agency_id, gateway_ids, parent_uuid }) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/gateways/move`,
+            url: `agencies/${parent_uuid}/gateways/move`,
             method: 'POST',
-            body: body,
+            body: { gateway_ids, agency_id },
           };
         } catch (error: any) {
           throw new error.message();
@@ -85,7 +120,7 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
-    deleteGateway: build.mutation<null, { id: string; parent_uuid: string }>({
+    deleteGateway: build.mutation<null, { id: string; parent_uuid?: string }>({
       query: (body) => {
         try {
           return {

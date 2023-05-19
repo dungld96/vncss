@@ -5,7 +5,7 @@ import DefaultAvatar from '../../assets/img/avatar.svg';
 
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { useAuth } from '../../hooks/useAuth';
-import { useGetArgencyQuery } from '../../services/agencies.service';
+import { useGetAgencyQuery } from '../../services/agencies.service';
 import ModalChangePassword from './ModalChangePassword';
 import ModalProfileStore from './ModalProfileStore';
 import ModalProfileUser from './ModalProfileUser';
@@ -148,7 +148,7 @@ const Profile: React.FC = () => {
     auth: { currentUser },
   } = useAuth() as any;
 
-  const { data: agency } = useGetArgencyQuery({ id: currentUser?.sub_id });
+  const { data: agency } = useGetAgencyQuery({ id: currentUser?.sub_id });
 
   const currentAgency: any = agency?.data;
 
