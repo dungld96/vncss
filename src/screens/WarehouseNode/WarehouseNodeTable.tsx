@@ -151,11 +151,7 @@ export const WarehouseNodeTable = () => {
     auth: { currentUser },
   } = useAuth();
 
-  const mappingAgencies = {} as any;
-
-  agencies.forEach((agency) => {
-    mappingAgencies[agency?.id || ''] = agency.name;
-  });
+  const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
 
   const [columns] = useState([
     { name: 'node_type_id', title: 'Loại' },
@@ -173,30 +169,30 @@ export const WarehouseNodeTable = () => {
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
-  const [customField] = useState<CustomFieldType>({
-    status: {
-      renderContent: ({ row }) => (
-        <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
-          {mappingStatusNode[row.status]}
-        </Typography>
-      ),
-    },
-    mfg: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
-        );
+  const customField = useMemo<CustomFieldType>(
+    () => ({
+      status: {
+        renderContent: ({ row }) => (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
+            {mappingStatusNode[row.status]}
+          </Typography>
+        ),
       },
-    },
-    agency_id: {
-      renderContent: ({ row }) =>
-        !row.agency_id ? (
-          '--'
-        ) : (
+      mfg: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
+          );
+        },
+      },
+      agency_id: {
+        renderContent: ({ row }) => (
           <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{mappingAgencies[row.agency_id] || '--'}</Typography>
         ),
-    },
-  });
+      },
+    }),
+    [mappingAgencies]
+  );
 
   const handleRecall = (ids: (string | number)[], more?: boolean) => {
     showModalConfirm({

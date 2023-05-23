@@ -21,7 +21,7 @@ const WarehouseNodeScreen = () => {
     if (currentUser) {
       trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
     }
-  }, [trigger, paginate, currentUser]);
+  }, [trigger, paginate, currentUser, limit]);
 
   return (
     <div>

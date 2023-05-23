@@ -150,11 +150,7 @@ export const WarehouseGatewayTable = () => {
     auth: { currentUser },
   } = useAuth();
 
-  const mappingAgencies = {} as any;
-
-  agencies.forEach((agency) => {
-    mappingAgencies[agency?.id || ''] = agency.name;
-  });
+  const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
 
   const [columns] = useState([
     { name: 'gateway_type_id', title: 'Loại' },
@@ -176,44 +172,50 @@ export const WarehouseGatewayTable = () => {
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
-  const [customField] = useState<CustomFieldType>({
-    status: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusGatewayColor[row.status]}` }}>
-            {mappingStatusGateway[row.status]}
-          </Typography>
-        );
+  const customField = useMemo<CustomFieldType>(
+    () => ({
+      status: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusGatewayColor[row.status]}` }}>
+              {mappingStatusGateway[row.status]}
+            </Typography>
+          );
+        },
       },
-    },
-    mfg: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
-        );
+      mfg: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
+          );
+        },
       },
-    },
-    active_at: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
-            {dayjs(row?.active_at)?.format('DD/MM/YYYY')}
-          </Typography>
-        );
+      active_at: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
+              {dayjs(row?.active_at)?.format('DD/MM/YYYY')}
+            </Typography>
+          );
+        },
       },
-    },
-    enable_callcenter: {
-      renderContent: ({ row }) => (row.enable_callcenter === null ? '--' : <Switch checked={row.enable_callcenter} />),
-    },
-    agency_id: {
-      renderContent: ({ row }) =>
-        !row.agency_id ? (
-          '--'
-        ) : (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{mappingAgencies[row.agency_id] || '--'}</Typography>
-        ),
-    },
-  });
+      enable_callcenter: {
+        renderContent: ({ row }) =>
+          row.enable_callcenter === null ? '--' : <Switch checked={row.enable_callcenter} />,
+      },
+      agency_id: {
+        renderContent: ({ row }) => {
+          console.log(mappingAgencies, row.agency_id);
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
+              {mappingAgencies[row.agency_id] || '--'}
+            </Typography>
+          );
+        },
+      },
+    }),
+    [mappingAgencies]
+  );
 
   const handleRecall = (ids: (string | number)[], more?: boolean) => {
     showModalConfirm({
