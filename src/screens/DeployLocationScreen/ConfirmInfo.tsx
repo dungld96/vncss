@@ -1,4 +1,14 @@
-import { Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Divider,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import SimpleBar from 'simplebar-react';
@@ -8,9 +18,6 @@ import { dataTag } from '../../common/TableTag/dataSelectTag';
 import TableTag from '../../common/TableTag/TableTag';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-interface Props {
-  maxHeight?: string | number;
-}
 
 const RenderInfor = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -25,15 +32,17 @@ const RenderInfor = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
-const ConfirmInfo: React.FC<Props> = ({ maxHeight }) => {
+const ConfirmInfo: React.FC = () => {
   const [listUser] = React.useState([
     { id: 'YCINVzlKVKg7tZHROV2q', userName: 'Hàn Việt Anh', service: 'Nhân viên', userPhone: '0983888444' },
     { id: '2cCks2hpmCbuvyfn5rT', userName: 'Vũ Quang Anh', service: 'Trưởng phòng', userPhone: '0978456789' },
   ]);
   return (
-    <SimpleBar style={{ maxHeight }}>
+    <SimpleBar style={{ maxHeight: '560px' }}>
       <Box>
-        <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px', marginBottom: '20px' }}>
+        <Typography
+          sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px', marginBottom: '20px', marginTop: '16px' }}
+        >
           Thông tin chung
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>

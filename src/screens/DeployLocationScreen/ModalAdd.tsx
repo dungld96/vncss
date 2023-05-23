@@ -5,6 +5,8 @@ import SelectPosition from '../../common/SelectPosition/SelectPosition';
 import React, { useState } from 'react';
 import LocationInfo from './LocationInfo';
 import ConfirmInfo from './ConfirmInfo';
+import { Form, FormikProvider, useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const steps = ['Chọn vị trí triển khai trên bản đồ', 'Thông tin vị trí triển khai', 'Xác nhận thông tin'];
 
@@ -13,10 +15,23 @@ interface Props {
   onClose: () => void;
 }
 
+const validationSchema = Yup.object().shape({});
+
 const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const [selectedPosition, setSelectedPosition] = useState(null);
+
+  const formik = useFormik({
+    initialValues: {},
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+
+  const { submitForm, values } = formik;
 
   const handleNext = (step: number) => {
     setActiveStep(step + 1);
@@ -31,11 +46,25 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
       case 0:
         return <SelectPosition selectedPosition={selectedPosition} handleSelectedPosition={handleSelectedPosition} />;
       case 1:
-        return <LocationInfo maxHeight="calc(100vh - 364px)" />;
+        return <LocationInfo />;
       case 2:
-        return <ConfirmInfo maxHeight="calc(100vh - 364px)" />;
+        return <ConfirmInfo />;
       default:
         return 'Unknown step';
+    }
+  };
+
+  const handelClickNext = (step: number) => {
+    switch (step) {
+      case 0:
+        handleNext(activeStep);
+        break;
+      case 1:
+        handleNext(activeStep);
+        break;
+      case 2:
+        submitForm();
+        break;
     }
   };
 
@@ -47,7 +76,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
         maxWidth: '1136px',
         display: 'flex',
         flexDirection: 'column',
-        overflowX: 'visible',
+        overflow: 'hidden',
       }}
       size="xl"
       show={show}
@@ -100,21 +129,17 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
         </Stepper>
       </Box>
       <Divider />
-      <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-        }}
-      >
-        {RenderStep(activeStep)}
-      </Box>
+
+      <FormikProvider value={formik}>
+        <Form style={{ width: '100%', height: '100%' }}>{RenderStep(activeStep)}</Form>
+      </FormikProvider>
       <DialogActions sx={{ padding: 0 }}>
         {activeStep !== 0 && (
           <Button style={{ width: 131 }} variant="outlined" onClick={() => setActiveStep(activeStep - 1)}>
             Trước đó
           </Button>
         )}
-        <Button style={{ width: 131 }} variant="contained" onClick={() => handleNext(activeStep)}>
+        <Button style={{ width: 131 }} variant="contained" onClick={() => handelClickNext(activeStep)}>
           Tiếp theo
         </Button>
       </DialogActions>

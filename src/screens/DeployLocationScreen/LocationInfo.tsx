@@ -11,19 +11,18 @@ import { dataTag } from '../../common/TableTag/dataSelectTag';
 import TableTag from '../../common/TableTag/TableTag';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
-interface Props {
-  maxHeight?: string | number;
-}
 const randomId = () => Math.random().toString(36).substr(2, 6);
 
-const LocationInfo: React.FC<Props> = ({ maxHeight }) => {
+const LocationInfo: React.FC = () => {
   const [listUsersReceiveNoti, setListUsersReceiveNoti] = useState([
     { id: randomId(), userName: '', service: '', userPhone: '' },
   ]);
   return (
-    <SimpleBar style={{ maxHeight }}>
+    <SimpleBar style={{ maxHeight: '560px' }}>
       <Box>
-        <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px' }}>Thông tin chung</Typography>
+        <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px', marginTop: '16px' }}>
+          Thông tin chung
+        </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           <Input style={{ width: '312px' }} topLable="Tên vị trí triển khai" placeholder="Nhập tên vị trí" />
           <Input style={{ width: '312px' }} topLable="Người liên hệ" placeholder="Nhập tên người liên hệ" />

@@ -264,9 +264,9 @@ export const WarehouseNodeTable = () => {
   return (
     <>
       <ModalChangeAgency
+        {...modalChangeAgency}
         type="node"
         onSuccess={() => setSelection([])}
-        {...modalChangeAgency}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
       <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} />
