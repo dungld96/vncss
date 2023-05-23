@@ -14,7 +14,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   CustomFieldType,
   getTableCell,
@@ -45,6 +45,8 @@ import { defaultInitialValues, listStatusNode, mappingStatusNode, mappingStatusN
 import ModalAddNode from './ModalAddNode';
 import ModalChangeAgency from './ModalChangeAgency';
 import ModalEditNode from './ModalEditNode';
+import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
+import { selectAgencies } from '../../state/modules/agency/agencyReducer';
 
 const ActionCellContent = ({
   cellProps,
@@ -127,6 +129,7 @@ const ActionCellContent = ({
 export const WarehouseNodeTable = () => {
   const [achieveNode] = useAchieveNodeMutation();
   const [deleteNode] = useDeleteNodeMutation();
+  const [trigger] = useLazyGetAllAgenciesQuery();
 
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
@@ -142,9 +145,17 @@ export const WarehouseNodeTable = () => {
   });
 
   const data = useSelector(selectNode);
+  const agencies = useSelector(selectAgencies);
+
   const {
     auth: { currentUser },
   } = useAuth();
+
+  const mappingAgencies = {} as any;
+
+  agencies.forEach((agency) => {
+    mappingAgencies[agency?.id || ''] = agency.name;
+  });
 
   const [columns] = useState([
     { name: 'node_type_id', title: 'Loại' },
@@ -176,6 +187,14 @@ export const WarehouseNodeTable = () => {
           <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
         );
       },
+    },
+    agency_id: {
+      renderContent: ({ row }) =>
+        !row.agency_id ? (
+          '--'
+        ) : (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{mappingAgencies[row.agency_id] || '--'}</Typography>
+        ),
     },
   });
 
@@ -260,6 +279,12 @@ export const WarehouseNodeTable = () => {
     const selectedRowIds = selectedRowIndices.map((index) => data[Number(index)]?.id);
     setSelection(selectedRowIds);
   };
+
+  useEffect(() => {
+    if (currentUser?.sub_id) {
+      trigger({ id: currentUser?.sub_id });
+    }
+  }, [trigger, currentUser]);
 
   return (
     <>
