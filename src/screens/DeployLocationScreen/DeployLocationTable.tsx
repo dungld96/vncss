@@ -93,7 +93,7 @@ export const DeployLocationTable: React.FC = () => {
 
   const [columns] = useState([
     { name: 'province', title: 'Tên vị trí' },
-    { name: 'address', title: 'Địa chỉ' },
+    { name: 'addressString', title: 'Địa chỉ' },
     { name: 'business_id', title: 'Loại hình KD' },
     { name: 'contact_name', title: 'Người liên hệ' },
     { name: 'contact_number', title: 'SĐT người liên hệ' },

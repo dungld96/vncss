@@ -17,9 +17,15 @@ export const loactionsApi = createApi({
           const {
             data: { data },
           } = await queryFulfilled;
+          const dataParse = data.map((item: any) => ({
+            ...item,
+            addressString: `${item.address && item.address + ','} ${item.commune && item.commune + ','} ${
+              item.district && item.district + ','
+            } ${item.province}`,
+          }));
           dispatch(
             setLocations({
-              locations: data,
+              locations: dataParse,
             })
           );
         } catch (error) {}

@@ -7,6 +7,7 @@ import LocationInfo from './LocationInfo';
 import ConfirmInfo from './ConfirmInfo';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
+import useModalConfirm from '../../hooks/useModalConfirm';
 
 const steps = ['Chọn vị trí triển khai trên bản đồ', 'Thông tin vị trí triển khai', 'Xác nhận thông tin'];
 
@@ -18,6 +19,7 @@ interface Props {
 const validationSchema = Yup.object().shape({});
 
 const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
+  const {showModalConfirm,hideModalConfirm} = useModalConfirm()
   const [activeStep, setActiveStep] = useState(0);
 
   const [selectedPosition, setSelectedPosition] = useState(null);
@@ -46,7 +48,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
       case 0:
         return <SelectPosition selectedPosition={selectedPosition} handleSelectedPosition={handleSelectedPosition} />;
       case 1:
-        return <LocationInfo />;
+        return <LocationInfo formik={formik} />;
       case 2:
         return <ConfirmInfo />;
       default:
@@ -57,6 +59,17 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
   const handelClickNext = (step: number) => {
     switch (step) {
       case 0:
+        if(!selectedPosition){
+          showModalConfirm({
+            title:'Thông báo',
+            content:'Bạn phải chọn vị trí trên bản đồ',
+            confirm:{
+              text:'Đã hiểu',
+              action: hideModalConfirm
+            }
+          })
+          return
+        }
         handleNext(activeStep);
         break;
       case 1:

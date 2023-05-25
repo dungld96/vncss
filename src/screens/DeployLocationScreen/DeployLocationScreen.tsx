@@ -18,8 +18,10 @@ const DeployLocationScreen = () => {
   } = useAuth();
 
   useEffect(() => {
-    trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
-  }, [trigger, paginate]);
+    if (currentUser) {
+      trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
+    }
+  }, [trigger, paginate,currentUser]);
 
   return (
     <div>

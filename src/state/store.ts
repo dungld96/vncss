@@ -13,6 +13,7 @@ import agencyReducer from './modules/agency/agencyReducer';
 import gatewayReducer from './modules/gateway/gatewayReducer';
 import nodeReducer from './modules/node/nodeReducer';
 import locationReducer from './modules/location/locationReducer';
+import appState from './modules/app/appReducer'
 
 export const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ export const store = configureStore({
     gatewayState: gatewayReducer,
     nodeState: nodeReducer,
     locationState: locationReducer,
+    appState:appState
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([

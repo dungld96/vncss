@@ -1,22 +1,35 @@
 import { Button, Divider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
+import FormikWrappedField from '../../common/input/Field';
+import { FormikProps, FormikValues } from 'formik';
+import React, { useEffect, useState } from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import AddIcon from '../../assets/icons/add-circle-red.svg';
-import { Input } from '../../common';
 import Select from '../../common/Select/Select';
 import { Switch } from '../../common/Switch/Switch';
 import { dataTag } from '../../common/TableTag/dataSelectTag';
 import TableTag from '../../common/TableTag/TableTag';
 import { ImageIcon } from '../../utils/UtilsComponent';
+import useApp from '../../hooks/useApp';
 
 const randomId = () => Math.random().toString(36).substr(2, 6);
 
-const LocationInfo: React.FC = () => {
+interface Props {
+  formik: FormikProps<FormikValues>;
+}
+
+const LocationInfo: React.FC<Props> = ({ formik }) => {
+  const { area, fetchArea } = useApp();
   const [listUsersReceiveNoti, setListUsersReceiveNoti] = useState([
     { id: randomId(), userName: '', service: '', userPhone: '' },
   ]);
+  const { setFieldValue, values, getFieldProps } = formik;
+
+  useEffect(() => {
+    fetchArea();
+  }, []);
+
   return (
     <SimpleBar style={{ maxHeight: '560px' }}>
       <Box>
@@ -24,9 +37,20 @@ const LocationInfo: React.FC = () => {
           Thông tin chung
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          <Input style={{ width: '312px' }} topLable="Tên vị trí triển khai" placeholder="Nhập tên vị trí" />
-          <Input style={{ width: '312px' }} topLable="Người liên hệ" placeholder="Nhập tên người liên hệ" />
-          <Input
+          <FormikWrappedField
+            {...getFieldProps('name')}
+            style={{ width: '312px' }}
+            topLable="Tên vị trí triển khai"
+            placeholder="Nhập tên vị trí"
+          />
+          <FormikWrappedField
+            {...getFieldProps('contact_name')}
+            style={{ width: '312px' }}
+            topLable="Người liên hệ"
+            placeholder="Nhập tên người liên hệ"
+          />
+          <FormikWrappedField
+            {...getFieldProps('contact_number')}
             style={{ width: '312px' }}
             topLable="Số điện thoại người liên hệ"
             placeholder="Nhập số điện thoại liên hệ"
@@ -34,14 +58,24 @@ const LocationInfo: React.FC = () => {
           <Select fullWidth style={{ width: '312px' }} topLable="Tỉnh thành" placeholder="Chọn tỉnh thành" />
           <Select fullWidth style={{ width: '312px' }} topLable="Quận, Huyện" placeholder="Chọn quận huyện" />
           <Select fullWidth style={{ width: '312px' }} topLable="Phường, Xã" placeholder="Chọn phường xã" />
-          <Input style={{ width: '312px' }} topLable="Tên đường, Toà nhà, Số nhà" placeholder="Nhập địa chỉ" />
+          <FormikWrappedField
+            {...getFieldProps('address')}
+            style={{ width: '312px' }}
+            topLable="Tên đường, Toà nhà, Số nhà"
+            placeholder="Nhập địa chỉ"
+          />
           <Select
             fullWidth
             style={{ width: '312px' }}
             topLable="Loại hình kinh doanh"
             placeholder="Chọn loại hình kinh doanh"
           />
-          <Input style={{ width: '312px' }} topLable="Ngày ký hợp đồng" placeholder="DD/MM/YYYY" />
+          <FormikWrappedField
+            {...getFieldProps('contract_date')}
+            style={{ width: '312px' }}
+            topLable="Ngày ký hợp đồng"
+            placeholder="DD/MM/YYYY"
+          />
         </Box>
       </Box>
 
@@ -49,7 +83,7 @@ const LocationInfo: React.FC = () => {
       <Box marginTop={'16px'}>
         {listUsersReceiveNoti.map((item, index) => {
           return (
-            <Box marginBottom={'24px'}>
+            <Box marginBottom={'24px'} key={item.id}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px' }}>
                   Người nhận thông báo {index + 1}
@@ -62,9 +96,24 @@ const LocationInfo: React.FC = () => {
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                <Input style={{ width: '312px' }} topLable="Họ tên người nhận thông báo" placeholder="Nhập họ tên" />
-                <Input style={{ width: '312px' }} topLable="Chức vụ" placeholder="Nhập chức vụ" />
-                <Input style={{ width: '312px' }} topLable="Số điện thoại" placeholder="Nhập số điện thoại" />
+                <FormikWrappedField
+                  {...getFieldProps('')}
+                  style={{ width: '312px' }}
+                  topLable="Họ tên người nhận thông báo"
+                  placeholder="Nhập họ tên"
+                />
+                <FormikWrappedField
+                  {...getFieldProps('')}
+                  style={{ width: '312px' }}
+                  topLable="Chức vụ"
+                  placeholder="Nhập chức vụ"
+                />
+                <FormikWrappedField
+                  {...getFieldProps('')}
+                  style={{ width: '312px' }}
+                  topLable="Số điện thoại"
+                  placeholder="Nhập số điện thoại"
+                />
               </Box>
             </Box>
           );
@@ -81,7 +130,7 @@ const LocationInfo: React.FC = () => {
           }
         >
           <ImageIcon image={AddIcon} />
-          <Box sx={{ marginLeft: '8px' }}>Thêm vị trí triển khai</Box>
+          <Box sx={{ marginLeft: '8px' }}>Thêm người nhận thông báo</Box>
         </Button>
       </Box>
       <Divider sx={{ marginTop: '16px !important' }} />

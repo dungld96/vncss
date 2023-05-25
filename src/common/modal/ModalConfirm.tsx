@@ -69,7 +69,8 @@ const ModalConfirm: React.FC<ModalConfirmState> = (props) => {
       sx={{
         '.MuiPaper-root': {
           borderRadius: '12px',
-          maxWidth: '391px',
+          maxWidth: '392px',
+          width:'392px'
         },
       }}
     >
