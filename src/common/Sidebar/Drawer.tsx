@@ -1,5 +1,6 @@
 import { useState, ReactNode } from 'react';
-import { Box, Drawer, List, ListItemIcon, ListItem, ListItemText } from '@mui/material';
+import { Box, Drawer, List, ListItemIcon, ListItem, ListItemText, Collapse } from '@mui/material';
+import { ArrowDropDown, ArrowRight } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ImageIcon } from '../../utils/UtilsComponent';
 import {
@@ -15,6 +16,7 @@ import {
   ROUTE_WAREHOUSE_NODE,
   ROUTE_WAREHOUSESIM,
   ROUTE_WAREHOUSE_GATEWAY,
+  ROUTE_WAREHOUSES,
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
@@ -40,9 +42,19 @@ import NodeIcon from '../../assets/icons/node-icon.svg';
 import NodeActiveIcon from '../../assets/icons/node-active-icon.svg';
 import GatewayIcon from '../../assets/icons/gateway-icon.svg';
 import GatewayActiveIcon from '../../assets/icons/gateway-icon-active.svg';
+import ProductIcon from '../../assets/icons/product-icon.svg';
+import ProductActiveIcon from '../../assets/icons/product-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
+interface IRouteSubItem {
+  id: string;
+  title: string;
+  icon: ReactNode;
+  activeIcon: ReactNode;
+  permission: string[];
+  route: string;
+}
 interface IRouteItem {
   id: string;
   title: string;
@@ -50,6 +62,7 @@ interface IRouteItem {
   activeIcon: ReactNode;
   permission: string[];
   route: string;
+  subItems?: IRouteSubItem[];
 }
 
 const listFeature = [
@@ -86,30 +99,6 @@ const listFeature = [
     route: DEPLOY_LOCATION,
   },
   {
-    id: '11115061-4494-4bdc-8a6e-5a59aadec58f',
-    title: 'Nhân viên',
-    icon: <ImageIcon image={usersIcon} />,
-    activeIcon: <ImageIcon image={usersActiveIcon} />,
-    permission: ['users'],
-    route: ROUTE_USER,
-  },
-  {
-    id: '11115061-4494-4bdc-8a6e-5a59aadec5ii',
-    title: 'Kho Gateway',
-    icon: <ImageIcon image={GatewayIcon} />,
-    activeIcon: <ImageIcon image={GatewayActiveIcon} />,
-    permission: ['warehouse-gateway'],
-    route: ROUTE_WAREHOUSE_GATEWAY,
-  },
-  {
-    id: '11115061-4494-4bdc-8a6e-5a59aadec500',
-    title: 'Kho Node',
-    icon: <ImageIcon image={NodeIcon} />,
-    activeIcon: <ImageIcon image={NodeActiveIcon} />,
-    permission: ['warehouse-node'],
-    route: ROUTE_WAREHOUSE_NODE,
-  },
-  {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671a5',
     title: 'Đại lý',
     icon: <ImageIcon image={agencyIcon} />,
@@ -118,29 +107,64 @@ const listFeature = [
     route: ROUTE_AGENCY,
   },
   {
-    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671cc',
-    title: 'Phương tiện tuần tra',
-    icon: <ImageIcon image={vehicleVitalIcon} />,
-    activeIcon: <ImageIcon image={vehicleVitalActiveIcon} />,
-    permission: [''],
-    route: ROUTE_VITAL_VEHICLE,
+    id: '11115061-4494-4bdc-8a6e-5a59aadec58f',
+    title: 'Nhân viên',
+    icon: <ImageIcon image={usersIcon} />,
+    activeIcon: <ImageIcon image={usersActiveIcon} />,
+    permission: ['users'],
+    route: ROUTE_USER,
   },
   {
-    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671aa',
-    title: 'Phương tiện trọng yếu',
-    icon: <ImageIcon image={CarProtectIcon} />,
-    activeIcon: <ImageIcon image={CarProtectActiveIcon} />,
-    permission: [''],
-    route: ROUTE_VEHICLE_PROTECT,
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f267234',
+    title: 'Thiết bị',
+    icon: <ImageIcon image={ProductIcon} />,
+    activeIcon: <ImageIcon image={ProductActiveIcon} />,
+    permission: ['warehouse'],
+    subItems: [
+      {
+        id: '11115061-4494-4bdc-8a6e-5a59aadec5ii',
+        title: 'Kho Gateway',
+        icon: <ImageIcon image={GatewayIcon} />,
+        activeIcon: <ImageIcon image={GatewayActiveIcon} />,
+        permission: ['warehouse-gateway'],
+        route: ROUTE_WAREHOUSE_GATEWAY,
+      },
+      {
+        id: '11115061-4494-4bdc-8a6e-5a59aadec500',
+        title: 'Kho Node',
+        icon: <ImageIcon image={NodeIcon} />,
+        activeIcon: <ImageIcon image={NodeActiveIcon} />,
+        permission: ['warehouse-node'],
+        route: ROUTE_WAREHOUSE_NODE,
+      },
+      {
+        id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671cc',
+        title: 'Phương tiện tuần tra',
+        icon: <ImageIcon image={vehicleVitalIcon} />,
+        activeIcon: <ImageIcon image={vehicleVitalActiveIcon} />,
+        permission: [''],
+        route: ROUTE_VITAL_VEHICLE,
+      },
+      {
+        id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671aa',
+        title: 'Phương tiện trọng yếu',
+        icon: <ImageIcon image={CarProtectIcon} />,
+        activeIcon: <ImageIcon image={CarProtectActiveIcon} />,
+        permission: [''],
+        route: ROUTE_VEHICLE_PROTECT,
+      },
+      {
+        id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ff',
+        title: 'Kho Sim',
+        icon: <ImageIcon image={simIcon} />,
+        activeIcon: <ImageIcon image={simActiveIcon} />,
+        permission: ['warehouse-sim'],
+        route: ROUTE_WAREHOUSESIM,
+      },
+    ],
+    route: ROUTE_WAREHOUSES,
   },
-  {
-    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ff',
-    title: 'Kho Sim',
-    icon: <ImageIcon image={simIcon} />,
-    activeIcon: <ImageIcon image={simActiveIcon} />,
-    permission: ['warehouse-sim'],
-    route: ROUTE_WAREHOUSESIM,
-  },
+
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ss',
     title: 'Báo cáo',
@@ -155,7 +179,7 @@ interface Props {
   open?: boolean;
 }
 export default function DrawerSidebar({ open }: Props) {
-  const [expanded, setExpanded] = useState([]);
+  const [expanded, setExpanded] = useState<string[]>([]);
   const [hovering, setHovering] = useState(false);
   const navigate = useNavigate();
   const localtion = useLocation();
@@ -168,15 +192,32 @@ export default function DrawerSidebar({ open }: Props) {
   };
 
   const onClickDrawerItem = (item: IRouteItem) => {
-    const route = item.route;
-    navigate(route);
+    if (item.subItems && item.subItems.length) {
+      !expanded.includes(item.id)
+        ? setExpanded([...expanded, item.id])
+        : setExpanded(expanded.filter((itemId) => itemId !== item.id));
+    } else {
+      const route = item.route;
+      navigate(route);
+    }
+  };
+
+  const expandedIcon = (item: IRouteItem) => {
+    if (!item.subItems) {
+      return null;
+    }
+    return expanded.includes(item.id) ? (
+      <ArrowDropDown style={{ color: '#8F0A0C', minWidth: 40 }} />
+    ) : (
+      <ArrowRight style={{ color: '#8F0A0C', minWidth: 40 }} />
+    );
   };
 
   const highlighting = (item: IRouteItem) => {
-    // const subItemIds = _.get(item, 'subItems', []).map((subitem) => subitem.id);
-    // if (!open && !hovering && _.includes(subItemIds, currentRouteId)) {
-    //   return true;
-    // }
+    if (item.subItems) {
+      const subItemSelected = item.subItems.find((item) => item.route === localtion.pathname);
+      return Boolean(subItemSelected) && !open && !hovering;
+    }
     return item.route === localtion.pathname;
   };
 
@@ -260,7 +301,46 @@ export default function DrawerSidebar({ open }: Props) {
                     },
                   }}
                 ></ListItemText>
+                {expandedIcon(item)}
               </ListItem>
+              <Collapse in={expanded.includes(item.id) && (open || hovering)} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {item.subItems &&
+                    item.subItems.map((subItem) => {
+                      return (
+                        <ListItem
+                          button
+                          key={subItem.id}
+                          style={{
+                            backgroundColor: highlighting(subItem) ? '#FFF3F4' : '',
+                            borderLeft: highlighting(subItem) ? '4px solid #A53B3D' : '',
+                            padding: highlighting(subItem) ? '12px 16px 12px 32px' : '12px 16px 12px 36px',
+                          }}
+                          onClick={() => onClickDrawerItem(subItem)}
+                        >
+                          <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>
+                            {highlighting(subItem) ? subItem.activeIcon : subItem.icon}
+                          </ListItemIcon>
+                          <ListItemText
+                            sx={{
+                              color: highlighting(subItem) ? '#8F0A0C' : '#8B8C9B',
+                              fontWeight: '500 !important',
+                              fontSize: '14px !important',
+                            }}
+                            primary={subItem.title}
+                            primaryTypographyProps={{
+                              sx: {
+                                color: highlighting(subItem) ? '#8F0A0C' : '#8B8C9B',
+                                fontWeight: '500 !important',
+                                fontSize: '14px !important',
+                              },
+                            }}
+                          ></ListItemText>
+                        </ListItem>
+                      );
+                    })}
+                </List>
+              </Collapse>
             </List>
           ))}
         </Box>

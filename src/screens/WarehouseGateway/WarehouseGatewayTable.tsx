@@ -48,6 +48,7 @@ import dayjs from 'dayjs';
 import { useAuth } from '../../hooks/useAuth';
 import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
 import { useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
+import { selectAgencies } from '../../state/modules/agency/agencyReducer';
 
 const ActionCellContent = ({
   cellProps,
@@ -143,10 +144,13 @@ export const WarehouseGatewayTable = () => {
   });
   const [ModalExtend, setModalExtend] = useState(false);
 
-  const data = useSelector(selectGateway);
+  const gateways = useSelector(selectGateway);
+  const agencies = useSelector(selectAgencies);
   const {
     auth: { currentUser },
   } = useAuth();
+
+  const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
 
   const [columns] = useState([
     { name: 'gateway_type_id', title: 'Loại' },
@@ -168,36 +172,50 @@ export const WarehouseGatewayTable = () => {
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
-  const [customField] = useState<CustomFieldType>({
-    status: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusGatewayColor[row.status]}` }}>
-            {mappingStatusGateway[row.status]}
-          </Typography>
-        );
+  const customField = useMemo<CustomFieldType>(
+    () => ({
+      status: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusGatewayColor[row.status]}` }}>
+              {mappingStatusGateway[row.status]}
+            </Typography>
+          );
+        },
       },
-    },
-    mfg: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
-        );
+      mfg: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{dayjs(row.mfg)?.format('DD/MM/YYYY')}</Typography>
+          );
+        },
       },
-    },
-    active_at: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
-            {dayjs(row?.active_at)?.format('DD/MM/YYYY')}
-          </Typography>
-        );
+      active_at: {
+        renderContent: ({ row }) => {
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
+              {dayjs(row?.active_at)?.format('DD/MM/YYYY')}
+            </Typography>
+          );
+        },
       },
-    },
-    enable_callcenter: {
-      renderContent: ({ row }) => (row.enable_callcenter === null ? '--' : <Switch checked={row.enable_callcenter} />),
-    },
-  });
+      enable_callcenter: {
+        renderContent: ({ row }) =>
+          row.enable_callcenter === null ? '--' : <Switch checked={row.enable_callcenter} />,
+      },
+      agency_id: {
+        renderContent: ({ row }) => {
+          console.log(mappingAgencies, row.agency_id);
+          return (
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
+              {mappingAgencies[row.agency_id] || '--'}
+            </Typography>
+          );
+        },
+      },
+    }),
+    [mappingAgencies]
+  );
 
   const handleRecall = (ids: (string | number)[], more?: boolean) => {
     showModalConfirm({
@@ -241,7 +259,7 @@ export const WarehouseGatewayTable = () => {
   };
 
   const handleSelectionChange = (selectedRowIndices: (number | string)[]) => {
-    const selectedRowIds = selectedRowIndices.map((index) => data[Number(index)]?.id || '');
+    const selectedRowIds = selectedRowIndices.map((index) => gateways[Number(index)]?.id || '');
     setSelection(selectedRowIds);
   };
 
@@ -269,7 +287,7 @@ export const WarehouseGatewayTable = () => {
   };
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser?.sub_id) {
       trigger({ id: currentUser?.sub_id });
     }
   }, [trigger, currentUser]);
@@ -322,9 +340,9 @@ export const WarehouseGatewayTable = () => {
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
-        <Grid rows={data} columns={columns}>
+        <Grid rows={gateways} columns={columns}>
           <SelectionState
-            selection={selection.map((id) => data.findIndex((r: any) => r.id === id))}
+            selection={selection.map((id) => gateways.findIndex((r: any) => r.id === id))}
             onSelectionChange={handleSelectionChange}
           />
           <IntegratedSelection />

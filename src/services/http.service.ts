@@ -1,6 +1,6 @@
 import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { Mutex } from 'async-mutex';
-import { logout } from '../state/modules/auth/authReducer';
+import { AuthResponsiveInterface } from './auth.service';
 
 export const BASE_URL = 'https://stg-api.sesaco.vn/v1';
 export interface ResponsiveInterface {
@@ -35,16 +35,34 @@ const customFetchBase: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryEr
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
       try {
-        // const refreshResult = await baseQuery({ credentials: 'include', url: 'auth/refresh' }, api, extraOptions);
-        // if (refreshResult.data) {
-        //   // Retry the initial query
-        //   result = await baseQuery(args, api, extraOptions);
-        // } else {
-        api.dispatch(logout());
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('current_user');
-        window.location.href = '/login';
-        // }
+        const refreshToken = localStorage.getItem('refresh_token') || '';
+        const refreshResult = (await fetchBaseQuery({
+          baseUrl: BASE_URL,
+          headers: {
+            'content-type': 'application/json',
+          },
+        })(
+          {
+            url: 'auth/refresh',
+            method: 'POST',
+            body: JSON.stringify({ refresh_token: JSON.parse(refreshToken) }),
+          },
+          api,
+          extraOptions
+        )) as { data: AuthResponsiveInterface };
+
+        if (refreshResult.data) {
+          const data = refreshResult.data.data;
+          localStorage.setItem('access_token', JSON.stringify(data.access_token));
+          localStorage.setItem('refresh_token', JSON.stringify(data.refresh_token));
+          result = await baseQuery(args, api, extraOptions);
+        } else {
+          // api.dispatch(logout());
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('current_user');
+          window.location.href = '/login';
+        }
       } finally {
         // release must be called once the mutex should be released again.
         release();

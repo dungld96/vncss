@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface } from './http.service';
 import { queryRootConfig } from './http.service';
 import { usersApi } from './users.service';
+
 export interface IUser {
   id: string;
   type: string;
@@ -21,7 +22,7 @@ interface AuthRequestInterface {
   password: string;
 }
 
-interface AuthResponsiveInterface extends ResponsiveInterface {
+export interface AuthResponsiveInterface extends ResponsiveInterface {
   data: {
     access_token: string;
     refresh_token: string;
@@ -48,10 +49,11 @@ export const authApi = createApi({
         try {
           const {
             data: {
-              data: { access_token },
+              data: { access_token, refresh_token },
             },
           } = await queryFulfilled;
           localStorage.setItem('access_token', JSON.stringify(access_token));
+          localStorage.setItem('refresh_token', JSON.stringify(refresh_token));
           await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
         } catch (error) {}
       },
