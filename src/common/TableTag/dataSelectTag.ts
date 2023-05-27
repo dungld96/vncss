@@ -5,23 +5,47 @@ export interface TagType {
 
 export const dataTag = [
   {
-    tagName: '@CA_bocongan',
-    agency: 'Bộ Công An',
+    tagName: '@Dawson',
+    agency: 'Collins',
   },
   {
-    tagName: '@CA_bocongan',
-    agency: 'Bộ Công An',
+    tagName: '@Freeman',
+    agency: 'Owen',
   },
   {
-    tagName: '@CA_bocongan',
-    agency: 'Bộ Công An',
+    tagName: '@Foster',
+    agency: 'McLaughlin',
   },
   {
-    tagName: '@CA_bocongan',
-    agency: 'Bộ Công An',
+    tagName: '@Tran',
+    agency: 'Silva',
   },
   {
-    tagName: '@CA_bocongan',
-    agency: 'Bộ Công An',
+    tagName: '@Chambers',
+    agency: 'Quinn',
+  },
+  {
+    tagName: '@Knight',
+    agency: 'Keller',
+  },
+  {
+    tagName: '@Schmidt',
+    agency: 'Peterson',
+  },
+  {
+    tagName: '@Herrera',
+    agency: 'Christensen',
+  },
+  {
+    tagName: '@Pratt',
+    agency: 'Lopez',
+  },
+  {
+    tagName: '@Edwards',
+    agency: 'Schwartz',
+  },
+  {
+    tagName: '@Mitchell',
+    agency: 'Obrien',
   },
 ];

@@ -39,6 +39,7 @@ export interface Props {
   error?: any;
   topLable?: string;
   noMarginTop?: boolean;
+  errorEmpty?:boolean
   [key: string]: any;
 }
 
@@ -55,11 +56,16 @@ const Select: React.FC<Props> = ({
   error,
   topLable,
   noMarginTop,
+  errorEmpty,
   ...rest
 }) => {
   const anchorRef = useRef<HTMLInputElement>(null);
   const touched = useRef(false);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (errorEmpty) touched.current = true
+  }, [errorEmpty])
 
   const readOnly = true;
 
@@ -139,7 +145,7 @@ const Select: React.FC<Props> = ({
           }}
           sx={{
             '& .MuiOutlinedInput-notchedOutline': {
-              border: '2px solid #EEF2FA',
+              border: '2px solid #EEF2FA !important',
             },
             '& .MuiInputBase-root': {
               borderRadius: '8px',
@@ -156,7 +162,7 @@ const Select: React.FC<Props> = ({
             },
             input: {
               background: '#fff',
-              cursor: 'pointer !important',
+              cursor: `${disabled ? 'default' : 'pointer'} !important`,
               '&::placeholder': {
                 color: '#C5C6D2',
               },

@@ -14,7 +14,7 @@ interface Props {
 const ModalEditTags: React.FC<Props> = ({ show, onClose, tags }) => {
   return (
     <Modal size="sm" show={show} close={onClose} title="Chỉnh sửa thẻ tag">
-      <TableTag tags={[dataTag[0]]} />
+      <TableTag data={[]} tags={[dataTag[0]]} />
       <DialogActions sx={{ padding: 0, marginTop: '32px' }}>
         <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
           Quay lại

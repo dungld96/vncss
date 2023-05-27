@@ -18,6 +18,10 @@ import ModalEditTags from '../../screens/VehicleWrapper/ModalEditTags';
 import { selectLocation } from '../../state/modules/location/locationReducer';
 import ModalAdd from './ModalAdd';
 import ModalEdit from './ModalEdit';
+import { useDeleteLocationMutation } from '../../services/location.service';
+import { useAuth } from '../../hooks/useAuth';
+import { defaultInitialValues } from './constant';
+import dayjs from 'dayjs';
 
 const ActionCellContent = ({
   cellProps,
@@ -35,7 +39,7 @@ const ActionCellContent = ({
     setAnchorEl(null);
   };
 
-  const rowId = useMemo(() => cellProps.row?.id, [cellProps]);
+  const row = useMemo(() => cellProps.row, [cellProps]);
 
   return (
     <div>
@@ -63,14 +67,14 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('edit', row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa</ListItemText>
         </MenuItem>
         <Divider sx={{ margin: '0 16px !important' }} />
-        <MenuItem onClick={() => onActionClick('delete', rowId)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('delete', row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
           </ListItemIcon>
@@ -84,15 +88,23 @@ const ActionCellContent = ({
 };
 
 export const DeployLocationTable: React.FC = () => {
+  const [deleteLocation] = useDeleteLocationMutation();
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [modalEdit, setModalEdit] = useState({
+    show: false,
+    initialValues: defaultInitialValues,
+  });
   const [showModalEditTag, setShowModalEditTag] = useState(false);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
 
-  const locations = useSelector(selectLocation)
+  const locations = useSelector(selectLocation);
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const [columns] = useState([
-    { name: 'province', title: 'Tên vị trí' },
+    { name: 'name', title: 'Tên vị trí' },
     { name: 'addressString', title: 'Địa chỉ' },
     { name: 'business_id', title: 'Loại hình KD' },
     { name: 'contact_name', title: 'Người liên hệ' },
@@ -103,14 +115,14 @@ export const DeployLocationTable: React.FC = () => {
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'province', width: 200 },
+    { columnName: 'name', width: 200 },
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
   const [customField] = useState<CustomFieldType>({
     tags: {
       renderContent: ({ row }) => {
-        if(!row?.tags) return '--'
+        if (!row?.tags) return '--';
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography
@@ -131,18 +143,41 @@ export const DeployLocationTable: React.FC = () => {
         );
       },
     },
+    maintaint_date: {
+      renderContent: ({ row }) => {
+        return (
+          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
+            {row.maintaint_date ? dayjs(row.maintaint_date)?.format('DD/MM/YYYY') : '--'}
+          </Typography>
+        );
+      },
+    },
   });
 
-  const handleClick = (type: string, id: string | any) => {
+  const handleUpdateLocation = (location: any) => {
+    setModalEdit({
+      show: true,
+      initialValues: {
+        ...location,
+        contract_date: dayjs(location.contract_date)?.format('DD/MM/YYYY'),
+        tags: location.tags || [],
+      },
+    });
+  };
+
+  const handleClick = (type: string, row: any) => {
     if (type === 'edit') {
-      setShowModalEdit(true);
+      handleUpdateLocation(row);
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
         title: 'Xoá vị trí triển khai',
         content: 'Bạn có chắc chắn muốn xoá vị trí này không?',
         confirm: {
-          action: hideModalConfirm,
+          action: async () => {
+            await deleteLocation({ id: row?.id, parent_uuid: currentUser?.sub_id }).unwrap();
+            hideModalConfirm();
+          },
           text: 'Xoá vị trí',
         },
         cancel: {
@@ -156,7 +191,7 @@ export const DeployLocationTable: React.FC = () => {
     <>
       <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
       <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
-      <ModalEdit show={showModalEdit} onClose={() => setShowModalEdit(false)} />
+      <ModalEdit {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}

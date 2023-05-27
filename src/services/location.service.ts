@@ -32,12 +32,12 @@ export const loactionsApi = createApi({
       },
     }),
     createLocation: build.mutation<any, any>({
-      query: ({ Location, parent_uuid }) => {
+      query: ({ location, parent_uuid }) => {
         try {
           return {
             url: `agencies/${parent_uuid}/locations`,
             method: 'POST',
-            body: Location,
+            body: location,
           };
         } catch (error: any) {
           throw new error.message();
@@ -45,13 +45,13 @@ export const loactionsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Location' }]),
     }),
-    updateNode: build.mutation<any, any>({
-      query: ({ Location, parent_uuid }) => {
+    updateLocation: build.mutation<any, any>({
+      query: ({ location, parent_uuid }) => {
         try {
           return {
-            url: `agencies/${parent_uuid}/locations/${Location.id}`,
+            url: `agencies/${parent_uuid}/locations/${location.id}`,
             method: 'PUT',
-            body: Location,
+            body: location,
           };
         } catch (error: any) {
           throw new error.message();
@@ -59,7 +59,7 @@ export const loactionsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Location' }]),
     }),
-    deleteNode: build.mutation<null, { id: string; parent_uuid?: string }>({
+    deleteLocation: build.mutation<null, { id: string; parent_uuid?: string }>({
       query: (body) => {
         try {
           return {
@@ -79,6 +79,6 @@ export const {
   useGetListLocationsQuery,
   useLazyGetListLocationsQuery,
   useCreateLocationMutation,
-  useDeleteNodeMutation,
-  useUpdateNodeMutation,
+  useDeleteLocationMutation,
+  useUpdateLocationMutation
 } = loactionsApi;
