@@ -1,13 +1,10 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
-import { get, noop } from 'lodash';
+import { Box, Typography } from '@mui/material';
 import GoogleMapReact from 'google-map-react';
-import { Box, InputAdornment, TextField, Typography } from '@mui/material';
+import { get } from 'lodash';
+import React, { createRef, useEffect, useState } from 'react';
 
 import mapStyles from './MapStyles.json';
 
-import Input from 'common/input/Input';
-import { ImageIcon } from 'utils/UtilsComponent';
-import SearchIcon from '../../assets/icons/search-icon.svg';
 import SearchBox from './SearchBoxPosition';
 
 export const centerDefault = {
@@ -23,9 +20,9 @@ interface Props {
 const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosition }) => {
   const googleMapRef = createRef<any>();
   const [center, setCenter] = useState(centerDefault);
-  const [loadedGeoService, setLoadedGeoService] = useState(false);
-  const [openPopupPosition, setOpenPopupPosition] = useState(false);
-  const [anchorElPopupPosition, setAnchorElPopupPosition] = useState(false);
+  // const [loadedGeoService, setLoadedGeoService] = useState(false);
+  // const [openPopupPosition, setOpenPopupPosition] = useState(false);
+  // const [anchorElPopupPosition, setAnchorElPopupPosition] = useState(false);
   const [loadedMapApi, setLoadedMapApi] = useState(false);
   const [map, setMap] = useState(null);
   const [googlemaps, setGooglemaps] = useState(null);
@@ -56,7 +53,7 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
-        setLoadedGeoService(true);
+        // setLoadedGeoService(true);
       });
     } else {
       console.log('khong tim thay vi tri hien tai');
@@ -64,17 +61,17 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
   }, []);
 
   const onMapClick = (e: any) => {
-    setAnchorElPopupPosition(e.event.target);
-    setOpenPopupPosition(true);
+    // setAnchorElPopupPosition(e.event.target);
+    // setOpenPopupPosition(true);
     handleSelectedPosition({
       lat: e.lat.toFixed(6),
       lng: e.lng.toFixed(6),
     });
   };
 
-  const handleClosePopupPosition = () => {
-    setOpenPopupPosition(false);
-  };
+  // const handleClosePopupPosition = () => {
+  //   setOpenPopupPosition(false);
+  // };
 
   const onGoogleApiLoaded = ({ map, maps }: any) => {
     setLoadedMapApi(true);

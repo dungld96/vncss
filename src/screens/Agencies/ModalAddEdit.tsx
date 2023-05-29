@@ -93,7 +93,7 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
   }, [show]);
 
   const listArgencies = useMemo(() => {
-    const newAgencies = agencies.map((agency) => ({
+    const newAgencies = agencies.map((agency:IAgency) => ({
       value: agency.id,
       label: agency.name,
     }));

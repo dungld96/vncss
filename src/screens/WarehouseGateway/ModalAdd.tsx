@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useCreateGatewayMutation, useImportGatewayMutation } from 'services/gateway.service';
+import { useCreateGatewayMutation, useImportGatewayMutation } from '../../services/gateway.service';
 import * as Yup from 'yup';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
 import Select from '../../common/Select/Select';

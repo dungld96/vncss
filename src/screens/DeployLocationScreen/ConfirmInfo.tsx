@@ -1,15 +1,27 @@
-import { Divider, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Divider,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography
+} from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
-import { dataTag } from '../../common/TableTag/dataSelectTag';
 import TableTag from '../../common/TableTag/TableTag';
 import { ImageIcon } from '../../utils/UtilsComponent';
+import { LocationResponType } from './constant';
 
 interface Props {
-  maxHeight?: string | number;
+  values: LocationResponType;
+  setFieldValue(field: keyof LocationResponType, value: any): void;
+  isSubmitting?: boolean
 }
 
 const RenderInfor = ({ label, value }: { label: string; value: string }) => {
@@ -25,29 +37,36 @@ const RenderInfor = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
-const ConfirmInfo: React.FC<Props> = ({ maxHeight }) => {
+const ConfirmInfo: React.FC<Props> = ({ values, setFieldValue,isSubmitting }) => {
   const [listUser] = React.useState([
     { id: 'YCINVzlKVKg7tZHROV2q', userName: 'Hàn Việt Anh', service: 'Nhân viên', userPhone: '0983888444' },
     { id: '2cCks2hpmCbuvyfn5rT', userName: 'Vũ Quang Anh', service: 'Trưởng phòng', userPhone: '0978456789' },
   ]);
+
+  const { address, commune, contact_name, contact_number, contract_date, district, name, province, tags, lat, lng } =
+    values;
+
+  const stringAddress = address + ', ' + commune + ', ' + district + ', ' + province;
   return (
-    <SimpleBar style={{ maxHeight }}>
+    <SimpleBar style={{ maxHeight: '560px' }}>
       <Box>
-        <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px', marginBottom: '20px' }}>
+        <Typography
+          sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px', marginBottom: '20px', marginTop: '16px' }}
+        >
           Thông tin chung
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           <Box sx={{ width: '43%' }}>
-            <RenderInfor label="Tên vị trí triển khai:" value="PGD Nguyễn Trãi" />
-            <RenderInfor label="Địa chỉ:" value="232 Phạm Văn Đồng,Từ Liêm, Hà Nội, Việt Nam" />
-            <RenderInfor label="Người liên hệ" value="Hoàng Việt Anh" />
-            <RenderInfor label="SĐT người liên hệ" value="0966222888" />
+            <RenderInfor label="Tên vị trí triển khai:" value={name} />
+            <RenderInfor label="Địa chỉ:" value={stringAddress} />
+            <RenderInfor label="Người liên hệ" value={contact_name} />
+            <RenderInfor label="SĐT người liên hệ" value={contact_number} />
           </Box>
           <Box sx={{ width: '43%' }}>
             <RenderInfor label="Loại hình kinh doanh" value="Ngân hàng" />
-            <RenderInfor label="Ngày ký hợp đồng" value="15/01/2023" />
+            <RenderInfor label="Ngày ký hợp đồng" value={contract_date} />
             <RenderInfor label="Ngày bảo trì tiếp theo" value="15/06/2023" />
-            <RenderInfor label="Kinh độ/Vĩ độ" value="23o23’ Bắc - 8o27’ Bắc " />
+            <RenderInfor label="Kinh độ/Vĩ độ" value={lng + ' - ' + lat} />
           </Box>
         </Box>
       </Box>
@@ -124,7 +143,18 @@ const ConfirmInfo: React.FC<Props> = ({ maxHeight }) => {
           Cơ quan, Đơn vị giám sát vị trí
         </Typography>
         <Box>
-          <TableTag tags={[dataTag[0]]} hideButtonAdd />
+          <TableTag
+            data={[
+              { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
+              { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
+            ]}
+            tags={tags as any}
+            hideButtonAdd
+            onSelected={(tags) => setFieldValue('tags', tags)}
+            
+            error="Vui lòng chọn cơ quan, Đơn vị giám sát vị trí"
+            errorEmpty={isSubmitting}
+          />
         </Box>
       </Box>
     </SimpleBar>
