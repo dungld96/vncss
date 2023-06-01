@@ -17,6 +17,7 @@ import {
   ROUTE_WAREHOUSESIM,
   ROUTE_WAREHOUSE_GATEWAY,
   ROUTE_WAREHOUSES,
+  ROUTE_CONTROL
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
@@ -44,6 +45,8 @@ import GatewayIcon from '../../assets/icons/gateway-icon.svg';
 import GatewayActiveIcon from '../../assets/icons/gateway-icon-active.svg';
 import ProductIcon from '../../assets/icons/product-icon.svg';
 import ProductActiveIcon from '../../assets/icons/product-active-icon.svg';
+import ControlIcon from '../../assets/icons/control-icon.svg';
+import ControlActiveIcon from '../../assets/icons/control-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
 
@@ -164,7 +167,14 @@ const listFeature = [
     ],
     route: ROUTE_WAREHOUSES,
   },
-
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f267888',
+    title: 'Giám sát',
+    icon: <ImageIcon image={ControlIcon} />,
+    activeIcon: <ImageIcon image={ControlActiveIcon} />,
+    permission: ['report'],
+    route: ROUTE_CONTROL,
+  },
   {
     id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ss',
     title: 'Báo cáo',
