@@ -14,14 +14,16 @@ import {
 import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { Box } from '@mui/system';
+import { useSelector } from 'react-redux';
 import GroupIcon from '../../assets/icons/group-icon.svg';
 import KeyIcon from '../../assets/icons/key-icon.svg';
 import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
 import ModalChangePassword from '../../screens/Users/ModalChangePassword';
-import { Regulatory, regulatoryAgencies } from './mockData';
+import { IRegulatory, useChangePasswordRegulatoryMutation } from '../../services/regulatory.service';
+import { selectRegulatories } from '../../state/modules/regulatory/regulatoryReducer';
 
-const getChildRows = (row: Regulatory, rootRows: Regulatory[]) => {
+const getChildRows = (row: IRegulatory, rootRows: IRegulatory[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
   return childRows.length ? childRows : null;
 };
@@ -82,15 +84,17 @@ const ActionCellContent = ({
 };
 
 export const RegulatoryAgenciesTable = () => {
-  const [modalChangePass, setModalChangePass] = useState({ show: false });
+  const [changePassword] = useChangePasswordRegulatoryMutation();
+  const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
+  const regulatoryAgencies = useSelector(selectRegulatories);
 
   const [columns] = useState([
     { name: 'name', title: 'Tên cơ quan' },
     { name: 'address', title: 'Địa chỉ' },
-    { name: 'account', title: 'Tài khoản' },
+    { name: 'username', title: 'Tài khoản' },
     { name: 'tag', title: 'Thẻ Tag' },
-    { name: 'number_location', title: 'Vị trí triển khai' },
-    { name: 'number_device', title: 'Số thiết bị' },
+    { name: 'count_locations', title: 'Vị trí triển khai' },
+    { name: 'count_devices', title: 'Số thiết bị' },
     { name: 'action', title: 'Hành động' },
   ]);
 
@@ -101,44 +105,65 @@ export const RegulatoryAgenciesTable = () => {
 
   const handleClick = (type: string, id: string) => {
     if (type === 'change-pass') {
-      setModalChangePass({ show: true });
+      setModalChangePass({ show: true, id });
     }
   };
 
   const customField: CustomFieldType = {
-    number_location: {
+    count_locations: {
       renderContent: ({ row }) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-            <Typography sx={{ textAlign: 'right', width: '60px' }}>
-              {row.number_location.toLocaleString('en-US')}
-            </Typography>
-            <IconButton>
-              <ImageIcon image={GroupIcon} />
-            </IconButton>
-          </Box>
+          <>
+            {row?.number_location ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+                <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                  {row?.number_location?.toLocaleString('en-US')}
+                </Typography>
+                <IconButton>
+                  <ImageIcon image={GroupIcon} />
+                </IconButton>
+              </Box>
+            ) : (
+              '--'
+            )}
+          </>
         );
       },
     },
-    number_device: {
+    count_devices: {
       renderContent: ({ row }) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-            <Typography sx={{ textAlign: 'right', width: '60px' }}>
-              {row.number_device.toLocaleString('en-US')}
-            </Typography>
-            <IconButton>
-              <ImageIcon image={GroupIcon} />
-            </IconButton>
-          </Box>
+          <>
+            {row?.number_device ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+                <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                  {row?.number_device?.toLocaleString('en-US')}
+                </Typography>
+                <IconButton>
+                  <ImageIcon image={GroupIcon} />
+                </IconButton>
+              </Box>
+            ) : (
+              '--'
+            )}
+          </>
         );
       },
     },
   };
 
+  const handelChangePass = async (password: string, id: string) => {
+    await changePassword({ id, password }).unwrap();
+    setModalChangePass({ ...modalChangePass, show: false });
+  };
+
   return (
     <>
-      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      <ModalChangePassword
+        {...modalChangePass}
+        onClose={() => setModalChangePass({ ...modalChangePass, show: false })}
+        onSuccess={(pass, id) => handelChangePass(pass, id)}
+      />
       <Box
         sx={{
           display: 'flex',

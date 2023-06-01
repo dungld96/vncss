@@ -6,6 +6,7 @@ import { usersApi } from '../services/users.service';
 import { gatewaysApi } from '../services/gateway.service';
 import { nodesApi } from '../services/node.service';
 import { loactionsApi } from '../services/location.service';
+import { regulatoryApi } from '../services/regulatory.service';
 import authReducer from './modules/auth/authReducer';
 import modalConfirmReducer from './modules/modalConfirm/reducer';
 import userReducer from './modules/user/userReducer';
@@ -13,6 +14,7 @@ import agencyReducer from './modules/agency/agencyReducer';
 import gatewayReducer from './modules/gateway/gatewayReducer';
 import nodeReducer from './modules/node/nodeReducer';
 import locationReducer from './modules/location/locationReducer';
+import regulatoryReducer from './modules/regulatory/regulatoryReducer';
 import appState from './modules/app/appReducer'
 
 export const store = configureStore({
@@ -23,6 +25,7 @@ export const store = configureStore({
     [gatewaysApi.reducerPath]: gatewaysApi.reducer,
     [nodesApi.reducerPath]: nodesApi.reducer,
     [loactionsApi.reducerPath]: loactionsApi.reducer,
+    [regulatoryApi.reducerPath]: regulatoryApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
@@ -30,6 +33,7 @@ export const store = configureStore({
     gatewayState: gatewayReducer,
     nodeState: nodeReducer,
     locationState: locationReducer,
+    regulatoryState: regulatoryReducer,
     appState:appState
   },
   middleware: (getDefaultMiddleware) =>
@@ -40,6 +44,7 @@ export const store = configureStore({
       gatewaysApi.middleware,
       nodesApi.middleware,
       loactionsApi.middleware,
+      regulatoryApi.middleware,
     ]),
 });
 

@@ -119,7 +119,7 @@ export const UsersTable = () => {
     type: 'create',
     initialValues: defaultValueUser,
   });
-  const [modalChangePass, setModalChangePass] = useState({ show: false });
+  const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const users = useSelector(selectUsers);
 
@@ -146,7 +146,7 @@ export const UsersTable = () => {
         initialValues: id,
       });
     } else if (type === 'change-pass') {
-      setModalChangePass({ show: true });
+      setModalChangePass({ show: true, id });
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
@@ -198,7 +198,10 @@ export const UsersTable = () => {
   return (
     <>
       <ModalAddEditUser {...modalUser} onClose={() => setModalUser({ ...modalUser, show: false })} />
-      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      <ModalChangePassword
+        {...modalChangePass}
+        onClose={() => setModalChangePass({ ...modalChangePass, show: false })}
+      />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}

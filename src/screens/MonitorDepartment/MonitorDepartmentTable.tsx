@@ -106,7 +106,7 @@ const ActionCellContent = ({
 
 export const MonitorDepartmentTable = () => {
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const [modalChangePass, setModalChangePass] = useState({ show: false });
+  const [modalChangePass, setModalChangePass] = useState({ show: false,id:'' });
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
     type: 'create',
@@ -130,7 +130,7 @@ export const MonitorDepartmentTable = () => {
 
   const handleClick = (type: string, row: string | any) => {
     if (type === 'change-pass') {
-      setModalChangePass({ show: true });
+      setModalChangePass({ show: true,id: row });
     } else if (type === 'edit') {
       setModalAddEdit({ show: true, type: 'update', initialValues: {} });
     } else if (type === 'delete') {
@@ -183,7 +183,7 @@ export const MonitorDepartmentTable = () => {
   return (
     <>
       <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
-      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({...modalChangePass, show: false })} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
