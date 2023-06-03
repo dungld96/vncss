@@ -13,7 +13,6 @@ const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
-  mode: 'no-cors',
   prepareHeaders(headers) {
     const token = localStorage.getItem('access_token');
     headers.set('Content-Type', 'application/json');
