@@ -35,7 +35,7 @@ function App() {
             <Route path="reports" element={<ReportsScreen />} />
             <Route path="vehicle-protect" element={<VehicleProtect />} />
             <Route path="vehicle-vital" element={<VitalVehicle />} />
-            <Route path="monitor-department" element={<MonitorDepartmentScreen />} />
+            <Route path="organizations" element={<MonitorDepartmentScreen />} />
             <Route path="depoy-location" element={<DeployLocationScreen />} />
             <Route path="warehouse-node" element={<WarehouseNodeScreen />} />
             <Route path="warehouse-gateway" element={<WarehouseGatewayScreen />} />

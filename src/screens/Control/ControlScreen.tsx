@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import GoogleMapReact from 'google-map-react';
-import supercluster from 'supercluster';
+// import supercluster from 'supercluster';
 import mapStyles from './MapStyles.json';
 
 export const centerDefault = {

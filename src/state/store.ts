@@ -2,20 +2,22 @@ import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { agenciesApi } from 'services/agencies.service';
 import { authApi } from '../services/auth.service';
-import { usersApi } from '../services/users.service';
 import { gatewaysApi } from '../services/gateway.service';
-import { nodesApi } from '../services/node.service';
 import { loactionsApi } from '../services/location.service';
+import { nodesApi } from '../services/node.service';
+import { organizationsApi } from '../services/organizations.service';
 import { regulatoryApi } from '../services/regulatory.service';
-import authReducer from './modules/auth/authReducer';
-import modalConfirmReducer from './modules/modalConfirm/reducer';
-import userReducer from './modules/user/userReducer';
+import { usersApi } from '../services/users.service';
 import agencyReducer from './modules/agency/agencyReducer';
+import appState from './modules/app/appReducer';
+import authReducer from './modules/auth/authReducer';
 import gatewayReducer from './modules/gateway/gatewayReducer';
-import nodeReducer from './modules/node/nodeReducer';
 import locationReducer from './modules/location/locationReducer';
+import modalConfirmReducer from './modules/modalConfirm/reducer';
+import nodeReducer from './modules/node/nodeReducer';
+import organizationReducer from './modules/organization/organizationReducer';
 import regulatoryReducer from './modules/regulatory/regulatoryReducer';
-import appState from './modules/app/appReducer'
+import userReducer from './modules/user/userReducer';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +28,7 @@ export const store = configureStore({
     [nodesApi.reducerPath]: nodesApi.reducer,
     [loactionsApi.reducerPath]: loactionsApi.reducer,
     [regulatoryApi.reducerPath]: regulatoryApi.reducer,
+    [organizationsApi.reducerPath]: organizationsApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
@@ -34,6 +37,7 @@ export const store = configureStore({
     nodeState: nodeReducer,
     locationState: locationReducer,
     regulatoryState: regulatoryReducer,
+    organizationsState: organizationReducer,
     appState:appState
   },
   middleware: (getDefaultMiddleware) =>
@@ -45,6 +49,7 @@ export const store = configureStore({
       nodesApi.middleware,
       loactionsApi.middleware,
       regulatoryApi.middleware,
+      organizationsApi.middleware,
     ]),
 });
 

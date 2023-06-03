@@ -9,7 +9,7 @@ import {
   getTableCell,
   TableHeaderCell,
   TableHeaderContent,
-  TableTreeCell,
+  TableTreeCell
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
@@ -17,6 +17,7 @@ import GroupIcon from '../../assets/icons/group-icon.svg';
 import KeyIcon from '../../assets/icons/key-icon.svg';
 
 import { Box } from '@mui/system';
+import { useSelector } from 'react-redux';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
@@ -24,11 +25,12 @@ import SearchIcon from '../../assets/icons/search-icon.svg';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { Regulatory, regulatoryAgencies } from '../../screens/RegulatoryAgencies/mockData';
 import ModalChangePassword from '../../screens/Users/ModalChangePassword';
+import { IOrganization } from '../../services/organizations.service';
+import { selectOrganization } from '../../state/modules/organization/organizationReducer';
 import ModalAddEdit from './ModalAddEdit';
 
-const getChildRows = (row: Regulatory, rootRows: Regulatory[]) => {
+const getChildRows = (row: IOrganization, rootRows: IOrganization[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
   return childRows.length ? childRows : null;
 };
@@ -112,14 +114,16 @@ export const MonitorDepartmentTable = () => {
     type: 'create',
     initialValues: {},
   });
+  
+  const organizations = useSelector(selectOrganization);
 
   const [columns] = useState([
     { name: 'name', title: 'Tên đơn vị' },
     { name: 'address', title: 'Địa chỉ' },
-    { name: 'account', title: 'Tài khoản' },
+    { name: 'username', title: 'Tài khoản' },
     { name: 'tag', title: 'Thẻ Tag' },
-    { name: 'number_location', title: 'Vị trí triển khai' },
-    { name: 'number_device', title: 'Số thiết bị' },
+    { name: 'count_locations', title: 'Vị trí triển khai' },
+    { name: 'count_devices', title: 'Số thiết bị' },
     { name: 'action', title: 'Hành động' },
   ]);
 
@@ -150,31 +154,43 @@ export const MonitorDepartmentTable = () => {
   };
 
   const customField: CustomFieldType = {
-    number_location: {
+    count_locations: {
       renderContent: ({ row }) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-            <Typography sx={{ textAlign: 'right', width: '60px' }}>
-              {row.number_location.toLocaleString('en-US')}
-            </Typography>
-            <IconButton>
-              <ImageIcon image={GroupIcon} />
-            </IconButton>
-          </Box>
+          <>
+            {row?.number_location ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+                <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                  {row?.number_location?.toLocaleString('en-US')}
+                </Typography>
+                <IconButton>
+                  <ImageIcon image={GroupIcon} />
+                </IconButton>
+              </Box>
+            ) : (
+              '--'
+            )}
+          </>
         );
       },
     },
-    number_device: {
+    count_devices: {
       renderContent: ({ row }) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-            <Typography sx={{ textAlign: 'right', width: '60px' }}>
-              {row.number_device.toLocaleString('en-US')}
-            </Typography>
-            <IconButton>
-              <ImageIcon image={GroupIcon} />
-            </IconButton>
-          </Box>
+          <>
+            {row?.number_device ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+                <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                  {row?.number_device?.toLocaleString('en-US')}
+                </Typography>
+                <IconButton>
+                  <ImageIcon image={GroupIcon} />
+                </IconButton>
+              </Box>
+            ) : (
+              '--'
+            )}
+          </>
         );
       },
     },
@@ -196,7 +212,7 @@ export const MonitorDepartmentTable = () => {
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={regulatoryAgencies} columns={columns}>
+        <Grid rows={organizations} columns={columns}>
           <TreeDataState />
           <CustomTreeData getChildRows={getChildRows} />
           <Table
