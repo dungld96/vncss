@@ -6,15 +6,16 @@ import { queryRootConfig, ResponsiveInterface } from './http.service';
 export interface IOrganization {
   id?: string;
   parent_id: string | null;
-  parentId: string | null;
+  parentId?: string | null;
   tag: string;
   name: string;
   address: string;
-  level: number;
-  active: boolean;
+  level?: number;
+  active?: boolean;
   username: string;
-  count_locations: number;
-  count_devices: number;
+  count_locations?: number;
+  count_devices?: number;
+  password?: string
 }
 
 export interface OrganizationResponsiveInterface extends ResponsiveInterface {

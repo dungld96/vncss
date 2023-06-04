@@ -9,7 +9,7 @@ import {
   getTableCell,
   TableHeaderCell,
   TableHeaderContent,
-  TableTreeCell
+  TableTreeCell,
 } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
@@ -26,9 +26,11 @@ import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import ModalChangePassword from '../../screens/Users/ModalChangePassword';
-import { IOrganization } from '../../services/organizations.service';
+import { IOrganization, useDeleteOrganizationMutation } from '../../services/organizations.service';
 import { selectOrganization } from '../../state/modules/organization/organizationReducer';
 import ModalAddEdit from './ModalAddEdit';
+import { defaultInitialValue } from './constants';
+import { useAuth } from 'hooks/useAuth';
 
 const getChildRows = (row: IOrganization, rootRows: IOrganization[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
@@ -40,7 +42,7 @@ const ActionCellContent = ({
   onActionClick,
 }: {
   cellProps: Table.DataCellProps;
-  onActionClick: (type: string, id: string) => void;
+  onActionClick: (type: string, row: IOrganization) => void;
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -107,15 +109,19 @@ const ActionCellContent = ({
 };
 
 export const MonitorDepartmentTable = () => {
+  const [deleteOrganization] = useDeleteOrganizationMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const [modalChangePass, setModalChangePass] = useState({ show: false,id:'' });
+  const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
     type: 'create',
-    initialValues: {},
+    initialValues: defaultInitialValue,
   });
-  
+
   const organizations = useSelector(selectOrganization);
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const [columns] = useState([
     { name: 'name', title: 'Tên đơn vị' },
@@ -132,11 +138,11 @@ export const MonitorDepartmentTable = () => {
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
-  const handleClick = (type: string, row: string | any) => {
+  const handleClick = (type: string, row: IOrganization) => {
     if (type === 'change-pass') {
-      setModalChangePass({ show: true,id: row });
+      setModalChangePass({ show: true, id: row.id || '' });
     } else if (type === 'edit') {
-      setModalAddEdit({ show: true, type: 'update', initialValues: {} });
+      setModalAddEdit({ show: true, type: 'update', initialValues: row });
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
@@ -144,7 +150,10 @@ export const MonitorDepartmentTable = () => {
         content: `Bạn có chắc chắn muốn xoá đơn vị giám sát ${row.name} không?`,
         confirm: {
           text: 'Xoá đơn vị',
-          action: hideModalConfirm,
+          action: async () => {
+            await deleteOrganization({ id: row.id || '', parent_uuid: currentUser?.sub_id });
+            hideModalConfirm();
+          },
         },
         cancel: {
           action: hideModalConfirm,
@@ -199,14 +208,20 @@ export const MonitorDepartmentTable = () => {
   return (
     <>
       <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
-      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({...modalChangePass, show: false })} />
+      <ModalChangePassword
+        {...modalChangePass}
+        onClose={() => setModalChangePass({ ...modalChangePass, show: false })}
+      />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
           placeholder="Tìm kiếm tên nhân viên"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
-        <Button variant="contained" onClick={() => setModalAddEdit({ show: true, type: 'create', initialValues: {} })}>
+        <Button
+          variant="contained"
+          onClick={() => setModalAddEdit({ show: true, type: 'create', initialValues: defaultInitialValue })}
+        >
           <ImageIcon image={AddIcon} />
           <Box sx={{ marginLeft: '8px' }}>Thêm đơn vị mới</Box>
         </Button>
