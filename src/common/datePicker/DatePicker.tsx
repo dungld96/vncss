@@ -27,12 +27,12 @@ interface Props {
 const DatePickers: React.FC<Props> = (props) => {
   const { date, maxDate, minDate, format = 'DD/MM/YYYY', error, onChange, showError, topLable, style, ...rest } = props;
 
-  const [isTouched, setIsTouched] = React.useState(false)
-  const touched = React.useRef(false)
+  const [isTouched, setIsTouched] = React.useState(false);
+  const touched = React.useRef(false);
 
   React.useEffect(() => {
-    if (showError) touched.current = true
-  }, [showError])
+    if (showError) touched.current = true;
+  }, [showError]);
 
   const helperText = (touched.current || isTouched) && !!error ? error : undefined;
 
@@ -58,12 +58,11 @@ const DatePickers: React.FC<Props> = (props) => {
           closeOnSelect
           value={date ? dayjs(reformatDateString(date)) : null}
           onChange={(e) => {
-            onChange?.(dayjs(e).format(format))
+            onChange?.(dayjs(e).format(format));
           }}
-          
           format={format}
           onSelectedSectionsChange={(e) => {
-            setIsTouched(e === null)
+            setIsTouched(e === null);
           }}
           onClose={() => setIsTouched(true)}
           onOpen={() => setIsTouched(false)}
@@ -75,10 +74,10 @@ const DatePickers: React.FC<Props> = (props) => {
           sx={{
             ...style,
             '& .MuiOutlinedInput-notchedOutline': {
-              border: '2px solid #EEF2FA',
-              '&.Mui-error':{
-                borderColor:'#EEF2FA !important'
-              }
+              border: '1px solid #d9d9d9',
+              '&.Mui-error': {
+                borderColor: '#EEF2FA !important',
+              },
             },
             '& .MuiInputBase-root': {
               borderRadius: '8px',
@@ -92,7 +91,7 @@ const DatePickers: React.FC<Props> = (props) => {
             },
             input: {
               '&::placeholder': {
-                color: '#C5C6D2',
+                color: '#777777',
               },
               '&:-webkit-autofill': {
                 transition: ' background-color 5000s ease-in-out 0s',

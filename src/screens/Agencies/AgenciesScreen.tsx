@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Box } from '@mui/material';
 import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -17,8 +18,8 @@ export default function AgenciesScreen() {
     }
   }, [trigger, currentUser]);
   return (
-    <div>
+    <Box mt={2} ml={2} mr={'12px'}>
       <AgenciesTable />
-    </div>
+    </Box>
   );
 }

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useLazyGetAllUsersQuery } from '../../services/users.service';
 import { selectUsersState } from '../../state/modules/user/userReducer';
 import { UsersTable } from './UsersTable';
+import { Box } from '@mui/material';
 
 export default function UsersScreen() {
   const [trigger] = useLazyGetAllUsersQuery();
@@ -17,9 +18,9 @@ export default function UsersScreen() {
   }, [trigger, limit, paginate]);
 
   return (
-    <div>
+    <Box mt={2} ml={2} mr={'12px'}>
       <UsersTable />
       <Pagination paginate={cursors} setPaginate={setPaginate} />
-    </div>
+    </Box>
   );
 }

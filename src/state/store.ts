@@ -7,6 +7,7 @@ import { gatewaysApi } from '../services/gateway.service';
 import { nodesApi } from '../services/node.service';
 import { loactionsApi } from '../services/location.service';
 import { regulatoryApi } from '../services/regulatory.service';
+import { controlApi } from '../services/control.service';
 import authReducer from './modules/auth/authReducer';
 import modalConfirmReducer from './modules/modalConfirm/reducer';
 import userReducer from './modules/user/userReducer';
@@ -15,7 +16,8 @@ import gatewayReducer from './modules/gateway/gatewayReducer';
 import nodeReducer from './modules/node/nodeReducer';
 import locationReducer from './modules/location/locationReducer';
 import regulatoryReducer from './modules/regulatory/regulatoryReducer';
-import appState from './modules/app/appReducer'
+import appState from './modules/app/appReducer';
+import controlReducer from './modules/control/controlReducer';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +28,7 @@ export const store = configureStore({
     [nodesApi.reducerPath]: nodesApi.reducer,
     [loactionsApi.reducerPath]: loactionsApi.reducer,
     [regulatoryApi.reducerPath]: regulatoryApi.reducer,
+    [controlApi.reducerPath]: controlApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
@@ -34,7 +37,8 @@ export const store = configureStore({
     nodeState: nodeReducer,
     locationState: locationReducer,
     regulatoryState: regulatoryReducer,
-    appState:appState
+    appState: appState,
+    controlState: controlReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([
@@ -45,6 +49,7 @@ export const store = configureStore({
       nodesApi.middleware,
       loactionsApi.middleware,
       regulatoryApi.middleware,
+      controlApi.middleware,
     ]),
 });
 

@@ -86,7 +86,7 @@ const SearchBox: React.FC<Props> = ({ map, maps, onPlacesChanged, placeholder, s
       }}
       sx={{
         '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-          border: '2px solid #EEF2FA',
+          border: '1px solid #d9d9d9',
         },
         '& .MuiInputBase-root': {
           borderRadius: '8px',
@@ -100,7 +100,7 @@ const SearchBox: React.FC<Props> = ({ map, maps, onPlacesChanged, placeholder, s
         },
         input: {
           '&::placeholder': {
-            color: '#C5C6D2',
+            color: '#777777',
           },
           '&:-webkit-autofill': {
             transition: ' background-color 5000s ease-in-out 0s',

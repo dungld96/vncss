@@ -18,12 +18,12 @@ const Title = styled(DialogTitle)({
   justifyContent: 'space-between',
   fontStyle: 'normal',
   fontWeight: '700',
-  fontSize: '20px',
-  lineHeight: '32px',
+  fontSize: '18px',
+  lineHeight: '16px',
   color: '#1E2323',
   padding: 0,
-  paddingBottom: 20,
-  borderBottom: '2px solid #EEF2FA',
+  paddingBottom: 16,
+  borderBottom: '1px solid #d9d9d9',
   '& .MuiSvgIcon-root': {
     color: '#8B8C9B',
     cursor: 'pointer',
@@ -39,13 +39,9 @@ const Modal: React.FC<Props> = (props) => {
       maxWidth={size}
       sx={{
         '.MuiPaper-root': {
-          borderRadius: '12px',
-          padding: '20px 32px 32px',
+          borderRadius: '8px',
+          padding: '20px 24px',
           ...style,
-        },
-        '.MuiDialog-container': {
-          webkitBackdropFilter: 'blur(2px)',
-          backdropFilter: 'blur(2px)',
         },
       }}
     >

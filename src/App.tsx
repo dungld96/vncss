@@ -1,23 +1,23 @@
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import LoginScreen from './screens/Auth/LoginScreen';
-import UsersScreen from './screens/Users/UsersScreen';
-import Profile from './screens/Profile/Profile';
-import RequireUser from './screens/Auth/RequireUser';
-import DashboardScreen from './screens/Dashboard/DashboardScreen';
-import AgenciesScreen from './screens/Agencies/AgenciesScreen';
-import RegulatoryAgenciesScreen from './screens/RegulatoryAgencies/RegulatoryAgenciesScreen';
+import LoginScreen from './screens/auth/LoginScreen';
+import UsersScreen from './screens/users/UsersScreen';
+import Profile from './screens/profile/Profile';
+import RequireUser from './screens/auth/RequireUser';
+import DashboardScreen from './screens/dashboard/DashboardScreen';
+import AgenciesScreen from './screens/agencies/AgenciesScreen';
+import RegulatoryAgenciesScreen from './screens/regulatory-agencies/RegulatoryAgenciesScreen';
 import Layout from './common/Layout/Layout';
-import ReportsScreen from './screens/Reports/ReportsScreen';
-import WarehouseSimScreen from './screens/WarehouseSim/WarehouseSimScreen';
-import VitalVehicle from './screens/VitalVehicle/VitalVehicle';
-import VehicleProtect from './screens/VehicleProtect/VehicleProtect';
-import MonitorDepartmentScreen from './screens/MonitorDepartment/MonitorDepartmentScreen';
+import ReportsScreen from './screens/reports/ReportsScreen';
+import WarehouseSimScreen from './screens/warehouse-sim/WarehouseSimScreen';
+import VitalVehicle from './screens/vital-vehicle/VitalVehicle';
+import VehicleProtect from './screens/vehicle-protect/VehicleProtect';
+import MonitorDepartmentScreen from './screens/monitor-department/MonitorDepartmentScreen';
 import ModalConfirmContainer from './common/modal/ModalConfirmContainer';
-import DeployLocationScreen from './screens/DeployLocationScreen/DeployLocationScreen';
-import WarehouseNodeScreen from './screens/WarehouseNode/WarehouseNodeScreen';
-import WarehouseGatewayScreen from './screens/WarehouseGateway/WarehouseGatewayScreen';
-import { ControlScreen } from './screens/Control/ControlScreen';
+import DeployLocationScreen from './screens/deploy-location/DeployLocationScreen';
+import WarehouseNodeScreen from './screens/warehouse-node/WarehouseNodeScreen';
+import WarehouseGatewayScreen from './screens/warehouse-gateway/WarehouseGatewayScreen';
+import { ControlScreen } from './screens/control/ControlScreen';
 
 function App() {
   return (

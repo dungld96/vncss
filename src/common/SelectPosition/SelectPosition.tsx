@@ -2,27 +2,26 @@ import { Box, Typography } from '@mui/material';
 import GoogleMapReact from 'google-map-react';
 import { get } from 'lodash';
 import React, { createRef, useEffect, useState } from 'react';
-
 import mapStyles from './MapStyles.json';
-
 import SearchBox from './SearchBoxPosition';
+import { MakerSelected } from './MakerSelected';
 
 export const centerDefault = {
-  lat: 21.027627,
-  lng: 105.833166,
+  lat: 21.037516,
+  lng: 105.835331,
 };
-
+interface IPosition {
+  lat: number;
+  lng: number;
+}
 interface Props {
-  selectedPosition: any;
-  handleSelectedPosition: any;
+  selectedPosition: IPosition | null;
+  handleSelectedPosition: (position: IPosition) => void;
 }
 
 const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosition }) => {
   const googleMapRef = createRef<any>();
   const [center, setCenter] = useState(centerDefault);
-  // const [loadedGeoService, setLoadedGeoService] = useState(false);
-  // const [openPopupPosition, setOpenPopupPosition] = useState(false);
-  // const [anchorElPopupPosition, setAnchorElPopupPosition] = useState(false);
   const [loadedMapApi, setLoadedMapApi] = useState(false);
   const [map, setMap] = useState(null);
   const [googlemaps, setGooglemaps] = useState(null);
@@ -61,31 +60,17 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
   }, []);
 
   const onMapClick = (e: any) => {
-    // setAnchorElPopupPosition(e.event.target);
-    // setOpenPopupPosition(true);
     handleSelectedPosition({
       lat: e.lat.toFixed(6),
       lng: e.lng.toFixed(6),
     });
   };
 
-  // const handleClosePopupPosition = () => {
-  //   setOpenPopupPosition(false);
-  // };
-
   const onGoogleApiLoaded = ({ map, maps }: any) => {
     setLoadedMapApi(true);
     setMap(map);
     setGooglemaps(maps);
   };
-
-  //   const onZoomIn = () => {
-  //     googleMapRef.current.map_.setZoom(googleMapRef.current.map_.getZoom() + 1);
-  //   };
-
-  //   const onZoomOut = () => {
-  //     googleMapRef.current.map_.setZoom(googleMapRef.current.map_.getZoom() - 1);
-  //   };
 
   const handleSearch = (places: any) => {
     console.log(places);
@@ -94,11 +79,8 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
     <Box
       sx={{
         height: '100%',
-        width: 'calc(100% + 64px)',
         position: 'relative',
         boxSizing: 'border-box ',
-        paddingBottom: '24px',
-        marginLeft: '-32px',
       }}
     >
       {selectedPosition && (
@@ -163,7 +145,7 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
 
       <GoogleMapReact
         bootstrapURLKeys={{
-          key: 'AIzaSyD30G1X8I2BXdxp9H-nGWQVB5IkAQqpXmI',
+          key: 'AIzaSyAjDwo_TVHsOX1nC5u9ySilk6IShSHF5tM',
           libraries: ['places'],
         }}
         defaultZoom={13}
@@ -174,29 +156,7 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
         onClick={onMapClick}
         yesIWantToUseGoogleMapApiInternals
       >
-        {/* {loadedGeoService && (
-          <MyLocation
-            lat={center.lat}
-            lng={center.lng}
-            text="My Marker"
-            color="#DC3545"
-            name="my marker 1"
-            message="Vị trí của bạn"
-            shortName="LC"
-            id={13}
-            onMarkerClick={noop}
-          />
-        )}
-        {selectedPosition && (
-          <MakerSelected
-            lat={selectedPosition.lat}
-            lng={selectedPosition.lng}
-            position={selectedPosition}
-            open={openPopupPosition}
-            handleClose={handleClosePopupPosition}
-            anchorEl={anchorElPopupPosition}
-          />
-        )} */}
+        {selectedPosition && <MakerSelected lat={selectedPosition.lat} lng={selectedPosition.lng} />}
       </GoogleMapReact>
     </Box>
   );

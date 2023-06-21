@@ -3,8 +3,29 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
 import { CursorsType } from '../../../configs/constant';
 
+export interface LocationType {
+  active: boolean;
+  address: string;
+  agency_id: string;
+  business_id: string;
+  commune: string;
+  contact_name: string;
+  contact_number: string;
+  contract_date: string;
+  district: string;
+  event_receiver: string | null;
+  id: string;
+  lat: number;
+  lng: number;
+  maintaint_date: string | null;
+  name: string;
+  plan_building: string;
+  province: string;
+  tags: null;
+}
+
 type LocationState = {
-  locations: any[];
+  locations: LocationType[];
   cursors: CursorsType;
   limit: number;
 };

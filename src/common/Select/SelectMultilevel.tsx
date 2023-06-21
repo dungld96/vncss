@@ -137,7 +137,7 @@ const SelectMultilevel: React.FC<Props> = ({
           }}
           sx={{
             '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-              border: '2px solid #EEF2FA',
+              border: '1px solid #d9d9d9',
             },
             '& .MuiInputBase-root': {
               borderRadius: '8px',
@@ -153,7 +153,7 @@ const SelectMultilevel: React.FC<Props> = ({
               background: '#fff',
               cursor: 'pointer !important',
               '&::placeholder': {
-                color: '#C5C6D2',
+                color: '#777777',
               },
               '&:-webkit-autofill': {
                 transition: ' background-color 5000s ease-in-out 0s',

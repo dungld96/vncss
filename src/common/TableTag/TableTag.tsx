@@ -82,23 +82,24 @@ const TableTag: React.FC<Props> = ({ tags, hideButtonAdd, data, error, onSelecte
     <TableContainer
       sx={{
         border: 'none',
+        borderRadius: '4px',
       }}
     >
       <Table
         border={1}
         sx={{
-          borderRadius: '8px',
           borderCollapse: 'collapse',
           tableLayout: 'auto',
           border: 'none',
           overflow: 'hidden',
+          borderRadius: '4px',
         }}
       >
         <TableHead
           sx={{
             background: '#EEF2FA',
             border: 'none',
-            borderTopLeftRadius: '8px',
+            borderRadius: 0,
           }}
         >
           <TableRow>

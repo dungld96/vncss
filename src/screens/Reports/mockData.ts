@@ -1,4 +1,4 @@
-import { agencies } from 'screens/Agencies/mockData';
+import { agencies } from '../agencies/mockData';
 
 export interface IReport {
   seri: string;

@@ -75,7 +75,7 @@ const Input: React.FC<Props> = (props) => {
         <Typography
           style={{
             fontWeight: 400,
-            fontSize: '12px',
+            fontSize: '14px',
             lineHeight: '20px',
             padding: 0,
             marginTop: noMarginTop ? undefined : 20,
@@ -101,7 +101,7 @@ const Input: React.FC<Props> = (props) => {
         helperText={error}
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {
-            border: noOutLine ? 'none' : '2px solid #EEF2FA',
+            border: noOutLine ? 'none' : '1px solid #d9d9d9',
           },
           '& .MuiInputBase-root': {
             borderRadius: '8px',
@@ -115,7 +115,7 @@ const Input: React.FC<Props> = (props) => {
           },
           input: {
             '&::placeholder': {
-              color: '#C5C6D2',
+              color: '#777777',
             },
             '&:-webkit-autofill': {
               transition: ' background-color 5000s ease-in-out 0s',

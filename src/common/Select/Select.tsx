@@ -105,7 +105,7 @@ const Select: React.FC<Props> = ({
         <Typography
           style={{
             fontWeight: 400,
-            fontSize: '12px',
+            fontSize: '14px',
             lineHeight: '20px',
             padding: 0,
             marginTop: noMarginTop ? undefined : 20,
@@ -145,7 +145,7 @@ const Select: React.FC<Props> = ({
           }}
           sx={{
             '& .MuiOutlinedInput-notchedOutline': {
-              border: '2px solid #EEF2FA !important',
+              border: '1px solid #d9d9d9 !important',
             },
             '& .MuiInputBase-root': {
               borderRadius: '8px',
@@ -164,7 +164,7 @@ const Select: React.FC<Props> = ({
               background: '#fff',
               cursor: `${disabled ? 'default' : 'pointer'} !important`,
               '&::placeholder': {
-                color: '#C5C6D2',
+                color: '#777777',
               },
               '&:-webkit-autofill': {
                 transition: ' background-color 5000s ease-in-out 0s',

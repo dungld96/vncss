@@ -7,7 +7,7 @@ import { FieldProps as FormikFieldProps, getIn, FieldConfig, FastField, Field as
 
 const TopLabel = styled.p({
   fontWeight: 400,
-  fontSize: '12px',
+  fontSize: '14px',
   lineHeight: '20px',
   padding: 0,
   marginTop: 20,
@@ -51,7 +51,7 @@ const Input: React.FC<Props> = (props) => {
   const isPassword = type === 'password';
   const [passwordShown, setPasswordShown] = useState(!isPassword);
 
-  const [isFocusing, setIsFocusing] = useState(false)
+  const [isFocusing, setIsFocusing] = useState(false);
 
   const IconEye = styled(passwordShown ? VisibilityIcon : VisibilityOffIcon)({
     color: '#C5C6D2',
@@ -74,12 +74,12 @@ const Input: React.FC<Props> = (props) => {
   };
 
   const handleFocus = useCallback((e: any) => {
-    setIsFocusing(true)
-    onFocus?.(e)
-  }, [])
+    setIsFocusing(true);
+    onFocus?.(e);
+  }, []);
 
   const handleBlur = (e: any) => {
-    setIsFocusing(false)
+    setIsFocusing(false);
     if (onBlur) {
       onBlur(e);
     }
@@ -98,7 +98,7 @@ const Input: React.FC<Props> = (props) => {
     [onChange]
   );
 
-  const helperText = !isFocusing && error !== true ? error : undefined
+  const helperText = !isFocusing && error !== true ? error : undefined;
 
   return (
     <div>
@@ -118,7 +118,7 @@ const Input: React.FC<Props> = (props) => {
         onFocus={handleFocus}
         sx={{
           '& .css-1d3z3hw-MuiOutlinedInput-notchedOutline': {
-            border: '2px solid #EEF2FA',
+            border: '1px solid #d9d9d9',
           },
           '& .MuiInputBase-root': {
             borderRadius: '8px',
@@ -132,7 +132,7 @@ const Input: React.FC<Props> = (props) => {
           },
           input: {
             '&::placeholder': {
-              color: '#C5C6D2',
+              color: '#777777',
             },
             '&:-webkit-autofill': {
               transition: ' background-color 5000s ease-in-out 0s',
@@ -151,7 +151,7 @@ interface FormikValues {
 interface ExtendedFieldConfig {
   topLable?: string;
   slow?: boolean;
-  maxLength?:number
+  maxLength?: number;
   iconStartAdorment?: ReactNode;
 }
 
@@ -162,7 +162,7 @@ const FormikWrappedField = ({ slow, name, validate, ...rest }: FormikWrappedFiel
     return (
       <FormikField name={name} validate={validate}>
         {({ field, form }: FormikFieldProps<FormikValues>) => {
-          const error = form.touched? getIn(form.errors, field.name):'';
+          const error = form.touched ? getIn(form.errors, field.name) : '';
           return <Input name={name} field={field} error={error} {...rest} />;
         }}
       </FormikField>
@@ -171,7 +171,7 @@ const FormikWrappedField = ({ slow, name, validate, ...rest }: FormikWrappedFiel
   return (
     <FastField name={name} validate={validate}>
       {({ field, form }: FormikFieldProps<FormikValues>) => {
-        const error = (form.touched[name] || form.isSubmitting)? getIn(form.errors, field.name):'';
+        const error = form.touched[name] || form.isSubmitting ? getIn(form.errors, field.name) : '';
         return <Input name={name} field={field} error={error} {...rest} />;
       }}
     </FastField>
