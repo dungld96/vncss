@@ -9,6 +9,6 @@ export const ROUTE_WAREHOUSE_NODE = '/warehouse-node';
 export const ROUTE_WAREHOUSE_GATEWAY = '/warehouse-gateway';
 export const ROUTE_VEHICLE_PROTECT = '/vehicle-protect';
 export const ROUTE_VITAL_VEHICLE = '/vehicle-vital';
-export const MONITOR_DEPARTMENT = '/monitor-department';
+export const MONITOR_DEPARTMENT = '/organizations';
 export const DEPLOY_LOCATION = '/depoy-location';
 export const ROUTE_CONTROL = '/control';

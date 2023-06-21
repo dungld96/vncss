@@ -17,6 +17,7 @@ import GroupIcon from '../../assets/icons/group-icon.svg';
 import KeyIcon from '../../assets/icons/key-icon.svg';
 
 import { Box } from '@mui/system';
+import { useSelector } from 'react-redux';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
@@ -24,11 +25,14 @@ import SearchIcon from '../../assets/icons/search-icon.svg';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { Regulatory, regulatoryAgencies } from '../regulatory-agencies/mockData';
 import ModalChangePassword from '../users/ModalChangePassword';
+import { IOrganization, useDeleteOrganizationMutation } from '../../services/organizations.service';
+import { selectOrganization } from '../../state/modules/organization/organizationReducer';
 import ModalAddEdit from './ModalAddEdit';
+import { defaultInitialValue } from './constants';
+import { useAuth } from 'hooks/useAuth';
 
-const getChildRows = (row: Regulatory, rootRows: Regulatory[]) => {
+const getChildRows = (row: IOrganization, rootRows: IOrganization[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
   return childRows.length ? childRows : null;
 };
@@ -38,7 +42,7 @@ const ActionCellContent = ({
   onActionClick,
 }: {
   cellProps: Table.DataCellProps;
-  onActionClick: (type: string, id: string) => void;
+  onActionClick: (type: string, row: IOrganization) => void;
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -105,21 +109,27 @@ const ActionCellContent = ({
 };
 
 export const MonitorDepartmentTable = () => {
+  const [deleteOrganization] = useDeleteOrganizationMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const [modalChangePass, setModalChangePass] = useState({ show: false,id:'' });
+  const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
     type: 'create',
-    initialValues: {},
+    initialValues: defaultInitialValue,
   });
+
+  const organizations = useSelector(selectOrganization);
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const [columns] = useState([
     { name: 'name', title: 'Tên đơn vị' },
     { name: 'address', title: 'Địa chỉ' },
-    { name: 'account', title: 'Tài khoản' },
+    { name: 'username', title: 'Tài khoản' },
     { name: 'tag', title: 'Thẻ Tag' },
-    { name: 'number_location', title: 'Vị trí triển khai' },
-    { name: 'number_device', title: 'Số thiết bị' },
+    { name: 'count_locations', title: 'Vị trí triển khai' },
+    { name: 'count_devices', title: 'Số thiết bị' },
     { name: 'action', title: 'Hành động' },
   ]);
 
@@ -128,11 +138,11 @@ export const MonitorDepartmentTable = () => {
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
-  const handleClick = (type: string, row: string | any) => {
+  const handleClick = (type: string, row: IOrganization) => {
     if (type === 'change-pass') {
-      setModalChangePass({ show: true,id: row });
+      setModalChangePass({ show: true, id: row.id || '' });
     } else if (type === 'edit') {
-      setModalAddEdit({ show: true, type: 'update', initialValues: {} });
+      setModalAddEdit({ show: true, type: 'update', initialValues: row });
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
@@ -140,7 +150,10 @@ export const MonitorDepartmentTable = () => {
         content: `Bạn có chắc chắn muốn xoá đơn vị giám sát ${row.name} không?`,
         confirm: {
           text: 'Xoá đơn vị',
-          action: hideModalConfirm,
+          action: async () => {
+            await deleteOrganization({ id: row.id || '', parent_uuid: currentUser?.sub_id });
+            hideModalConfirm();
+          },
         },
         cancel: {
           action: hideModalConfirm,
@@ -150,31 +163,43 @@ export const MonitorDepartmentTable = () => {
   };
 
   const customField: CustomFieldType = {
-    number_location: {
+    count_locations: {
       renderContent: ({ row }) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-            <Typography sx={{ textAlign: 'right', width: '60px' }}>
-              {row.number_location.toLocaleString('en-US')}
-            </Typography>
-            <IconButton>
-              <ImageIcon image={GroupIcon} />
-            </IconButton>
-          </Box>
+          <>
+            {row?.number_location ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+                <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                  {row?.number_location?.toLocaleString('en-US')}
+                </Typography>
+                <IconButton>
+                  <ImageIcon image={GroupIcon} />
+                </IconButton>
+              </Box>
+            ) : (
+              '--'
+            )}
+          </>
         );
       },
     },
-    number_device: {
+    count_devices: {
       renderContent: ({ row }) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-            <Typography sx={{ textAlign: 'right', width: '60px' }}>
-              {row.number_device.toLocaleString('en-US')}
-            </Typography>
-            <IconButton>
-              <ImageIcon image={GroupIcon} />
-            </IconButton>
-          </Box>
+          <>
+            {row?.number_device ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+                <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                  {row?.number_device?.toLocaleString('en-US')}
+                </Typography>
+                <IconButton>
+                  <ImageIcon image={GroupIcon} />
+                </IconButton>
+              </Box>
+            ) : (
+              '--'
+            )}
+          </>
         );
       },
     },
@@ -183,20 +208,26 @@ export const MonitorDepartmentTable = () => {
   return (
     <>
       <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
-      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({...modalChangePass, show: false })} />
+      <ModalChangePassword
+        {...modalChangePass}
+        onClose={() => setModalChangePass({ ...modalChangePass, show: false })}
+      />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
           placeholder="Tìm kiếm tên nhân viên"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
-        <Button variant="contained" onClick={() => setModalAddEdit({ show: true, type: 'create', initialValues: {} })}>
+        <Button
+          variant="contained"
+          onClick={() => setModalAddEdit({ show: true, type: 'create', initialValues: defaultInitialValue })}
+        >
           <ImageIcon image={AddIcon} />
           <Box sx={{ marginLeft: '8px' }}>Thêm đơn vị mới</Box>
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={regulatoryAgencies} columns={columns}>
+        <Grid rows={organizations} columns={columns}>
           <TreeDataState />
           <CustomTreeData getChildRows={getChildRows} />
           <Table

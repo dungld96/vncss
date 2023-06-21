@@ -96,7 +96,7 @@ export const agenciesApi = createApi({
         }
       },
       invalidatesTags: (result, error, data) => {
-        return error ? [] : [{ type:  'Agencies', id: data.agency.id }];
+        return error ? [] : [{ type: 'Agencies', id: data.agency.id }];
       },
     }),
     updateAgency: build.mutation<CurrentAgencyResponsiveInterface, AgencyRequestInterface>({
@@ -112,7 +112,7 @@ export const agenciesApi = createApi({
         }
       },
       invalidatesTags: (result, error, data) => {
-        return error ? [] : [{ type:  'AllAgencies' }];
+        return error ? [] : [{ type: 'AllAgencies' }];
       },
     }),
     deleteAgency: build.mutation<null, { id: string }>({
@@ -138,5 +138,6 @@ export const {
   useLazyGetAllAgenciesQuery,
   useAddlAgencyMutation,
   useDeleteAgencyMutation,
-  useUpdateCurrentAgencyMutation
+  useUpdateCurrentAgencyMutation,
+  useLazyGetAgencyQuery,
 } = agenciesApi;
