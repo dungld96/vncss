@@ -37,7 +37,7 @@ import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
 import { Switch } from '../../common/Switch/Switch';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import ModalChangeAgency from '../warehouse-node/ModalChangeAgency';
+import ModalChangeAgency from '../WarehouseNode/ModalChangeAgency';
 import { IUser } from '../../services/auth.service';
 import { selectGateway } from '../../state/modules/gateway/gatewayReducer';
 import { listStatusGateway, mappingStatusGateway, mappingStatusGatewayColor } from './constants';
