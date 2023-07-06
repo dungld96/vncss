@@ -17,7 +17,7 @@ import {
   ROUTE_WAREHOUSESIM,
   ROUTE_WAREHOUSE_GATEWAY,
   ROUTE_WAREHOUSES,
-  ROUTE_CONTROL
+  ROUTE_CONTROL,
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';

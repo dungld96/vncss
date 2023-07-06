@@ -3,12 +3,14 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
 
 type ObjectType = { [key: string]: any };
+export type SnackbarType = { severity: 'error' | 'success' | 'warning' | 'info'; message: string; open: boolean };
 
 type AppState = {
   area: ObjectType[];
+  snackbar: SnackbarType;
 };
 
-const initialState: AppState = { area: [] };
+const initialState: AppState = { area: [], snackbar: { severity: 'info', message: '', open: false } };
 
 const slice = createSlice({
   name: 'appState',
@@ -17,11 +19,15 @@ const slice = createSlice({
     setArea: (state, { payload: { area } }: PayloadAction<{ area: ObjectType[] }>) => {
       state.area = area;
     },
+    setSnackbar: (state, { payload }: PayloadAction<SnackbarType>) => {
+      state.snackbar = payload;
+    },
   },
 });
 
-export const { setArea } = slice.actions;
+export const { setArea, setSnackbar } = slice.actions;
 
 export default slice.reducer;
 
 export const selectArea = (state: RootState) => state.appState.area;
+export const selectSnackbar = (state: RootState) => state.appState.snackbar;

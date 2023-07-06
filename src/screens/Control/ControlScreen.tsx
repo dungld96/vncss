@@ -45,6 +45,23 @@ export const ControlScreen = () => {
         },
       });
     }
+    const interval = setInterval(() => {
+      if (currentUser) {
+        trigger({
+          agency_id: currentUser?.sub_id,
+          params: {
+            center_lat: center.lat,
+            center_lng: center.lng,
+            visible_radius: 70,
+            // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
+          },
+        });
+      }
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [trigger, currentUser, center, containerMapRef]);
 
   useEffect(() => {
@@ -101,8 +118,9 @@ export const ControlScreen = () => {
   return (
     <Box
       style={{
-        height: 'calc(100vh - 82px)',
+        height: 'calc(100vh - 64px)',
         width: ' 100%',
+        position: 'relative',
       }}
       ref={containerMapRef}
     >

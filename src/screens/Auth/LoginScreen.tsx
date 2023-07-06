@@ -99,7 +99,7 @@ const LoginScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = ((location.state as any)?.from.pathname as string) || '/';
+  const from = ((location.state as any)?.from.pathname as string) || '/control';
 
   const formik = useFormik({
     initialValues: {

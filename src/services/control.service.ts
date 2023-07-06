@@ -5,9 +5,50 @@ import { queryRootConfig, ResponsiveInterface } from './http.service';
 
 export interface AddGatewayResponsiveInterface extends ResponsiveInterface {}
 export interface AddGatewayRequestInterface {
-  data: { name: string; serial: string; sim: string; enableCallCenter: boolean };
+  data: { name: string; serial: string; enableCallCenter: boolean };
   agencyId: string;
   locationId: string;
+}
+
+export interface AddNodeRequestInterface {
+  data: { name: string; serial: string };
+  agencyId: string;
+  locationId: string;
+  gatewayId: string;
+}
+
+export interface ControlLocationGatewayType {
+  id: string;
+  agency_id: string;
+  gateway_type_id: string;
+  name: string;
+  sim: string;
+  serial: string;
+  hardware_version: string;
+  firmware_version: string;
+  mfg: string;
+  alert: number;
+  blocking: boolean;
+  testing: boolean;
+  state: string | null;
+  status: string;
+  secure_code: 'string';
+  enable_callcenter: boolean;
+}
+
+export interface ControlLocationNodeType {
+  id: string;
+  agency_id: string;
+  node_type_id: string;
+  name: string;
+  serial: string;
+  version: string;
+  mfg: string;
+  alert: number;
+  state: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export const controlApi = createApi({
@@ -40,11 +81,41 @@ export const controlApi = createApi({
       },
       transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
     }),
+    getControlLocationGateways: build.query<any, { agencyId: string; locationId: string }>({
+      query: (body) => ({ url: `agencies/${body.agencyId}/locations/${body.locationId}/gateways` }),
+      providesTags() {
+        return [{ type: 'Control' }];
+      },
+      transformResponse: (response: { data: ControlLocationGatewayType }, meta, arg) => response.data,
+    }),
+    getControlLocationGatewayNodes: build.query<any, { agencyId: string; locationId: string; gatewayId: string }>({
+      query: (body) => ({
+        url: `agencies/${body.agencyId}/locations/${body.locationId}/gateways/${body.gatewayId}/nodes`,
+      }),
+      providesTags() {
+        return [{ type: 'Control' }];
+      },
+      transformResponse: (response: { data: ControlLocationNodeType }, meta, arg) => response.data,
+    }),
     addGateway: build.mutation<AddGatewayResponsiveInterface, AddGatewayRequestInterface>({
       query: ({ data, agencyId, locationId }) => {
         try {
           return {
             url: `agencies/${agencyId}/locations/${locationId}/addgateway`,
+            method: 'POST',
+            body: data,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Control' }]),
+    }),
+    addNode: build.mutation<AddGatewayResponsiveInterface, AddNodeRequestInterface>({
+      query: ({ data, agencyId, locationId, gatewayId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/locations/${locationId}/gateways/${gatewayId}/addnode`,
             method: 'POST',
             body: data,
           };
@@ -63,4 +134,9 @@ export const {
   useAddGatewayMutation,
   useGetControlLocationQuery,
   useLazyGetControlLocationQuery,
+  useGetControlLocationGatewaysQuery,
+  useLazyGetControlLocationGatewaysQuery,
+  useGetControlLocationGatewayNodesQuery,
+  useLazyGetControlLocationGatewayNodesQuery,
+  useAddNodeMutation,
 } = controlApi;

@@ -50,7 +50,7 @@ export default function AppBarHeader() {
             variant="h6"
             sx={{ flexGrow: 1, textTransform: 'uppercase', color: '#8F0A0C', fontSize: 18, fontWeight: 600 }}
           >
-            Hệ thông an ninh tập trung Việt Nam
+            Hệ thống an ninh tập trung Việt Nam
           </Typography>
           <Box>
             <IconButton edge="end" color="inherit" aria-label="open drawer" onClick={handleMenu}>

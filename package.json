@@ -9,6 +9,7 @@
     "@devexpress/dx-react-grid-material-ui": "^4.0.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@material-ui/lab": "^4.0.0-alpha.61",
     "@material-ui/pickers": "^3.3.10",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.14",

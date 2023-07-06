@@ -1,6 +1,6 @@
 import { IntegratedSelection, SelectionState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-material-ui';
-import { MoreHoriz } from '@mui/icons-material';
+import { MoreHoriz, FileCopyOutlined } from '@mui/icons-material';
 import {
   Box,
   Button as ButtonBase,
@@ -174,6 +174,29 @@ export const WarehouseGatewayTable = () => {
 
   const customField = useMemo<CustomFieldType>(
     () => ({
+      serial: {
+        renderContent: ({ row }) => {
+          return (
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: '400',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {row.serial}
+              </Typography>
+              <FileCopyOutlined
+                style={{ marginLeft: '4px', cursor: 'pointer', fontSize: '12px' }}
+                onClick={() => navigator.clipboard.writeText(row.serial)}
+              />
+            </Box>
+          );
+        },
+      },
       status: {
         renderContent: ({ row }) => {
           return (
@@ -205,7 +228,6 @@ export const WarehouseGatewayTable = () => {
       },
       agency_id: {
         renderContent: ({ row }) => {
-          console.log(mappingAgencies, row.agency_id);
           return (
             <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
               {mappingAgencies[row.agency_id] || '--'}
@@ -275,7 +297,7 @@ export const WarehouseGatewayTable = () => {
             hideModalConfirm();
             more && setSelection([]);
           } catch (error) {
-            console.log(error);
+            // console.log(error);
           }
         },
         text: 'Xoá gateway',

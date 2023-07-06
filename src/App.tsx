@@ -18,8 +18,12 @@ import DeployLocationScreen from './screens/DeployLocationScreen/DeployLocationS
 import WarehouseNodeScreen from './screens/WarehouseNode/WarehouseNodeScreen';
 import WarehouseGatewayScreen from './screens/WarehouseGateway/WarehouseGatewayScreen';
 import { ControlScreen } from './screens/Control/ControlScreen';
+import { GlobalSnackbar } from './common/snackbar/Snackbar';
+import { useSnackbar } from './hooks/useSnackbar';
 
 function App() {
+  const { snackbar } = useSnackbar();
+
   return (
     <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh', fontFamily: 'Roboto' }}>
       <ModalConfirmContainer />
@@ -46,6 +50,7 @@ function App() {
 
         <Route path="login" element={<LoginScreen />} />
       </Routes>
+      <GlobalSnackbar {...snackbar} />
     </Box>
   );
 }

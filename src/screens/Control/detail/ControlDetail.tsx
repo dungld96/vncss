@@ -15,13 +15,13 @@ const DLCard = styled(Card)({
   position: 'absolute',
   bottom: 0,
   zIndex: 10,
-  width: 'calc(100% - 56px)',
   display: 'flex',
   flexDirection: 'column',
   boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
   borderRadius: '5px',
   justifyContent: 'center',
-  height: 'calc(100% - 64px)',
+  height: '100%',
+  width: '100%',
 });
 
 const ContentBox = styled(Box)({
@@ -39,6 +39,8 @@ interface Props {
 
 export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Props) => {
   const [location, setLocation] = useState<LocationType>();
+
+
   const {
     auth: { currentUser },
   } = useAuth();
@@ -56,6 +58,8 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
     }
   }, [currentUser, getControlLocation, selectedLocationId]);
 
+  
+
   const onClickRefresh = () => {};
 
   return (
@@ -65,7 +69,6 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           display: 'flex',
           alignItems: 'center',
           backgroundColor: '#8F0A0C',
-          height: '44px',
           padding: '0 8px 0 20px',
           color: '#FFFFFF',
         }}
@@ -81,6 +84,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
             lineHeight: '28px',
             flex: 1,
             marginLeft: '8px',
+            padding: '8px 0',
           }}
         >
           {locationName}
@@ -96,11 +100,19 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           </IconButton>
         </Tooltip>
       </Box>
-      <Box sx={{ flex: 1, backgroundColor: '#EEF2FA', padding: '4px 8px' }}>
-        <Grid container spacing={1} sx={{ marginTop: '-4px', marginLeft: '-4px', height: '100%' }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          backgroundColor: '#EEF2FA',
+          padding: '4px 8px',
+          overflowX: 'hidden',
+          overflowY: 'auto',
+        }}
+      >
+        <Grid container spacing={1} sx={{ marginTop: '-4px', marginLeft: '-4px', height: 'calc(100% - 20px)' }}>
           <Grid item xs={12} sm={3}>
             <ContentBox>
-              <LocationInfo location={location}/>
+              <LocationInfo location={location} />
               <LocationManager />
             </ContentBox>
           </Grid>

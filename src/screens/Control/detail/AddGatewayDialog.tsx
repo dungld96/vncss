@@ -8,11 +8,13 @@ import Modal from '../../../common/modal/Modal';
 import { useAddGatewayMutation } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { LocationType } from '../../../state/modules/location/locationReducer';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 interface Props {
   location?: LocationType;
   show: boolean;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -27,7 +29,6 @@ const ContentWrapper = styled(DialogContent)({
 const validationSchema = {
   serial: Yup.string().required('Serial không được để trông'),
   name: Yup.string().required('Tên không được để trống'),
-  sim: Yup.string().required('Sim không được để trống'),
 };
 
 export const AddGatewayDialog: React.FC<Props> = ({ location, show, onClose }) => {
@@ -36,11 +37,12 @@ export const AddGatewayDialog: React.FC<Props> = ({ location, show, onClose }) =
     auth: { currentUser },
   } = useAuth();
 
+  const { setSnackbar } = useSnackbar();
+
   const formik = useFormik({
     initialValues: {
       serial: '',
       name: '',
-      sim: '',
       enableCallCenter: true,
     },
     enableReinitialize: true,
@@ -53,7 +55,10 @@ export const AddGatewayDialog: React.FC<Props> = ({ location, show, onClose }) =
           agencyId: currentUser.sub_id,
           locationId: location.id,
           data: values,
-        }).unwrap();
+        }).then((res) => {
+          console.log(res);
+          setSnackbar({ open: true, message: 'Thêm gateway thành công', severity: 'success' });
+        });
         onClose?.();
       }
     },
@@ -76,12 +81,6 @@ export const AddGatewayDialog: React.FC<Props> = ({ location, show, onClose }) =
               placeholder="Nhập tên gateway"
               topLable="Tên gateway"
               {...getFieldProps('name')}
-            />
-            <FormikWrappedField
-              style={{ width: 286 }}
-              placeholder="Nhập số sim"
-              topLable="Số sim"
-              {...getFieldProps('sim')}
             />
             <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>

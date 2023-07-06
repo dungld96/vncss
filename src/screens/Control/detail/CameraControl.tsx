@@ -7,6 +7,7 @@ export const CameraControl = () => {
   const [message, setMessage] = useState('cam2');
   const [event, setEvent] = useState('');
   const sonamPlayerRef = useRef<SoNamPlayer>();
+  const wsEventRef = useRef<WebSocket>();
 
   const handlePlay = useCallback(() => {
     if (!message) {
@@ -20,9 +21,9 @@ export const CameraControl = () => {
     sonamPlayerRef.current = new SoNamPlayer('sonam-camera', { transport: ws_url });
     //handle event
     const ws_event_url = `${ws_server}/event/${Date.now()}/all`;
-    const wsEvent = new WebSocket(ws_event_url);
+    wsEventRef.current = new WebSocket(ws_event_url);
 
-    wsEvent.onmessage = (msg) => {
+    wsEventRef.current.onmessage = (msg) => {
       const event_data = JSON.parse(msg.data);
       if (event_data.motionType === 'START_DETECTED') {
         setEvent(
@@ -42,6 +43,10 @@ export const CameraControl = () => {
 
   useEffect(() => {
     handlePlay();
+    return () => {
+      sonamPlayerRef.current?.stop();
+      wsEventRef.current?.close();
+    };
   }, [handlePlay]);
 
   return (
