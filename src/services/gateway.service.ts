@@ -23,6 +23,17 @@ export interface IGateway {
   description?: string;
 }
 
+export interface IGatewayType {
+  id: string;
+  code: string;
+  name: string;
+  project: string;
+  schema?: string;
+  can_stop_alert: boolean;
+  permission?: string;
+  created_at: string;
+}
+
 export interface DeltailGatewayResponsiveInterface extends ResponsiveInterface {
   data: IGateway;
 }
@@ -31,16 +42,26 @@ export interface GatewaysResponsiveInterface extends ResponsiveInterface {
   data: IGateway[];
   cursor: CursorsType;
 }
+export interface GatewayTypesResponsiveInterface extends ResponsiveInterface {
+  data: IGatewayType[];
+  cursor: CursorsType;
+}
 
 export interface GatewayRequestInterface {
   parent_uuid?: string;
-  gateway: IGateway;
+  gateway: {
+    id?: string;
+    gateway_type_id: string;
+    serial: string;
+    hardware_version: string;
+    mfg: number;
+  };
 }
 
 export const gatewaysApi = createApi({
   ...queryRootConfig,
   reducerPath: 'gatewaysApi',
-  tagTypes: ['Gateway'],
+  tagTypes: ['Gateway', 'GatewayType'],
   endpoints: (build) => ({
     getListGateway: build.query<GatewaysResponsiveInterface, { agency_id?: string; params: any }>({
       query: (body) => ({ url: `agencies/${body.agency_id}/gateways`, params: body.params }),
@@ -151,6 +172,13 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
+    getGatewayTypes: build.query<any, null>({
+      query: (body) => ({ url: `gatewaytypes` }),
+      providesTags() {
+        return [{ type: 'GatewayType' }];
+      },
+      transformResponse: (response: { data: IGatewayType[] }, meta, arg) => response.data,
+    }),
   }),
 });
 
@@ -163,4 +191,5 @@ export const {
   useMoveGatewayMutation,
   useUpdateGatewayMutation,
   useDeleteGatewayMutation,
+  useGetGatewayTypesQuery,
 } = gatewaysApi;

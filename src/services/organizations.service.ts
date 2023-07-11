@@ -15,22 +15,22 @@ export interface IOrganization {
   username: string;
   count_locations?: number;
   count_devices?: number;
-  password?: string
+  password?: string;
 }
 
 export interface OrganizationResponsiveInterface extends ResponsiveInterface {
-    data: IOrganization;
-  }
-  
-  export interface OrganizationsResponsiveInterface extends ResponsiveInterface {
-    data: IOrganization[];
-    cursor: CursorsType;
-  }
-  
-  export interface OrganizationRequestInterface {
-    parent_uuid?: string;
-    organization: IOrganization;
-  }
+  data: IOrganization;
+}
+
+export interface OrganizationsResponsiveInterface extends ResponsiveInterface {
+  data: IOrganization[];
+  cursor: CursorsType;
+}
+
+export interface OrganizationRequestInterface {
+  parent_uuid?: string;
+  organization: IOrganization;
+}
 
 export const organizationsApi = createApi({
   ...queryRootConfig,

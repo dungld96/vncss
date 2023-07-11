@@ -3,6 +3,7 @@ import { Button, Typography, Box, Grid } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
 
 import DataEmpty from '../../../assets/img/data_empty.svg';
+
 import { LocationType } from '../../../state/modules/location/locationReducer';
 import {
   useLazyGetControlLocationGatewayNodesQuery,
@@ -54,12 +55,12 @@ export const GatewayControl = ({
       {nodes.length > 0 ? (
         <Box>
           <Grid container spacing={1}>
-            <Grid item xs={8}>
+            <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Typography style={{ fontSize: '18px', fontWeight: 700 }}>Danh sách Node</Typography>
                 </Box>
-                <Box>
+                <Box mt={1}>
                   <Button
                     variant="outlined"
                     style={{ padding: '4px 12px', borderRadius: '8px', height: '36px' }}
@@ -86,7 +87,21 @@ export const GatewayControl = ({
               </Box>
             </Grid>
             <Grid item xs={4}>
-              xxx
+              <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+                <Box>
+                  <Typography style={{ fontSize: '18px', fontWeight: 700 }}>Thông tin Gateway</Typography>
+                </Box>
+                <Box>
+                  {/* <Button
+                    variant="outlined"
+                    style={{ padding: '4px 12px', borderRadius: '8px', height: '36px' }}
+                    startIcon={<AddCircleOutline />}
+                    onClick={() => setOpenAddNodeDialog(true)}
+                  >
+                    Thêm Node
+                  </Button> */}
+                </Box>
+              </Box>
             </Grid>
           </Grid>
         </Box>

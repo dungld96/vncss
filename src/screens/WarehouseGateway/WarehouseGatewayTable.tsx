@@ -47,7 +47,7 @@ import ModalExtendGateway from './ModalExtendGateway';
 import dayjs from 'dayjs';
 import { useAuth } from '../../hooks/useAuth';
 import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
-import { useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
+import { IGatewayType, useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
 import { selectAgencies } from '../../state/modules/agency/agencyReducer';
 
 const ActionCellContent = ({
@@ -130,7 +130,7 @@ const ActionCellContent = ({
   );
 };
 
-export const WarehouseGatewayTable = () => {
+export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGatewayType[] }) => {
   const [achieveGateway] = useAchieveGatewayMutation();
   const [deleteGateway] = useDeleteGatewayMutation();
   const [trigger] = useLazyGetAllAgenciesQuery();
@@ -323,7 +323,7 @@ export const WarehouseGatewayTable = () => {
         {...modalChangeAgency}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
-      <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} gatewayTypes={gatewayTypes} />
       <Box
         sx={{
           display: 'flex',

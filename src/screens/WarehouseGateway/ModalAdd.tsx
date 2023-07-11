@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useCreateGatewayMutation, useImportGatewayMutation } from '../../services/gateway.service';
+import { IGatewayType, useCreateGatewayMutation, useImportGatewayMutation } from '../../services/gateway.service';
 import * as Yup from 'yup';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
 import Select from '../../common/Select/Select';
@@ -12,10 +12,12 @@ import DatePickers from '../../common/datePicker/DatePicker';
 import FormikWrappedField from '../../common/input/Field';
 import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
+import dayjs from 'dayjs';
 
 interface Props {
   show: boolean;
   onClose?: () => void;
+  gatewayTypes: IGatewayType[];
 }
 
 interface TabPanelProps {
@@ -69,7 +71,7 @@ const validationSchema = Yup.object().shape({
   startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
 });
 
-const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
+const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
   const [addGateway] = useCreateGatewayMutation();
   const [importGateway] = useImportGatewayMutation();
   const [tab, setTab] = useState(0);
@@ -93,11 +95,11 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
     validationSchema,
     onSubmit: async (values) => {
       const body = {
-        id: values.id,
+        id: values.id || undefined,
         gateway_type_id: values.type,
         serial: values.serial,
         hardware_version: values.version,
-        mfg: values.startDate,
+        mfg: dayjs(values.startDate).unix(),
         description: values.description,
       };
       if (tab === 0) {
@@ -145,6 +147,8 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
     setTab(0);
     setFile(null);
   }, [show]);
+
+  const gatewayTypesList = gatewayTypes.map((item) => ({ value: item.id, label: item.name }));
 
   return (
     <Dialog
@@ -201,12 +205,10 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 style={{ width: 286 }}
                 fullWidth
                 topLable="Loại sản phẩm"
-                data={[
-                  { value: 'none', label: 'Chọn loại sản phẩm' },
-                  { value: '123abc', label: 'GW-001 - Gateway Sample' },
-                ]}
+                data={gatewayTypesList}
                 selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
+                placeholder="Chọn loại sản phẩm"
                 error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
               />
               <FormikWrappedField

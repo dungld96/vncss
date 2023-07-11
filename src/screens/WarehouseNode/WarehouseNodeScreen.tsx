@@ -5,11 +5,12 @@ import { CursorsType } from '../../configs/constant';
 import { useSelector } from 'react-redux';
 import { selectNodeState } from '../../state/modules/node/nodeReducer';
 import Pagination from '../../common/pagination/Pagination';
-import { useLazyGetListNodeQuery } from '../../services/node.service';
+import { useLazyGetListNodeQuery, useGetNodeTypesQuery } from '../../services/node.service';
 import { Box } from '@mui/material';
 
 const WarehouseNodeScreen = () => {
   const [trigger] = useLazyGetListNodeQuery();
+  const { data: nodeTypes } = useGetNodeTypesQuery(null);
   const [paginate, setPaginate] = useState<CursorsType>({});
 
   const { cursors, limit } = useSelector(selectNodeState);
@@ -26,7 +27,7 @@ const WarehouseNodeScreen = () => {
 
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <WarehouseNodeTable />
+      <WarehouseNodeTable nodeTypes={nodeTypes || []} />
       <Pagination paginate={cursors} setPaginate={setPaginate} />
     </Box>
   );

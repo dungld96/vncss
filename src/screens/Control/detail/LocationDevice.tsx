@@ -21,7 +21,7 @@ const TabPanel = (props: TabPanelProps) => {
 
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box pt={2}>{children}</Box>}
+      {value === index && <Box pt={1}>{children}</Box>}
     </div>
   );
 };
@@ -68,8 +68,8 @@ export const LocationDevice = ({ location }: { location?: LocationType }) => {
   return (
     <Box pb={2}>
       <Tabs value={value} onChange={handleChange} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tab label={<TabLabel>{gateway?.name || 'Gateway'}</TabLabel>} value={0} />
-        <Tab label={<TabLabel>Danh sách camera</TabLabel>} value={1} />
+        <Tab label={<TabLabel>Gateway: {gateway?.name}</TabLabel>} value={0} />
+        <Tab label={<TabLabel>Quản lý camera</TabLabel>} value={1} />
         {/* <Box display="flex" flexDirection="row" width="100%" justifyContent="flex-end" alignItems="center" p="12px">
           <AddCircleOutline color="primary" style={{ cursor: 'pointer' }} />
         </Box> */}

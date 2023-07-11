@@ -39,7 +39,7 @@ import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
 import { useAuth } from '../../hooks/useAuth';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { useAchieveNodeMutation, useDeleteNodeMutation } from '../../services/node.service';
+import { INodeType, useAchieveNodeMutation, useDeleteNodeMutation } from '../../services/node.service';
 import { selectNode } from '../../state/modules/node/nodeReducer';
 import { defaultInitialValues, listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
 import ModalAddNode from './ModalAddNode';
@@ -126,7 +126,7 @@ const ActionCellContent = ({
   );
 };
 
-export const WarehouseNodeTable = () => {
+export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) => {
   const [achieveNode] = useAchieveNodeMutation();
   const [deleteNode] = useDeleteNodeMutation();
   const [trigger] = useLazyGetAllAgenciesQuery();
@@ -223,6 +223,7 @@ export const WarehouseNodeTable = () => {
             hideModalConfirm();
             more && setSelection([]);
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.log(error);
           }
         },
@@ -291,7 +292,7 @@ export const WarehouseNodeTable = () => {
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
       <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} />
-      <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} nodeTypes={nodeTypes} />
       <Box
         sx={{
           display: 'flex',

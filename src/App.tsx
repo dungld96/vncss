@@ -20,6 +20,7 @@ import WarehouseGatewayScreen from './screens/WarehouseGateway/WarehouseGatewayS
 import { ControlScreen } from './screens/Control/ControlScreen';
 import { GlobalSnackbar } from './common/snackbar/Snackbar';
 import { useSnackbar } from './hooks/useSnackbar';
+import { CamerasScreen } from './screens/cameras/CamerasScreen';
 
 function App() {
   const { snackbar } = useSnackbar();
@@ -43,6 +44,7 @@ function App() {
             <Route path="depoy-location" element={<DeployLocationScreen />} />
             <Route path="warehouse-node" element={<WarehouseNodeScreen />} />
             <Route path="warehouse-gateway" element={<WarehouseGatewayScreen />} />
+            <Route path="warehouse-cameras" element={<CamerasScreen />} />
             <Route path="control" element={<ControlScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>

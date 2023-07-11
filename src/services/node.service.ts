@@ -2,10 +2,21 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { setNodes } from '../state/modules/node/nodeReducer';
 import { queryRootConfig } from './http.service';
 
+export interface INodeType {
+  id: string;
+  code: string;
+  name: string;
+  schema?: string;
+  can_stop_alert: boolean;
+  permission?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export const nodesApi = createApi({
   ...queryRootConfig,
   reducerPath: 'nodesApi',
-  tagTypes: ['Node'],
+  tagTypes: ['Node', 'NodeType'],
   endpoints: (build) => ({
     getListNode: build.query<any, { agency_id?: string; params: any }>({
       query: (body) => ({ url: `agencies/${body.agency_id}/nodes`, params: body.params }),
@@ -116,6 +127,13 @@ export const nodesApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
+    getNodeTypes: build.query<any, null>({
+      query: (body) => ({ url: `nodetypes` }),
+      providesTags() {
+        return [{ type: 'NodeType' }];
+      },
+      transformResponse: (response: { data: INodeType[] }, meta, arg) => response.data,
+    }),
   }),
 });
 
@@ -128,4 +146,5 @@ export const {
   useLazyGetListNodeQuery,
   useMoveNodeMutation,
   useUpdateNodeMutation,
+  useGetNodeTypesQuery,
 } = nodesApi;

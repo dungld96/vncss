@@ -3,13 +3,14 @@ import { CursorsType } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyGetListGatewayQuery } from '../../services/gateway.service';
+import { useLazyGetListGatewayQuery, useGetGatewayTypesQuery } from '../../services/gateway.service';
 import { selectGatewayState } from '../../state/modules/gateway/gatewayReducer';
 import { WarehouseGatewayTable } from './WarehouseGatewayTable';
 import { Box } from '@mui/material';
 
 const WarehouseGatewayScreen = () => {
   const [trigger] = useLazyGetListGatewayQuery();
+  const { data: gatewayTypes } = useGetGatewayTypesQuery(null);
   const [paginate, setPaginate] = React.useState<CursorsType>({});
 
   const { cursors, limit } = useSelector(selectGatewayState);
@@ -26,7 +27,7 @@ const WarehouseGatewayScreen = () => {
 
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <WarehouseGatewayTable />
+      <WarehouseGatewayTable gatewayTypes={gatewayTypes || []} />
       <Pagination paginate={cursors} setPaginate={setPaginate} />
     </Box>
   );

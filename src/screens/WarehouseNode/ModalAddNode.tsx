@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import dayjs from 'dayjs';
 import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -11,11 +12,12 @@ import FormikWrappedField from '../../common/input/Field';
 import Select from '../../common/Select/Select';
 import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
-import { useCreateNodeMutation, useImportNodeMutation } from '../../services/node.service';
+import { INodeType, useCreateNodeMutation, useImportNodeMutation } from '../../services/node.service';
 
 interface Props {
   show: boolean;
   onClose?: () => void;
+  nodeTypes: INodeType[];
 }
 
 interface TabPanelProps {
@@ -69,7 +71,7 @@ const validationSchema = Yup.object().shape({
   startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
 });
 
-const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
+const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
   const [addNode] = useCreateNodeMutation();
   const [importNode] = useImportNodeMutation();
 
@@ -94,11 +96,11 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
     validationSchema,
     onSubmit: async (values) => {
       const body = {
-        id: values.id,
+        id: values.id || undefined,
         node_type_id: values.type,
         serial: values.serial,
         version: values.version,
-        mfg: values.startDate,
+        mfg: dayjs(values.startDate).unix(),
         description: values.description,
       };
       if (tab === 0) {
@@ -146,6 +148,8 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
     setTab(0);
     setFile(null);
   }, [show]);
+
+  const nodeTypesList = nodeTypes.map((item) => ({ value: item.id, label: item.name }));
 
   return (
     <Dialog
@@ -202,12 +206,10 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose }) => {
                 style={{ width: 286 }}
                 fullWidth
                 topLable="Loại sản phẩm"
-                data={[
-                  { value: 'none', label: 'Chọn loại sản phẩm' },
-                  { value: 'snh-srb', label: 'Node Sample' },
-                ]}
+                data={nodeTypesList}
                 selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
+                placeholder="Chọn loại sản phẩm"
                 error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
               />
               <FormikWrappedField

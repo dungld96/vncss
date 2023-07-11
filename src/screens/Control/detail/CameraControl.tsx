@@ -1,59 +1,162 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Box } from '@mui/material';
-import SoNamPlayer from '../../../assets/libs/SoNam/SoNamPlayer.oc';
-import dayjs from 'dayjs';
+import { useState } from 'react';
+import { Box, Grid, Typography, IconButton, Badge, Button, ButtonGroup } from '@mui/material';
+import { AddCircleOutline } from '@mui/icons-material';
+import ImageGallery from 'react-image-gallery';
+import ActiveCameraIcon from '../../../assets/icons/active-camera-icon.svg';
+import CameraIcon from '../../../assets/icons/camera-icon.svg';
+import { CameraLive } from './CameraLive';
 
 export const CameraControl = () => {
-  const [message, setMessage] = useState('cam2');
-  const [event, setEvent] = useState('');
-  const sonamPlayerRef = useRef<SoNamPlayer>();
-  const wsEventRef = useRef<WebSocket>();
+  const [imageMode, setImageMode] = useState(true);
 
-  const handlePlay = useCallback(() => {
-    if (!message) {
-      alert('Url not null!');
-      return;
-    }
-    //init player
-    if (sonamPlayerRef.current) sonamPlayerRef.current.stop();
-    const ws_server = 'wss://vnt.sonam.vn';
-    const ws_url = `${ws_server}/evup/${Date.now()}/${message}`;
-    sonamPlayerRef.current = new SoNamPlayer('sonam-camera', { transport: ws_url });
-    //handle event
-    const ws_event_url = `${ws_server}/event/${Date.now()}/all`;
-    wsEventRef.current = new WebSocket(ws_event_url);
+  const onChangeMode = () => {
+    setImageMode(!imageMode);
+  };
 
-    wsEventRef.current.onmessage = (msg) => {
-      const event_data = JSON.parse(msg.data);
-      if (event_data.motionType === 'START_DETECTED') {
-        setEvent(
-          `Phát hiện chuyển động tại Cam: ${event_data.camId}, IP: ${event_data.ip}, Thời điểm: ${dayjs(
-            event_data.time
-          ).format('DD-MM-YYYY HH:mm:ss')}`
-        );
-      } else {
-        setEvent(
-          `Kết thúc chuyển động tại Cam: ${event_data.camId}, IP: ${event_data.ip}, Thời điểm: ${dayjs(
-            event_data.time
-          ).format('DD-MM-YYYY HH:mm:ss')}`
-        );
-      }
-    };
-  }, [message]);
-
-  useEffect(() => {
-    handlePlay();
-    return () => {
-      sonamPlayerRef.current?.stop();
-      wsEventRef.current?.close();
-    };
-  }, [handlePlay]);
+  const images = [
+    {
+      original: 'https://picsum.photos/id/1018/1000/600/',
+      thumbnail: 'https://picsum.photos/id/1018/250/150/',
+    },
+    {
+      original: 'https://picsum.photos/id/1015/1000/600/',
+      thumbnail: 'https://picsum.photos/id/1015/250/150/',
+    },
+    {
+      original: 'https://picsum.photos/id/1019/1000/600/',
+      thumbnail: 'https://picsum.photos/id/1019/250/150/',
+    },
+  ];
 
   return (
-    <Box mt={2} ml={2} mr={'12px'}>
-      <Box className="container">
-        <video id="sonam-camera" width="100%" controls autoPlay src="" muted></video>
-      </Box>
+    <Box mr={'12px'}>
+      <Grid container spacing={1}>
+        <Grid item xs={3} style={{ borderRight: '1px solid #EEF2FA', paddingRight: '16px' }}>
+          <Box pb={2}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography style={{ fontWeight: 500 }}>Danh sách camera</Typography>
+              <IconButton>
+                <AddCircleOutline />
+              </IconButton>
+            </Box>
+            <Box display="flex" alignItems="center" pb="12px" style={{ borderBottom: '1px solid #EEF2FA' }}>
+              <Box>
+                <img src={ActiveCameraIcon} alt="" />
+              </Box>
+              <Box px={2}>
+                <Typography style={{ color: '#8F0A0C', fontWeight: 600, fontSize: '14px' }}>Broker NVR</Typography>
+                <Typography style={{ color: '#8F0A0C', fontSize: '12px' }}>4 camera</Typography>
+              </Box>
+            </Box>
+            <Box display="flex" alignItems="center" py="12px" style={{ borderBottom: '1px solid #EEF2FA' }}>
+              <Box>
+                <Badge color="success" variant="dot" invisible={false}>
+                  <img src={CameraIcon} alt="" />
+                </Badge>
+              </Box>
+              <Box px={2}>
+                <Typography style={{ color: '#8B8C9B', fontWeight: 600, fontSize: '14px' }}>
+                  CAM 1 - Sảnh chờ
+                </Typography>
+              </Box>
+            </Box>
+            <Box display="flex" alignItems="center" py="12px" style={{ borderBottom: '1px solid #EEF2FA' }}>
+              <Box>
+                <Badge color="success" variant="dot" invisible={false}>
+                  <img src={CameraIcon} alt="" />
+                </Badge>
+              </Box>
+              <Box px={2}>
+                <Typography style={{ color: '#8B8C9B', fontWeight: 600, fontSize: '14px' }}>
+                  CAM 1 - Sảnh chờ
+                </Typography>
+              </Box>
+            </Box>
+            <Box display="flex" alignItems="center" py="12px" style={{ borderBottom: '1px solid #EEF2FA' }}>
+              <Box>
+                <Badge color="success" variant="dot" invisible={false}>
+                  <img src={CameraIcon} alt="" />
+                </Badge>
+              </Box>
+              <Box px={2}>
+                <Typography style={{ color: '#8B8C9B', fontWeight: 600, fontSize: '14px' }}>
+                  CAM 1 - Sảnh chờ
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Box>
+            <Box display="flex" alignItems="center">
+              <Typography style={{ fontWeight: 500 }}>Thông tin</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" py="12px">
+              <Typography style={{ color: '#8B8C9B', fontSize: '14px' }}>Loại:</Typography>
+              <Typography style={{ fontSize: '14px' }}>Camera01</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" py="12px">
+              <Typography style={{ color: '#8B8C9B', fontSize: '14px' }}>Serial:</Typography>
+              <Typography style={{ fontSize: '14px' }}>SDFSDASDASASDSA</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" py="12px">
+              <Typography style={{ color: '#8B8C9B', fontSize: '14px' }}>Phiên bản:</Typography>
+              <Typography style={{ fontSize: '14px' }}>1.0</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" py="12px">
+              <Typography style={{ color: '#8B8C9B', fontSize: '14px' }}>Tên NVR:</Typography>
+              <Typography style={{ fontSize: '14px' }}>ABC</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" py="12px">
+              <Typography style={{ color: '#8B8C9B', fontSize: '14px' }}>MAC Address:</Typography>
+              <Typography style={{ fontSize: '14px' }}>AG AG KH KJ GH</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" py="12px">
+              <Typography style={{ color: '#8B8C9B', fontSize: '14px' }}>IP address:</Typography>
+              <Typography style={{ fontSize: '14px' }}>127.0.0.1</Typography>
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={9} style={{ paddingLeft: '8px' }}>
+          <Box display="flex" justifyContent="center" my={2}>
+            <ButtonGroup disableElevation>
+              <Button
+                style={{
+                  textTransform: 'none',
+                  width: '140px',
+                  borderRadius: '16px',
+                  marginRight: '-30px',
+                  padding: '10px 12px',
+                  height: '38px',
+                  zIndex: imageMode ? 1 : undefined,
+                }}
+                onClick={onChangeMode}
+                variant={imageMode ? 'contained' : 'outlined'}
+                color={imageMode ? 'primary' : undefined}
+              >
+                <Typography color={imageMode ? undefined : 'primary'} style={{ fontSize: '14px', fontWeight: 700 }}>
+                  Hình ảnh
+                </Typography>
+              </Button>
+              <Button
+                style={{
+                  textTransform: 'none',
+                  width: '140px',
+                  borderRadius: '16px',
+                  padding: '10px 12px',
+                  height: '38px',
+                }}
+                onClick={onChangeMode}
+                variant={!imageMode ? 'contained' : 'outlined'}
+                color={!imageMode ? 'primary' : undefined}
+              >
+                <Typography color={!imageMode ? undefined : 'primary'} style={{ fontSize: '14px', fontWeight: 700 }}>
+                  Trực tiếp
+                </Typography>
+              </Button>
+            </ButtonGroup>
+          </Box>
+          <Box>{imageMode ? <ImageGallery items={images} /> : <CameraLive />}</Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

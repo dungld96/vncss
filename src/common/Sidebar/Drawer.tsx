@@ -18,6 +18,7 @@ import {
   ROUTE_WAREHOUSE_GATEWAY,
   ROUTE_WAREHOUSES,
   ROUTE_CONTROL,
+  ROUTE_WAREHOUSE_CAMERA,
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
@@ -163,6 +164,14 @@ const listFeature = [
         activeIcon: <ImageIcon image={simActiveIcon} />,
         permission: ['warehouse-sim'],
         route: ROUTE_WAREHOUSESIM,
+      },
+      {
+        id: '0b2e42ed-00f9-4dbe-a1d3-12376f2671ff',
+        title: 'Kho Camera',
+        icon: <ImageIcon image={simIcon} />,
+        activeIcon: <ImageIcon image={simActiveIcon} />,
+        permission: ['warehouse-camera'],
+        route: ROUTE_WAREHOUSE_CAMERA,
       },
     ],
     route: ROUTE_WAREHOUSES,

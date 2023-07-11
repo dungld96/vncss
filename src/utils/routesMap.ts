@@ -7,6 +7,7 @@ export const ROUTE_WAREHOUSES = '/warehouse';
 export const ROUTE_WAREHOUSESIM = '/warehouse-sim';
 export const ROUTE_WAREHOUSE_NODE = '/warehouse-node';
 export const ROUTE_WAREHOUSE_GATEWAY = '/warehouse-gateway';
+export const ROUTE_WAREHOUSE_CAMERA = '/warehouse-cameras';
 export const ROUTE_VEHICLE_PROTECT = '/vehicle-protect';
 export const ROUTE_VITAL_VEHICLE = '/vehicle-vital';
 export const MONITOR_DEPARTMENT = '/organizations';

@@ -16,7 +16,10 @@ const slice = createSlice({
   name: 'organizationsState',
   initialState: initialState,
   reducers: {
-    setOrganizations: (state, { payload: { organizations, cursors } }: PayloadAction<{ organizations: any[]; cursors: CursorsType }>) => {
+    setOrganizations: (
+      state,
+      { payload: { organizations, cursors } }: PayloadAction<{ organizations: any[]; cursors: CursorsType }>
+    ) => {
       state.organizations = organizations;
       state.cursors = cursors;
     },
