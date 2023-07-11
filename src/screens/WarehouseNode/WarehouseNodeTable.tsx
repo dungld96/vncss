@@ -154,7 +154,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
   const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
 
   const [columns] = useState([
-    { name: 'node_type_id', title: 'Loại' },
+    { name: 'nodeType', title: 'Loại' },
     { name: 'description', title: 'Mô tả' },
     { name: 'serial', title: 'Serial' },
     { name: 'version', title: 'Phiên bản' },
@@ -171,6 +171,11 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
 
   const customField = useMemo<CustomFieldType>(
     () => ({
+      nodeType: {
+        renderContent: ({ row }) => (
+          <Typography sx={{ fontSize: '14px' }}>{mappingNodeType(row.node_type_id)}</Typography>
+        ),
+      },
       status: {
         renderContent: ({ row }) => (
           <Typography sx={{ fontSize: '14px', fontWeight: '400', color: `${mappingStatusNodeColor[row.status]}` }}>
@@ -275,6 +280,11 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
   const handleSelectionChange = (selectedRowIndices: (number | string)[]) => {
     const selectedRowIds = selectedRowIndices.map((index) => data[Number(index)]?.id);
     setSelection(selectedRowIds);
+  };
+
+  const mappingNodeType = (typeId: string) => {
+    const type = nodeTypes.find((item) => item.id === typeId);
+    return type ? `${type.code} - ${type.name}` : typeId;
   };
 
   useEffect(() => {

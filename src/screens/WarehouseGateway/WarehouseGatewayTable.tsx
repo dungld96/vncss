@@ -153,7 +153,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
   const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
 
   const [columns] = useState([
-    { name: 'gateway_type_id', title: 'Loại' },
+    { name: 'gatewayType', title: 'Loại' },
     { name: 'description', title: 'Mô tả' },
     { name: 'serial', title: 'Serial' },
     { name: 'hardware_version', title: 'Phiên bản' },
@@ -174,6 +174,11 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
 
   const customField = useMemo<CustomFieldType>(
     () => ({
+      gatewayType: {
+        renderContent: ({ row }) => {
+          return <Typography sx={{ fontSize: '14px' }}>{mappingGatewayType(row.gateway_type_id)}</Typography>;
+        },
+      },
       serial: {
         renderContent: ({ row }) => {
           return (
@@ -238,6 +243,11 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     }),
     [mappingAgencies]
   );
+
+  const mappingGatewayType = (typeId: string) => {
+    const type = gatewayTypes.find((item) => item.id === typeId);
+    return type ? `${type.code} - ${type.name}` : typeId;
+  };
 
   const handleRecall = (ids: (string | number)[], more?: boolean) => {
     showModalConfirm({
