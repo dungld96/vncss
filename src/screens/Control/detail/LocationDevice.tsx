@@ -80,7 +80,7 @@ export const LocationDevice = ({ location }: { location?: LocationType }) => {
           : location && <EmptyGateway location={location} refetch={refetchGateways} />}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <CameraControl />
+        {location && <CameraControl location={location} />}
       </TabPanel>
     </Box>
   );

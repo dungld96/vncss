@@ -121,7 +121,7 @@ export const GatewayControl = ({
           </Box>
         </Box>
       )}
-      {location && gateway && (
+      {location && gateway && openAddNodeDialog && (
         <AddNodeDialog
           locationId={location.id}
           gatewayId={gateway.id}

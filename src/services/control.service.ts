@@ -10,6 +10,12 @@ export interface AddGatewayRequestInterface {
   locationId: string;
 }
 
+export interface AddCameraRequestInterface {
+  data: { serial: string };
+  agencyId: string;
+  locationId: string;
+}
+
 export interface AddNodeRequestInterface {
   data: { name: string; serial: string };
   agencyId: string;
@@ -51,10 +57,29 @@ export interface ControlLocationNodeType {
   updated_at: string;
 }
 
+export interface ControlLocationCameraType {
+  camId: string;
+  rtsp: string;
+  name: string;
+  status: string;
+  camip: string;
+  onvifhost: string;
+  onvifport: string;
+  onvifusername: string;
+  onvifpassword: string;
+  audiocodec: string;
+  videocodec: string;
+  boxid: string;
+  boxserial: string;
+  boxip: string;
+  rtspstream: string;
+  websocketstream: string;
+}
+
 export const controlApi = createApi({
   ...queryRootConfig,
   reducerPath: 'controlApi',
-  tagTypes: ['Control'],
+  tagTypes: ['Control', 'AddCamera', 'AddGateway', 'AddNode'],
   endpoints: (build) => ({
     getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
       query: (body) => ({ url: `agencies/${body.agency_id}/locations/status`, params: body.params }),
@@ -109,7 +134,7 @@ export const controlApi = createApi({
           throw new error.message();
         }
       },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Control' }]),
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddGateway' }]),
     }),
     addNode: build.mutation<AddGatewayResponsiveInterface, AddNodeRequestInterface>({
       query: ({ data, agencyId, locationId, gatewayId }) => {
@@ -123,7 +148,42 @@ export const controlApi = createApi({
           throw new error.message();
         }
       },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Control' }]),
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddNode' }]),
+    }),
+    addCamera: build.mutation<AddGatewayResponsiveInterface, AddCameraRequestInterface>({
+      query: ({ data, agencyId, locationId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/locations/${locationId}/cameraboxes`,
+            method: 'POST',
+            body: data,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddCamera' }]),
+    }),
+    getControlLocationCameras: build.query<any, { agencyId: string; locationId: string }>({
+      query: (body) => ({
+        url: `agencies/${body.agencyId}/locations/${body.locationId}/cameras`,
+      }),
+      providesTags() {
+        return [{ type: 'Control' }];
+      },
+      transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+    }),
+    getControlLocationCameraImage: build.query<
+      any,
+      { agencyId: string; locationId: string; cameraboxeId: string; cameraId: string }
+    >({
+      query: (body) => ({
+        url: `agencies/${body.agencyId}/locations/${body.locationId}/cameraboxes/${body.cameraboxeId}/cameras/${body.cameraId}/images`,
+      }),
+      providesTags() {
+        return [{ type: 'Control' }];
+      },
+      transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
     }),
   }),
 });
@@ -138,5 +198,8 @@ export const {
   useLazyGetControlLocationGatewaysQuery,
   useGetControlLocationGatewayNodesQuery,
   useLazyGetControlLocationGatewayNodesQuery,
+  useLazyGetControlLocationCamerasQuery,
   useAddNodeMutation,
+  useAddCameraMutation,
+  useLazyGetControlLocationCameraImageQuery,
 } = controlApi;
