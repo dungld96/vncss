@@ -2,9 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Tabs, Tab, Box, Typography, Grid } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
-
-const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
-const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
+import { EventReceiveType } from '../../../state/modules/location/locationReducer';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -24,7 +22,7 @@ const TabPanel = (props: TabPanelProps) => {
 
 const TabLabel = styled(Typography)({ fontWeight: 700, fontSize: '14px', textTransform: 'none' });
 
-export const LocationManager = () => {
+export const LocationManager = ({ eventReceivers }: { eventReceivers: EventReceiveType[] }) => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -68,195 +66,46 @@ export const LocationManager = () => {
           </Grid>
 
           <Grid container style={{ fontSize: '14px' }}>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                  fontWeight: 500,
-                  color: '#8F0A0C',
-                }}
-              >
-                Hoàng Ngọc Anh
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                {`SMS & Call`}
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                Giám đốc chi nhánh
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                0999888999
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                  fontWeight: 500,
-                  color: '#8F0A0C',
-                }}
-              >
-                Hoàng Tùng Giang
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                {`SMS & Call`}
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                Giám đốc chi nhánh
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                0999888999
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                  fontWeight: 500,
-                  color: '#8F0A0C',
-                }}
-              >
-                Lê Tuyết Vân
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                {`SMS & Call`}
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                Giám đốc chi nhánh
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="40px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                0999888999
-              </Box>
-            </Grid>
+            {eventReceivers.map((item) => (
+              <>
+                <Grid
+                  item
+                  xs={6}
+                  height="40px"
+                  style={{
+                    borderLeft: '1px solid #C5C6D2',
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                  }}
+                >
+                  <Box
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '100%',
+                      fontWeight: 500,
+                      color: '#8F0A0C',
+                    }}
+                  >
+                    {item.name}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  height="40px"
+                  style={{
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                  }}
+                >
+                  <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    {`SMS & Call`}
+                  </Box>
+                </Grid>
+              </>
+            ))}
           </Grid>
           <Grid
             container

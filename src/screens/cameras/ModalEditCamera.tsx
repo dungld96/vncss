@@ -7,15 +7,15 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import { listStatus } from './constants';
-import { SimType } from './mockData';
+import { CameraType } from './mockData';
 
 interface Props {
   show: boolean;
   onClose: () => void;
-  initialValues: SimType;
+  initialValues: CameraType;
 }
 
-const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
+const ModalEditCamera: React.FC<Props> = ({ show, onClose, initialValues }) => {
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
@@ -31,7 +31,7 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
     resetForm();
   }, [show]);
   return (
-    <Modal size="sm" show={show} close={onClose} title={'Chỉnh sửa thông tin sim'}>
+    <Modal size="sm" show={show} close={onClose} title={'Chỉnh sửa thông tin camera'}>
       <FormikProvider value={formik}>
         <Form noValidate onSubmit={handleSubmit}>
           <DialogContent
@@ -45,7 +45,7 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
             }}
           >
             <Input style={{ width: 286 }} topLable="Số điện thoại" {...getFieldProps('phoneNumber')} />
-            <Input style={{ width: 286 }} topLable="Imei sim" {...getFieldProps('imei')} />
+            <Input style={{ width: 286 }} topLable="Imei camera" {...getFieldProps('imei')} />
             <Input style={{ width: 286 }} topLable="Ngày kích hoạt" {...getFieldProps('createdDate')} />
             <Select
               style={{ width: 286 }}
@@ -70,4 +70,4 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
   );
 };
 
-export default ModalEditSim;
+export default ModalEditCamera;

@@ -1,4 +1,4 @@
-export const defaultValuesSim = {
+export const defaultValuesCamera = {
   phoneNumber: '',
   imei: '',
   status: 1,

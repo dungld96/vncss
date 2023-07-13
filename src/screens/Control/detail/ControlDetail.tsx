@@ -40,7 +40,6 @@ interface Props {
 export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Props) => {
   const [location, setLocation] = useState<LocationType>();
 
-
   const {
     auth: { currentUser },
   } = useAuth();
@@ -57,8 +56,6 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
         .catch((err) => console.log('error', err));
     }
   }, [currentUser, getControlLocation, selectedLocationId]);
-
-  
 
   const onClickRefresh = () => {};
 
@@ -113,7 +110,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           <Grid item xs={12} sm={3}>
             <ContentBox>
               <LocationInfo location={location} />
-              <LocationManager />
+              {location && <LocationManager eventReceivers={location.event_receivers || []} />}
             </ContentBox>
           </Grid>
           <Grid item xs={12} sm={9}>

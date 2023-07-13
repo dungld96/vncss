@@ -13,7 +13,7 @@ export interface LocationType {
   contact_number: string;
   contract_date: string;
   district: string;
-  event_receiver: string | null;
+  event_receivers: EventReceiveType[];
   id: string;
   lat: number;
   lng: number;
@@ -23,6 +23,13 @@ export interface LocationType {
   province: string;
   tags: null;
 }
+
+export type EventReceiveType = {
+  enabled: boolean;
+  name: string;
+  phone: string;
+  position: string;
+};
 
 type LocationState = {
   locations: LocationType[];

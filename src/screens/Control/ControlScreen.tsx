@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box } from '@mui/material';
 import GoogleMapReact from 'google-map-react';
 import { PointFeature } from 'supercluster';
@@ -34,21 +34,10 @@ export const ControlScreen = () => {
   const locations = useSelector(selectLocation);
 
   useEffect(() => {
-    if (currentUser) {
-      trigger({
-        agency_id: currentUser?.sub_id,
-        params: {
-          center_lat: center.lat,
-          center_lng: center.lng,
-          visible_radius: 70,
-          // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
-        },
-      });
-    }
     const interval = setInterval(() => {
-      if (currentUser) {
+      if (currentUser && center) {
         trigger({
-          agency_id: currentUser?.sub_id,
+          agency_id: currentUser.sub_id,
           params: {
             center_lat: center.lat,
             center_lng: center.lng,
@@ -62,7 +51,20 @@ export const ControlScreen = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [trigger, currentUser, center, containerMapRef]);
+  }, []);
+
+  useEffect(() => {
+    if (currentUser && center) {
+      trigger({
+        agency_id: currentUser.sub_id,
+        params: {
+          center_lat: center.lat,
+          center_lng: center.lng,
+          visible_radius: 70,
+        },
+      });
+    }
+  }, [trigger, currentUser, center]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -80,14 +82,18 @@ export const ControlScreen = () => {
     }
   }, []);
 
-  const points: Array<PointFeature<GeoJsonProperties>> = locations.map((location) => ({
-    type: 'Feature',
-    properties: { cluster: false, location },
-    geometry: {
-      type: 'Point',
-      coordinates: [location.lat, location.lng],
-    },
-  }));
+  const points: Array<PointFeature<GeoJsonProperties>> = useMemo(
+    () =>
+      locations.map((location) => ({
+        type: 'Feature',
+        properties: { cluster: false, location },
+        geometry: {
+          type: 'Point',
+          coordinates: [location.lat, location.lng],
+        },
+      })),
+    [locations]
+  );
 
   const { clusters } = useSupercluster({
     points,
@@ -114,6 +120,9 @@ export const ControlScreen = () => {
         return '#00A550';
     }
   };
+
+  console.log(points);
+  console.log(locations);
 
   return (
     <Box

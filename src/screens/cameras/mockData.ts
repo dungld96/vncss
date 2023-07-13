@@ -1,14 +1,14 @@
-export interface SimType {
+export interface CameraType {
   id?: string;
   phoneNumber: string;
   imei: string;
   status: boolean | number;
   serial?: string;
   createdDate: string;
-  startDate?: string
+  startDate?: string;
 }
 
-export const dataSim:SimType[] = [
+export const dataCamera: CameraType[] = [
   {
     id: '5jgVggKBEYGhIcauyP',
     phoneNumber: '2805252923',

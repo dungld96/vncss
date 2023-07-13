@@ -2,6 +2,7 @@ import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-
 import { MoreHoriz } from '@mui/icons-material';
 import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import React, { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
@@ -16,10 +17,11 @@ import Button from '../../common/button/Button';
 import ExportIcon from '../../assets/icons/export-red-icon.svg';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { IUser } from '../../services/auth.service';
-import { dataSim } from './mockData';
-import ModalAddSim from './ModalAddSim';
-import ModalEditSim from './ModalEditSim';
-import { defaultValuesSim } from './constants';
+import { dataCamera } from './mockData';
+import ModalAddCamera from './ModalAddCamera';
+import ModalEditCamera from './ModalEditCamera';
+import { defaultValuesCamera } from './constants';
+import { selectCameras } from 'state/modules/camera/cameraReducer';
 
 const ActionCellContent = ({
   cellProps,
@@ -30,6 +32,7 @@ const ActionCellContent = ({
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -77,7 +80,9 @@ const ActionCellContent = ({
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>Xoá sim</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px', color: '#E5401C' } }}>
+            Xoá camera
+          </ListItemText>
         </MenuItem>
       </Menu>
     </div>
@@ -86,48 +91,29 @@ const ActionCellContent = ({
 
 const CamerasTable = () => {
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const [modalEditSim, setModalEditSim] = useState({
+  const [modalEditCamera, setModalEditCamera] = useState({
     show: false,
-    initialValues: defaultValuesSim,
+    initialValues: defaultValuesCamera,
   });
   const [showModalAdd, setShowModalAdd] = useState(false);
+  const cameras = useSelector(selectCameras);
 
   const [columns] = useState([
     { name: 'number', title: 'STT' },
-    { name: 'phoneNumber', title: 'Số điện thoại' },
-    { name: 'imei', title: 'Imei sim' },
-    { name: 'startDate', title: 'Ngày kích hoạt' },
-    { name: 'status', title: 'Trạng thái' },
-    { name: 'serial', title: 'Serial Gateway' },
-    { name: 'createdDate', title: 'Ngày tạo' },
-    { name: 'action', title: 'Hành động' },
+    { name: 'serial', title: 'Serial' },
+    { name: 'version', title: 'Phiên bản' },
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'number', width: 80, align: 'center' },
-    { columnName: 'name', width: 200 },
-    { columnName: 'phone', align: 'center' },
     { columnName: 'action', width: 200, align: 'center' },
   ]);
 
   const customField: CustomFieldType = {
-    status: {
-      renderContent: ({ row }) => {
-        return (
-          <Typography sx={{ color: row?.status ? '#27AE60' : '#8B8C9B', fontSize: '14px' }}>
-            {row?.status ? 'Online' : 'Offline'}
-          </Typography>
-        );
-      },
-    },
     serial: {
       renderContent: ({ row }) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography sx={{ fontSize: '14px' }}>{row?.serial}</Typography>
-            <IconButton>
-              <ImageIcon image={LocationIcon} />
-            </IconButton>
           </Box>
         );
       },
@@ -138,30 +124,30 @@ const CamerasTable = () => {
     if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
-        title: 'Xoá sim',
-        content: 'Bạn có chắc chắn muốn xoá sim này không?',
+        title: 'Xoá camera',
+        content: 'Bạn có chắc chắn muốn xoá camera này không?',
         confirm: {
           action: hideModalConfirm,
-          text: 'Xoá sim',
+          text: 'Xoá camera',
         },
         cancel: {
           action: hideModalConfirm,
         },
       });
     } else if (type === 'edit') {
-      setModalEditSim({
+      setModalEditCamera({
         show: true,
         initialValues: { ...row, status: row.status ? 1 : 0 },
       });
     }
   };
 
-  const dataTable = dataSim.map((item, index) => ({ ...item, number: index + 1 }));
+  const dataTable = cameras.map((item, index) => ({ ...item, number: index + 1 }));
 
   return (
     <>
-      <ModalAddSim show={showModalAdd} onClose={() => setShowModalAdd(false)} />
-      <ModalEditSim {...modalEditSim} onClose={() => setModalEditSim({ ...modalEditSim, show: false })} />
+      <ModalAddCamera show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      <ModalEditCamera {...modalEditCamera} onClose={() => setModalEditCamera({ ...modalEditCamera, show: false })} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
@@ -175,7 +161,7 @@ const CamerasTable = () => {
           </Button>
           <Button style={{ marginLeft: 16 }} variant="contained" onClick={() => setShowModalAdd(true)}>
             <ImageIcon image={AddIcon} />
-            <Typography sx={{ marginLeft: '8px', fontWeight: '700', fontSize: '14px' }}>Thêm Sim</Typography>
+            <Typography sx={{ marginLeft: '8px', fontWeight: '700', fontSize: '14px' }}>Thêm Camera</Typography>
           </Button>
         </Box>
       </Box>
