@@ -13,6 +13,7 @@ import {
 import { Close } from '@mui/icons-material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import { isEmpty } from 'lodash';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import Button from '../../common/button/Button';
@@ -64,7 +65,12 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           contact_name: values.contact_name,
           contact_number: values.contact_number,
           event_receivers:
-            values.usersReceive?.map((item) => ({ name: item.name, position: item.regency, phone: item.phone })) || [],
+            values.usersReceive?.map((item) => ({
+              name: item.name,
+              position: item.regency,
+              phone: item.phone,
+              enabled: true,
+            })) || [],
           province: values.province,
           district: values.district,
           commune: values.commune,
@@ -72,7 +78,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           lat: Number(selectedPosition?.lat),
           lng: Number(selectedPosition?.lng),
           tags: values.tags.map((i) => i.tagName),
-          contract_date: values.contract_date.replaceAll('/', '-'),
+          contract_date: dayjs(values.contract_date).unix(),
         };
         await addLocation({ location: body, parent_uuid: currentUser?.sub_id }).unwrap();
         onClose();
