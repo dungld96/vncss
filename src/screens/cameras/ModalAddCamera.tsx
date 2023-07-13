@@ -83,7 +83,7 @@ const ModalAddCamera: React.FC<Props> = ({ show, onClose }) => {
     onSubmit: async (values) => {
       console.log(values);
       await addCamera({
-        parent_uuid: currentUser?.sub_id,
+        agencyId: currentUser?.sub_id,
         data: {
           serial: values.serial,
           version: values.version,
