@@ -246,21 +246,6 @@ export const Marker = (props: Props) => {
         </Box>
       </MarkerContainer>
       <MarkerPulse />
-      <Box position="relative" zIndex={1}>
-        <Typography
-          style={{
-            position: 'absolute',
-            width: '90px',
-            left: '16px',
-            bottom: 0,
-            fontWeight: 700,
-            fontSize: '12px',
-            lineHeight: '16px',
-          }}
-        >
-          {name}
-        </Typography>
-      </Box>
     </>
   );
 };

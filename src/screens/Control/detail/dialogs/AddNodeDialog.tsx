@@ -1,13 +1,12 @@
 import React from 'react';
-import styled from '@emotion/styled';
-import { Box, Button, DialogActions, DialogContent } from '@mui/material';
-import FormikWrappedField from '../../../common/input/Field';
+import { Box, Button, DialogActions } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import Modal from '../../../common/modal/Modal';
-import { useAddNodeMutation } from '../../../services/control.service';
-import { useAuth } from '../../../hooks/useAuth';
-import { useSnackbar } from '../../../hooks/useSnackbar';
+import FormikWrappedField from '../../../../common/input/Field';
+import Modal from '../../../../common/modal/Modal';
+import { useAddNodeMutation } from '../../../../services/control.service';
+import { useAuth } from '../../../../hooks/useAuth';
+import { useSnackbar } from '../../../../hooks/useSnackbar';
 
 interface Props {
   locationId: string;
@@ -16,15 +15,6 @@ interface Props {
   onClose: () => void;
   onSuccess: () => void;
 }
-
-const ContentWrapper = styled(DialogContent)({
-  padding: 0,
-  display: 'flex',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-  overflow: 'hidden',
-  marginBottom: 32,
-});
 
 const validationSchema = {
   serial: Yup.string().required('Serial không được để trông'),

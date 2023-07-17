@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { IconButton, Typography, Tooltip, Card, Box, Grid } from '@mui/material';
 import styled from '@emotion/styled';
 import RefreshIcon from '../../../assets/icons/refresh-icon.svg';
@@ -9,7 +9,9 @@ import { LocationManager } from './LocationManager';
 import { LocationDevice } from './LocationDevice';
 import { useLazyGetControlLocationQuery } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
-import { LocationType } from '../../../state/modules/location/locationReducer';
+import { LocationType, EventReceiveType } from '../../../state/modules/location/locationReducer';
+import { useUpdateLocationControlMutation } from '../../../services/control.service';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const DLCard = styled(Card)({
   position: 'absolute',
@@ -38,26 +40,40 @@ interface Props {
 }
 
 export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Props) => {
-  const [location, setLocation] = useState<LocationType>();
+  const [getControlLocation, result] = useLazyGetControlLocationQuery();
+  const [updateLocationControl] = useUpdateLocationControlMutation();
+  const { setSnackbar } = useSnackbar();
 
   const {
     auth: { currentUser },
   } = useAuth();
-  const [getControlLocation] = useLazyGetControlLocationQuery();
 
   useEffect(() => {
-    if (currentUser) {
-      getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId })
-        .then(({ isSuccess, data }) => {
-          if (isSuccess) {
-            setLocation(data);
-          }
-        })
-        .catch((err) => console.log('error', err));
+    if (currentUser && selectedLocationId) {
+      getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId }).unwrap();
     }
   }, [currentUser, getControlLocation, selectedLocationId]);
 
-  const onClickRefresh = () => {};
+  const onRefresh = () => {
+    if (currentUser && selectedLocationId) {
+      getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId }).unwrap();
+    }
+  };
+
+  const handleSaveEnableEventNumber = (eventReceivers: EventReceiveType[]) => {
+    if (currentUser && selectedLocationId) {
+      updateLocationControl({
+        agencyId: currentUser.sub_id,
+        locationId: selectedLocationId,
+        data: { event_receivers: [...eventReceivers] },
+      }).then((res) => {
+        onRefresh();
+        setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
+      });
+    }
+  };
+
+  const location = result.data as LocationType;
 
   return (
     <DLCard elevation={0}>
@@ -87,12 +103,12 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           {locationName}
         </Typography>
         <Tooltip title="Cài đặt">
-          <IconButton aria-label="refresh" onClick={onClickRefresh}>
+          <IconButton aria-label="refresh" onClick={onRefresh}>
             <img src={SettingIcon} alt="" style={{ width: '20px', height: '20px' }} />
           </IconButton>
         </Tooltip>
         <Tooltip title="Làm mới">
-          <IconButton aria-label="refresh" onClick={onClickRefresh}>
+          <IconButton aria-label="refresh" onClick={onRefresh}>
             <img src={RefreshIcon} alt="" style={{ width: '20px', height: '20px' }} />
           </IconButton>
         </Tooltip>
@@ -110,7 +126,14 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           <Grid item xs={12} sm={3}>
             <ContentBox>
               <LocationInfo location={location} />
-              {location && <LocationManager eventReceivers={location.event_receivers || []} />}
+              {location && (
+                <LocationManager
+                  eventReceivers={location.event_receivers || []}
+                  locationId={location.id}
+                  refetch={onRefresh}
+                  enableEventNumber={handleSaveEnableEventNumber}
+                />
+              )}
             </ContentBox>
           </Grid>
           <Grid item xs={12} sm={9}>

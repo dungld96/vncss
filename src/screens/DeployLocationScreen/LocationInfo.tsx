@@ -1,7 +1,8 @@
 import { Button, Divider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { FormikProps, FormikValues } from 'formik';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import AddIcon from '../../assets/icons/add-circle-red.svg';
 import DatePickers from '../../common/datePicker/DatePicker';
 import FormikWrappedField from '../../common/input/Field';
@@ -10,46 +11,49 @@ import { Switch } from '../../common/Switch/Switch';
 import TableTag from '../../common/TableTag/TableTag';
 import useApp from '../../hooks/useApp';
 import { ImageIcon } from '../../utils/UtilsComponent';
-import { randomId, UsersReceiveType } from './constant';
+import { EventReceiveType } from '../../state/modules/location/locationReducer';
+import { NormalInput } from 'common/input/NormalInput';
 
+const tagsList = [
+  { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
+  { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
+];
 interface Props {
   formik: FormikProps<FormikValues | any>;
 }
 
 const LocationInfo: React.FC<Props> = ({ formik }) => {
   const { area, fetchArea } = useApp();
-  const [listUsersReceiveNoti, setListUsersReceiveNoti] = useState([
-    { id: randomId(), userName: '', regency: '', userPhone: '' },
-  ]);
   const { setFieldValue, values, getFieldProps, isSubmitting, touched } = formik;
-
-  const { usersReceive, contract_date, province, district, commune, dataDistrict, dataCity, tags } = values;
+  const { event_receivers, contract_date, province, district, commune, tags } = values;
 
   useEffect(() => {
     fetchArea();
   }, []);
 
-  useEffect(() => {
-    if (!area.length) return;
+  const handleChangeEventReceiver = (e: any, type: string, index: number) => {
+    const value = e.target.value;
+    const newItem = { ...event_receivers[index], [type]: value };
+    const newEventReceivers = [...event_receivers];
+    newEventReceivers[index] = newItem;
+    setFieldValue('event_receivers', [...newEventReceivers]);
+  };
 
-    if (!!province) {
-      const dataCity: any = area.find((item: any) => item.name === province);
-      const dataDistrict: any = dataCity?.level2s?.find((item: any) => item.name === district);
-
-      setFieldValue('dataCity', dataCity);
-      setFieldValue('dataDistrict', dataDistrict);
-    }
-  }, [province, district, commune, area]);
+  const dataCity = area.find((item: any) => item.name === province);
+  const districtList = dataCity?.level2s?.map((item: any) => ({ label: item.name, value: item.name }));
+  const dataDistrict = dataCity?.level2s?.find((item: any) => item.name == district);
 
   const createTowns = (arr1: any, arr2: any) => {
     if (!arr1 || !arr1.length) return arr2;
     return arr1;
   };
 
-  const towns = (dataDistrict ? createTowns(values.dataDistrict?.level3s, [dataDistrict]) : [])?.map((item: any) => ({
+  const towns = (dataDistrict ? createTowns(dataDistrict?.level3s, [dataDistrict]) : [])?.map((item: any) => ({
     label: item.name,
     value: item.name,
   }));
+
+  const tagsParsed = tagsList.filter((item) => tags.includes(item.tagName));
 
   return (
     <Box px={3} pb={3}>
@@ -96,10 +100,7 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
           <Select
             fullWidth
             style={{ width: '312px' }}
-            data={dataCity?.level2s?.map((item: any) => ({
-              label: item.name,
-              value: item.name,
-            }))}
+            data={districtList}
             selected={district}
             error={!district ? 'Vui lòng chọn quận huyện' : ''}
             setSelected={(data) => {
@@ -133,6 +134,7 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
           />
           <Select
             fullWidth
+            disabled
             style={{ width: '312px' }}
             topLable="Loại hình kinh doanh"
             placeholder="Chọn loại hình kinh doanh"
@@ -151,13 +153,9 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
 
       <Divider sx={{ marginTop: '16px !important' }} />
       <Box marginTop={'16px'}>
-        {usersReceive.map((item: UsersReceiveType, index: number) => {
-          const nameKey = `usersReceive[${index}].name`;
-          const regencyKey = `usersReceive[${index}].regency`;
-          const phoneKey = `usersReceive[${index}].phone`;
-
+        {event_receivers?.map((item: EventReceiveType, index: number) => {
           return (
-            <Box marginBottom={'24px'} key={item.id}>
+            <Box marginBottom={'24px'} key={index}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Typography sx={{ fontSize: '16px', fontWeight: '700', lineHeight: '24px' }}>
                   Người nhận thông báo {index + 1}
@@ -166,27 +164,39 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
                   <Typography sx={{ fontSize: '14px', fontWeight: '400', lineHeight: '22px' }}>
                     Nhận cuộc gọi và tin nhắn cảnh báo
                   </Typography>
-                  <Switch sx={{ m: 1 }} defaultChecked />
+                  <Switch
+                    sx={{ m: 1 }}
+                    checked={item.enabled}
+                    onChange={() => {
+                      const newItem = { ...item, enabled: !item.enabled };
+                      const newEventReceivers = [...event_receivers];
+                      newEventReceivers[index] = newItem;
+                      setFieldValue('event_receivers', [...newEventReceivers]);
+                    }}
+                  />
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                <FormikWrappedField
-                  {...getFieldProps(nameKey)}
+                <NormalInput
                   style={{ width: '312px' }}
                   topLable="Họ tên người nhận thông báo"
                   placeholder="Nhập họ tên"
+                  value={item.name}
+                  onChange={(e) => handleChangeEventReceiver(e, 'name', index)}
                 />
-                <FormikWrappedField
-                  {...getFieldProps(regencyKey)}
+                <NormalInput
                   style={{ width: '312px' }}
                   topLable="Chức vụ"
                   placeholder="Nhập chức vụ"
+                  value={item.position}
+                  onChange={(e) => handleChangeEventReceiver(e, 'position', index)}
                 />
-                <FormikWrappedField
-                  {...getFieldProps(phoneKey)}
+                <NormalInput
                   style={{ width: '312px' }}
                   topLable="Số điện thoại"
                   placeholder="Nhập số điện thoại"
+                  value={item.phone}
+                  onChange={(e) => handleChangeEventReceiver(e, 'phone', index)}
                 />
               </Box>
             </Box>
@@ -197,10 +207,7 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
           variant="outlined"
           fullWidth
           onClick={() =>
-            setFieldValue('usersReceive', [
-              ...usersReceive,
-              { id: randomId(), userName: '', regency: '', userPhone: '' },
-            ])
+            setFieldValue('event_receivers', [...event_receivers, { name: '', position: '', phone: '', enabled: true }])
           }
         >
           <ImageIcon image={AddIcon} />
@@ -214,12 +221,14 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
         </Typography>
         <Box>
           <TableTag
-            data={[
-              { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
-              { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
-            ]}
-            tags={tags}
-            onSelected={(tags) => setFieldValue('tags', tags)}
+            data={tagsList}
+            tags={tagsParsed}
+            onSelected={(tags) =>
+              setFieldValue(
+                'tags',
+                tagsParsed?.map((item) => item.tagName)
+              )
+            }
             error="Vui lòng chọn cơ quan, Đơn vị giám sát vị trí"
             errorEmpty={isSubmitting}
           />

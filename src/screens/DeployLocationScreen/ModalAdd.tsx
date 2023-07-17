@@ -24,6 +24,7 @@ import { useCreateLocationMutation } from '../../services/location.service';
 import ConfirmInfo from './ConfirmInfo';
 import { defaultInitialValues } from './constant';
 import LocationInfo from './LocationInfo';
+import { useSnackbar } from '../../hooks/useSnackbar';
 
 const steps = ['Chọn vị trí triển khai trên bản đồ', 'Thông tin vị trí triển khai', 'Xác nhận thông tin'];
 
@@ -47,9 +48,8 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
   const [addLocation] = useCreateLocationMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [activeStep, setActiveStep] = useState(0);
-
   const [selectedPosition, setSelectedPosition] = useState<any>(null);
-
+  const { setSnackbar } = useSnackbar();
   const {
     auth: { currentUser },
   } = useAuth();
@@ -65,9 +65,9 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           contact_name: values.contact_name,
           contact_number: values.contact_number,
           event_receivers:
-            values.usersReceive?.map((item) => ({
+            values.event_receivers?.map((item) => ({
               name: item.name,
-              position: item.regency,
+              position: item.position,
               phone: item.phone,
               enabled: true,
             })) || [],
@@ -77,10 +77,14 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           address: values.address,
           lat: Number(selectedPosition?.lat),
           lng: Number(selectedPosition?.lng),
-          tags: values.tags.map((i) => i.tagName),
+          tags: values.tags,
           contract_date: dayjs(values.contract_date).unix(),
         };
-        await addLocation({ location: body, parent_uuid: currentUser?.sub_id }).unwrap();
+        await addLocation({ location: body, parent_uuid: currentUser?.sub_id })
+          .then((res) => {
+            setSnackbar({ open: true, message: 'Thêm vị trí thành công', severity: 'success' });
+          })
+          .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi thêm ví trí', severity: 'error' }));
         onClose();
       }
     },

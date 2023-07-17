@@ -39,7 +39,7 @@ export interface Props {
   error?: any;
   topLable?: string;
   noMarginTop?: boolean;
-  errorEmpty?:boolean
+  errorEmpty?: boolean;
   [key: string]: any;
 }
 
@@ -64,8 +64,8 @@ const Select: React.FC<Props> = ({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (errorEmpty) touched.current = true
-  }, [errorEmpty])
+    if (errorEmpty) touched.current = true;
+  }, [errorEmpty]);
 
   const readOnly = true;
 
@@ -85,7 +85,9 @@ const Select: React.FC<Props> = ({
 
   // When click item, set selected item, set value in textbox and close menu
   const handleClickItem = (item?: SelectType) => {
-    setSelected?.(item?.value || '', item);
+    if (item) {
+      setSelected?.(item.value || '', item);
+    }
     handleClose(true);
   };
 

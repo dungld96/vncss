@@ -11,14 +11,15 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
 import TableTag from '../../common/TableTag/TableTag';
 import { ImageIcon } from '../../utils/UtilsComponent';
-import { LocationResponType } from './constant';
+import { LocationType } from '../../state/modules/location/locationReducer';
 
 interface Props {
-  values: LocationResponType;
-  setFieldValue(field: keyof LocationResponType, value: any): void;
+  values: LocationType;
+  setFieldValue(field: keyof LocationType, value: any): void;
   isSubmitting?: boolean;
 }
 
@@ -37,7 +38,7 @@ const RenderInfor = ({ label, value }: { label: string; value: string }) => {
 
 const ConfirmInfo: React.FC<Props> = ({ values, setFieldValue, isSubmitting }) => {
   const {
-    usersReceive,
+    event_receivers,
     address,
     commune,
     contact_name,
@@ -108,10 +109,10 @@ const ConfirmInfo: React.FC<Props> = ({ values, setFieldValue, isSubmitting }) =
                 </TableRow>
               </TableHead>
               <TableBody>
-                {usersReceive
+                {event_receivers
                   ?.filter((item) => item.phone && item.name)
                   .map((userReceive) => (
-                    <TableRow key={userReceive.id} sx={{}}>
+                    <TableRow key={uuidv4()}>
                       <TableCell
                         align="center"
                         width={'340px'}
@@ -124,7 +125,7 @@ const ConfirmInfo: React.FC<Props> = ({ values, setFieldValue, isSubmitting }) =
                         width={'340px'}
                         sx={{ fontSize: '14px', fontWeight: '500', color: '#1E2323' }}
                       >
-                        {userReceive.regency}
+                        {userReceive.position}
                       </TableCell>
                       <TableCell
                         align="center"

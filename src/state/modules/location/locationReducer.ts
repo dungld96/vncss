@@ -21,7 +21,7 @@ export interface LocationType {
   name: string;
   plan_building: string;
   province: string;
-  tags: null;
+  tags: string[];
 }
 
 export type EventReceiveType = {

@@ -1,14 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { Button, DialogActions, DialogContent, Box, Typography, Switch } from '@mui/material';
-import FormikWrappedField from '../../../common/input/Field';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import Modal from '../../../common/modal/Modal';
-import { useAddGatewayMutation } from '../../../services/control.service';
-import { useAuth } from '../../../hooks/useAuth';
-import { LocationType } from '../../../state/modules/location/locationReducer';
-import { useSnackbar } from '../../../hooks/useSnackbar';
+import FormikWrappedField from '../../../../common/input/Field';
+import Modal from '../../../../common/modal/Modal';
+import { useAddGatewayMutation } from '../../../../services/control.service';
+import { useAuth } from '../../../../hooks/useAuth';
+import { LocationType } from '../../../../state/modules/location/locationReducer';
+import { useSnackbar } from '../../../../hooks/useSnackbar';
 
 interface Props {
   location?: LocationType;
@@ -55,15 +55,17 @@ export const AddGatewayDialog: React.FC<Props> = ({ location, show, onClose }) =
           agencyId: currentUser.sub_id,
           locationId: location.id,
           data: values,
-        }).then((res) => {
-          console.log(res);
-          setSnackbar({ open: true, message: 'Thêm gateway thành công', severity: 'success' });
-        });
+        })
+          .then((res) => {
+            setSnackbar({ open: true, message: 'Thêm gateway thành công', severity: 'success' });
+          })
+          .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi thêm gateway', severity: 'error' }));
+
         onClose?.();
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, setFieldValue } = formik;
 
   return (
     <Modal size="sm" show={show} close={onClose} title={'Thêm gateway'}>

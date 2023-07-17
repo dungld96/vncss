@@ -79,7 +79,7 @@ export interface ControlLocationCameraType {
 export const controlApi = createApi({
   ...queryRootConfig,
   reducerPath: 'controlApi',
-  tagTypes: ['Control', 'AddCamera', 'AddGateway', 'AddNode'],
+  tagTypes: ['Control', 'AddCamera', 'AddGateway', 'AddNode', 'UpdateControlLocation'],
   endpoints: (build) => ({
     getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
       query: (body) => ({ url: `agencies/${body.agency_id}/monitoring/locations/status`, params: body.params }),
@@ -185,6 +185,20 @@ export const controlApi = createApi({
       },
       transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
     }),
+    updateLocationControl: build.mutation<ResponsiveInterface, any>({
+      query: ({ data, agencyId, locationId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}`,
+            method: 'PUT',
+            body: data,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
+    }),
   }),
 });
 
@@ -202,4 +216,5 @@ export const {
   useAddNodeMutation,
   useAddCameraMutation,
   useLazyGetControlLocationCameraImageQuery,
+  useUpdateLocationControlMutation,
 } = controlApi;

@@ -90,11 +90,9 @@ const ActionCellContent = ({
 export const DeployLocationTable: React.FC = () => {
   const [deleteLocation] = useDeleteLocationMutation();
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [modalEdit, setModalEdit] = useState({
-    show: false,
-    initialValues: defaultInitialValues,
-  });
+  const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalEditTag, setShowModalEditTag] = useState(false);
+  const [selectedLocationId, setSelectedLocatuonId] = useState<string>();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
 
   const locations = useSelector(selectLocation);
@@ -154,20 +152,10 @@ export const DeployLocationTable: React.FC = () => {
     },
   });
 
-  const handleUpdateLocation = (location: any) => {
-    setModalEdit({
-      show: true,
-      initialValues: {
-        ...location,
-        contract_date: dayjs(location.contract_date)?.format('DD/MM/YYYY'),
-        tags: location.tags || [],
-      },
-    });
-  };
-
   const handleClick = (type: string, row: any) => {
     if (type === 'edit') {
-      handleUpdateLocation(row);
+      setSelectedLocatuonId(row.id);
+      setShowModalEdit(true);
     } else if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
@@ -191,7 +179,15 @@ export const DeployLocationTable: React.FC = () => {
     <>
       <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
       <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
-      <ModalEdit {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} />
+      {selectedLocationId && currentUser && showModalEdit && (
+        <ModalEdit
+          show={showModalEdit}
+          onClose={() => setShowModalEdit(false)}
+          locationId={selectedLocationId}
+          agencyId={currentUser.sub_id}
+        />
+      )}
+
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Box, Button, DialogActions } from '@mui/material';
-import FormikWrappedField from '../../../common/input/Field';
+import FormikWrappedField from '../../../../common/input/Field';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import Modal from '../../../common/modal/Modal';
-import { useAddCameraMutation } from '../../../services/control.service';
-import { useAuth } from '../../../hooks/useAuth';
-import { useSnackbar } from '../../../hooks/useSnackbar';
+import Modal from '../../../../common/modal/Modal';
+import { useAddCameraMutation } from '../../../../services/control.service';
+import { useAuth } from '../../../../hooks/useAuth';
+import { useSnackbar } from '../../../../hooks/useSnackbar';
 
 interface Props {
   locationId: string;

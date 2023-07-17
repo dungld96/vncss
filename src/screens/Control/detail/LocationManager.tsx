@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Tabs, Tab, Box, Typography, Grid } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Grid, Switch } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import { EventReceiveType } from '../../../state/modules/location/locationReducer';
+import { UpdatePhoneNotiDialog } from './dialogs/UpdatePhoneNotiDialog';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -22,14 +23,34 @@ const TabPanel = (props: TabPanelProps) => {
 
 const TabLabel = styled(Typography)({ fontWeight: 700, fontSize: '14px', textTransform: 'none' });
 
-export const LocationManager = ({ eventReceivers }: { eventReceivers: EventReceiveType[] }) => {
+export const LocationManager = ({
+  eventReceivers,
+  refetch,
+  locationId,
+  enableEventNumber,
+}: {
+  eventReceivers: EventReceiveType[];
+  locationId: string;
+  refetch: () => void;
+  enableEventNumber: (newEventReceivers: EventReceiveType[]) => void;
+}) => {
   const [value, setValue] = React.useState(0);
+  const [openAddPhoneDialog, setOpenAddPhoneDialog] = React.useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   return (
     <Box pt={1} pb={2}>
+      {openAddPhoneDialog && (
+        <UpdatePhoneNotiDialog
+          open={openAddPhoneDialog}
+          eventReceivers={eventReceivers}
+          onClose={() => setOpenAddPhoneDialog(false)}
+          onSuccess={refetch}
+          locationId={locationId}
+        />
+      )}
       <Tabs
         value={value}
         onChange={handleChange}
@@ -66,7 +87,7 @@ export const LocationManager = ({ eventReceivers }: { eventReceivers: EventRecei
           </Grid>
 
           <Grid container style={{ fontSize: '14px' }}>
-            {eventReceivers.map((item) => (
+            {eventReceivers.map((item, index) => (
               <>
                 <Grid
                   item
@@ -76,6 +97,7 @@ export const LocationManager = ({ eventReceivers }: { eventReceivers: EventRecei
                     borderLeft: '1px solid #C5C6D2',
                     borderRight: '1px solid #C5C6D2',
                     borderBottom: '1px solid #C5C6D2',
+                    backgroundColor: index % 2 === 0 ? 'unset' : '#F8F9FC',
                   }}
                 >
                   <Box
@@ -98,10 +120,56 @@ export const LocationManager = ({ eventReceivers }: { eventReceivers: EventRecei
                   style={{
                     borderRight: '1px solid #C5C6D2',
                     borderBottom: '1px solid #C5C6D2',
+                    backgroundColor: index % 2 === 0 ? 'unset' : '#F8F9FC',
                   }}
                 >
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                     {`SMS & Call`}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  height="40px"
+                  style={{
+                    borderLeft: '1px solid #C5C6D2',
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                    backgroundColor: index % 2 === 0 ? 'unset' : '#F8F9FC',
+                  }}
+                >
+                  <Box
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '100%',
+                    }}
+                  >
+                    {item.position}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  height="40px"
+                  style={{
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                    backgroundColor: index % 2 === 0 ? 'unset' : '#F8F9FC',
+                  }}
+                >
+                  <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    <Switch
+                      sx={{ m: 1 }}
+                      checked={item.enabled}
+                      onChange={() => {
+                        const newItem = { ...item, enabled: !item.enabled };
+                        const newEventReceivers = [...eventReceivers];
+                        newEventReceivers[index] = newItem;
+                        enableEventNumber([...newEventReceivers]);
+                      }}
+                    />
                   </Box>
                 </Grid>
               </>
@@ -122,6 +190,7 @@ export const LocationManager = ({ eventReceivers }: { eventReceivers: EventRecei
           >
             <Grid item xs={12}>
               <Box
+                onClick={() => setOpenAddPhoneDialog(true)}
                 style={{
                   display: 'flex',
                   justifyContent: 'center',

@@ -11,7 +11,7 @@ import {
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { LocationType } from '../../../state/modules/location/locationReducer';
-import { AddCameraDialog } from './AddCameraDialog';
+import { AddCameraDialog } from './dialogs/AddCameraDialog';
 import { CameraImages } from './CameraImages';
 
 export const CameraControl = ({ location }: { location: LocationType }) => {

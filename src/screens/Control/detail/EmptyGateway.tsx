@@ -3,7 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
 import DataEmpty from '../../../assets/img/data_empty.svg';
 import { LocationType } from '../../../state/modules/location/locationReducer';
-import { AddGatewayDialog } from './AddGatewayDialog';
+import { AddGatewayDialog } from './dialogs/AddGatewayDialog';
 
 export const EmptyGateway = ({ location, refetch }: { location: LocationType; refetch: () => void }) => {
   const [openAddGatewayDialog, setOpenAddGatewayDialog] = useState(false);
@@ -25,7 +25,10 @@ export const EmptyGateway = ({ location, refetch }: { location: LocationType; re
       <AddGatewayDialog
         location={location}
         show={openAddGatewayDialog}
-        onClose={() => setOpenAddGatewayDialog(false)}
+        onClose={() => {
+          setOpenAddGatewayDialog(false);
+          refetch();
+        }}
         onSuccess={refetch}
       />
     </Box>

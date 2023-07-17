@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setLocations } from '../state/modules/location/locationReducer';
+import { setLocations, LocationType } from '../state/modules/location/locationReducer';
 import { queryRootConfig } from './http.service';
 
 export const loactionsApi = createApi({
@@ -30,6 +30,13 @@ export const loactionsApi = createApi({
           );
         } catch (error) {}
       },
+    }),
+    getLocation: build.query<any, { agencyId?: string; locationId?: string; }>({
+      query: (body) => ({ url: `agencies/${body.agencyId}/locations/${body.locationId}` }),
+      providesTags() {
+        return [{ type: 'Location' }];
+      },
+      transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
     }),
     createLocation: build.mutation<any, any>({
       query: ({ location, parent_uuid }) => {
@@ -80,5 +87,6 @@ export const {
   useLazyGetListLocationsQuery,
   useCreateLocationMutation,
   useDeleteLocationMutation,
-  useUpdateLocationMutation
+  useUpdateLocationMutation,
+  useGetLocationQuery,
 } = loactionsApi;
