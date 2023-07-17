@@ -121,9 +121,6 @@ export const ControlScreen = () => {
     }
   };
 
-  console.log(points);
-  console.log(locations);
-
   return (
     <Box
       style={{

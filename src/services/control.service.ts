@@ -82,7 +82,7 @@ export const controlApi = createApi({
   tagTypes: ['Control', 'AddCamera', 'AddGateway', 'AddNode'],
   endpoints: (build) => ({
     getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
-      query: (body) => ({ url: `agencies/${body.agency_id}/locations/status`, params: body.params }),
+      query: (body) => ({ url: `agencies/${body.agency_id}/monitoring/locations/status`, params: body.params }),
       providesTags() {
         return [{ type: 'Control' }];
       },
@@ -100,14 +100,14 @@ export const controlApi = createApi({
       },
     }),
     getControlLocation: build.query<any, { agencyId: string; locationId: string }>({
-      query: (body) => ({ url: `agencies/${body.agencyId}/locations/${body.locationId}` }),
+      query: (body) => ({ url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}` }),
       providesTags() {
         return [{ type: 'Control' }];
       },
       transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
     }),
     getControlLocationGateways: build.query<any, { agencyId: string; locationId: string }>({
-      query: (body) => ({ url: `agencies/${body.agencyId}/locations/${body.locationId}/gateways` }),
+      query: (body) => ({ url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/gateways` }),
       providesTags() {
         return [{ type: 'Control' }];
       },
@@ -115,7 +115,7 @@ export const controlApi = createApi({
     }),
     getControlLocationGatewayNodes: build.query<any, { agencyId: string; locationId: string; gatewayId: string }>({
       query: (body) => ({
-        url: `agencies/${body.agencyId}/locations/${body.locationId}/gateways/${body.gatewayId}/nodes`,
+        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/gateways/${body.gatewayId}/nodes`,
       }),
       providesTags() {
         return [{ type: 'Control' }];
@@ -126,7 +126,7 @@ export const controlApi = createApi({
       query: ({ data, agencyId, locationId }) => {
         try {
           return {
-            url: `agencies/${agencyId}/locations/${locationId}/addgateway`,
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}/addgateway`,
             method: 'POST',
             body: data,
           };
@@ -140,7 +140,7 @@ export const controlApi = createApi({
       query: ({ data, agencyId, locationId, gatewayId }) => {
         try {
           return {
-            url: `agencies/${agencyId}/locations/${locationId}/gateways/${gatewayId}/addnode`,
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}/addnode`,
             method: 'POST',
             body: data,
           };
@@ -154,7 +154,7 @@ export const controlApi = createApi({
       query: ({ data, agencyId, locationId }) => {
         try {
           return {
-            url: `agencies/${agencyId}/locations/${locationId}/cameraboxes`,
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}/cameraboxes`,
             method: 'POST',
             body: data,
           };
@@ -166,7 +166,7 @@ export const controlApi = createApi({
     }),
     getControlLocationCameras: build.query<any, { agencyId: string; locationId: string }>({
       query: (body) => ({
-        url: `agencies/${body.agencyId}/locations/${body.locationId}/cameras`,
+        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameras`,
       }),
       providesTags() {
         return [{ type: 'Control' }];
@@ -178,7 +178,7 @@ export const controlApi = createApi({
       { agencyId: string; locationId: string; cameraboxeId: string; cameraId: string }
     >({
       query: (body) => ({
-        url: `agencies/${body.agencyId}/locations/${body.locationId}/cameraboxes/${body.cameraboxeId}/cameras/${body.cameraId}/images`,
+        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes/${body.cameraboxeId}/cameras/${body.cameraId}/images`,
       }),
       providesTags() {
         return [{ type: 'Control' }];
