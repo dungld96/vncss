@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
-import DataEmpty from '../../../assets/img/data_empty.svg';
+import { Tabs, Tab, Box, Typography } from '@mui/material';
 import { GatewayControl } from './GatewayControl';
 import { CameraControl } from './CameraControl';
 import { LocationType } from '../../../state/modules/location/locationReducer';

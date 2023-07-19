@@ -3,6 +3,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Box, Card, Typography } from '@mui/material';
 import { sensorMapped } from '../../utils/sensorMapping';
+import DefaultNode from '../../assets/sensor/default-node.svg';
 import { ControlLocationNodeType } from '../../services/control.service';
 
 const DLNodeCard = styled(Card)({
@@ -21,15 +22,9 @@ type Props = {
 };
 
 export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
-  const nodeTypeName = nodeTypes.filter((item) => item.id === data.node_type_id);
-  const name = data.name ? data.name : nodeTypeName[0].name;
-  const { state = '' } = data;
-  const handleClick = () => {
-    // onClickCard({ ...data, nodeType: nodeTypeName[0].name });
-  };
-
+  const nodeCodeType = data.state?.nType.split('-')[1];
   return (
-    <DLNodeCard onClick={handleClick}>
+    <DLNodeCard onClick={onClickCard}>
       <Box display="flex" justifyContent="space-between" alignItems="center" pb={2}>
         <Box>
           {data.status === 'activated' ? (
@@ -45,7 +40,11 @@ export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
       </Box>
       <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
         <Box style={{ minHeight: 78 }}>
-          <img src={sensorMapped.SSHB} alt="" />
+          {nodeCodeType && (sensorMapped as any)[nodeCodeType] ? (
+            <img src={(sensorMapped as any)[nodeCodeType]} alt="" />
+          ) : (
+            <img src={DefaultNode} alt="" />
+          )}
         </Box>
         <Box py={2}>
           <Typography style={{ fontWeight: 500, lineHeight: '22px' }}>{data.name}</Typography>

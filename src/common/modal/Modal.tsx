@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
-import { Breakpoint, Dialog, DialogTitle } from '@mui/material';
+import { Breakpoint, Box, Dialog, DialogTitle } from '@mui/material';
 import React from 'react';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   size?: Breakpoint;
   close?: () => void;
   children: React.ReactNode;
+  extendActions?: React.ReactNode;
   style?: React.CSSProperties;
 }
 
@@ -31,7 +32,7 @@ const Title = styled(DialogTitle)({
 });
 
 const Modal: React.FC<Props> = (props) => {
-  const { show, title, close, size = 'xs', children, style } = props;
+  const { show, title, close, size = 'xs', children, style, extendActions } = props;
   return (
     <Dialog
       open={show}
@@ -47,7 +48,10 @@ const Modal: React.FC<Props> = (props) => {
     >
       <Title>
         {title}
-        {!!close && <CloseIcon onClick={() => close?.()} />}
+        <Box display="flex" alignItems="center">
+          {extendActions}
+          {!!close && <CloseIcon onClick={() => close?.()} />}
+        </Box>
       </Title>
       {children}
     </Dialog>

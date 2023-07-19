@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Box, Grid, IconButton, Tooltip } from '@mui/material';
+import { Button, Typography, Box, Grid, IconButton, Tooltip, Popover } from '@mui/material';
 import styled from '@emotion/styled';
 import { AddCircleOutline } from '@mui/icons-material';
 import SettingIcon from '../../../assets/icons/setting-grey-icon.svg';
@@ -15,6 +15,8 @@ import {
 import { useAuth } from '../../../hooks/useAuth';
 import { AddNodeDialog } from './dialogs/AddNodeDialog';
 import { NodeCard } from '../../../common/card/NodeCard';
+import { UpdateGatewayInfoDialog } from './dialogs/UpdateGatewayInfoDialog';
+import { NodeInfoDialog } from './dialogs/NodeInfoDialog';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -29,6 +31,9 @@ export const GatewayControl = ({
   refetchGateway: () => void;
 }) => {
   const [openAddNodeDialog, setOpenAddNodeDialog] = useState(false);
+  const [openUpdateGatewayDialog, setOpenUpdateGatewayDialog] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<ControlLocationNodeType>();
+  const [gwSettingAnchorEl, setGwSettingAnchorEl] = useState<any>();
   const [getControlLocationGatewayNodes, { data }] = useLazyGetControlLocationGatewayNodesQuery();
   const {
     auth: { currentUser },
@@ -51,6 +56,9 @@ export const GatewayControl = ({
         false
       ).unwrap();
     }
+  };
+  const onClickGwSetting = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setGwSettingAnchorEl(event.currentTarget);
   };
 
   const nodes = (data || []) as ControlLocationNodeType[];
@@ -85,7 +93,13 @@ export const GatewayControl = ({
                       // const Card = NodeCard[ComponentType] ? NodeCard[ComponentType] : NodeCard.DefaultCard;
                       return (
                         <Grid key={item.id} item xs={4} lg={3}>
-                          <NodeCard data={item} nodeTypes={[]} onClickCard={() => {}} />
+                          <NodeCard
+                            data={item}
+                            nodeTypes={[]}
+                            onClickCard={() => {
+                              setSelectedNode(item);
+                            }}
+                          />
                         </Grid>
                       );
                     })}
@@ -131,10 +145,35 @@ export const GatewayControl = ({
 
                   <Box ml={1} display="flex" alignItems="flex-end">
                     <Tooltip title="Cài đặt gateway">
-                      <IconButton aria-label="refresh">
+                      <IconButton aria-label="refresh" onClick={onClickGwSetting}>
                         <img src={SettingIcon} alt="" style={{ width: '20px', height: '20px' }} />
                       </IconButton>
                     </Tooltip>
+                    <Popover
+                      open={!!gwSettingAnchorEl}
+                      anchorEl={gwSettingAnchorEl}
+                      onClose={() => setGwSettingAnchorEl(undefined)}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                    >
+                      <Box py={2}>
+                        <Typography style={{ fontSize: '16px', fontWeight: 'bold', padding: ' 0 16px 16px' }}>
+                          Cài đặt Gateway
+                        </Typography>
+                        <Box
+                          p={2}
+                          style={{ fontSize: '14px', cursor: 'pointer', backgroundColor: '#F8F9FC', fontWeight: 500 }}
+                          onClick={() => {
+                            setOpenUpdateGatewayDialog(true);
+                            setGwSettingAnchorEl(undefined);
+                          }}
+                        >
+                          Chỉnh sửa thông tin Gateway
+                        </Box>
+                      </Box>
+                    </Popover>
                   </Box>
                 </Box>
               </Box>
@@ -195,6 +234,26 @@ export const GatewayControl = ({
           gatewayId={gateway.id}
           open={openAddNodeDialog}
           onClose={() => setOpenAddNodeDialog(false)}
+          onSuccess={getControlLocationGatewayNodesFetch}
+        />
+      )}
+      {location && gateway && openUpdateGatewayDialog && (
+        <UpdateGatewayInfoDialog
+          gateway={gateway}
+          locationId={location.id}
+          open={openUpdateGatewayDialog}
+          onClose={() => setOpenUpdateGatewayDialog(false)}
+          onSuccess={refetchGateway}
+        />
+      )}
+
+      {location && gateway && selectedNode && (
+        <NodeInfoDialog
+          gatewayId={gateway.id}
+          locationId={location.id}
+          node={selectedNode}
+          open={!!selectedNode}
+          onClose={() => setSelectedNode(undefined)}
           onSuccess={getControlLocationGatewayNodesFetch}
         />
       )}

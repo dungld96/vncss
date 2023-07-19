@@ -41,7 +41,14 @@ export interface ControlLocationGatewayType {
   secure_code: 'string';
   enable_callcenter: boolean;
 }
-
+export type NoteStateType = {
+  battery: number;
+  hum: number;
+  nType: string;
+  status: number;
+  temp: number;
+  timestamp: number;
+};
 export interface ControlLocationNodeType {
   id: string;
   agency_id: string;
@@ -51,7 +58,7 @@ export interface ControlLocationNodeType {
   version: string;
   mfg: string;
   alert: number;
-  state: string | null;
+  state: NoteStateType | null;
   status: string;
   created_at: string;
   updated_at: string;
@@ -79,7 +86,15 @@ export interface ControlLocationCameraType {
 export const controlApi = createApi({
   ...queryRootConfig,
   reducerPath: 'controlApi',
-  tagTypes: ['Control', 'AddCamera', 'AddGateway', 'AddNode', 'UpdateControlLocation'],
+  tagTypes: [
+    'Control',
+    'AddCamera',
+    'AddGateway',
+    'AddNode',
+    'UpdateControlLocation',
+    'UpdateGatewayControl',
+    'UpdateNodeControl',
+  ],
   endpoints: (build) => ({
     getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
       query: (body) => ({ url: `agencies/${body.agency_id}/monitoring/locations/status`, params: body.params }),
@@ -199,6 +214,34 @@ export const controlApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
     }),
+    updateGatewayControl: build.mutation<ResponsiveInterface, any>({
+      query: ({ data, agencyId, locationId, gatewayId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}`,
+            method: 'PUT',
+            body: data,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateGatewayControl' }]),
+    }),
+    updateNodeControl: build.mutation<ResponsiveInterface, any>({
+      query: ({ data, agencyId, locationId, gatewayId, nodeId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}/nodes/${nodeId}`,
+            method: 'PUT',
+            body: data,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateNodeControl' }]),
+    }),
   }),
 });
 
@@ -217,4 +260,6 @@ export const {
   useAddCameraMutation,
   useLazyGetControlLocationCameraImageQuery,
   useUpdateLocationControlMutation,
+  useUpdateGatewayControlMutation,
+  useUpdateNodeControlMutation,
 } = controlApi;
