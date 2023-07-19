@@ -1,9 +1,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Tabs, Tab, Box, Typography, Grid, Switch } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Grid, Switch, IconButton } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import { EventReceiveType } from '../../../state/modules/location/locationReducer';
 import { UpdatePhoneNotiDialog } from './dialogs/UpdatePhoneNotiDialog';
+import useModalConfirm from '../../../hooks/useModalConfirm';
+import { useUpdateLocationControlMutation } from '../../../services/control.service';
+import { useSnackbar } from '../../../hooks/useSnackbar';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,12 +40,49 @@ export const LocationManager = ({
 }) => {
   const [value, setValue] = React.useState(0);
   const [openAddPhoneDialog, setOpenAddPhoneDialog] = React.useState(false);
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
+  const [updateLocationControl] = useUpdateLocationControlMutation();
+  const { setSnackbar } = useSnackbar();
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const handleDeleteEventReceiver = (indexSelected: number) => {
+    const eventReceiver = eventReceivers[indexSelected];
+    const newEventReceivers = eventReceivers.filter((item, index) => index !== indexSelected);
+
+    showModalConfirm({
+      type: 'warning',
+      title: 'Xoá người nhận thông báo',
+      content: `Bạn có chắc chắn muốn xoá người nhận thông báo ${eventReceiver.name} không?`,
+      confirm: {
+        text: 'Xoá',
+        action: async () => {
+          if (currentUser && locationId) {
+            updateLocationControl({
+              agencyId: currentUser.sub_id,
+              locationId: locationId,
+              data: { event_receivers: [...newEventReceivers] },
+            }).then((res) => {
+              refetch();
+              setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
+            });
+          }
+          hideModalConfirm();
+        },
+      },
+      cancel: {
+        action: hideModalConfirm,
+      },
+    });
+  };
+
   return (
-    <Box pt={1} pb={2}>
+    <Box pt={1}>
       {openAddPhoneDialog && (
         <UpdatePhoneNotiDialog
           open={openAddPhoneDialog}
@@ -80,13 +121,24 @@ export const LocationManager = ({
               </Box>
             </Grid>
             <Grid item xs={6}>
-              <Box
-                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
-              >{`SMS & Call`}</Box>
+              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                <Box>{`SMS & Call`}</Box>
+                <Switch
+                  sx={{ m: 1 }}
+                  checked={eventReceivers.every((item) => item.enabled)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    const newEventReceivers = checked
+                      ? eventReceivers.map((item) => ({ ...item, enabled: true }))
+                      : eventReceivers.map((item) => ({ ...item, enabled: false }));
+                    enableEventNumber([...newEventReceivers]);
+                  }}
+                />
+              </Box>
             </Grid>
           </Grid>
 
-          <Grid container style={{ fontSize: '14px' }}>
+          <Grid container style={{ fontSize: '14px', maxHeight: '294px', overflow: 'auto' }}>
             {eventReceivers.map((item, index) => (
               <>
                 <Grid
@@ -124,7 +176,19 @@ export const LocationManager = ({
                   }}
                 >
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                    {`SMS & Call`}
+                    <Switch
+                      sx={{ m: 1 }}
+                      checked={item.enabled}
+                      onChange={() => {
+                        const newItem = { ...item, enabled: !item.enabled };
+                        const newEventReceivers = [...eventReceivers];
+                        newEventReceivers[index] = newItem;
+                        enableEventNumber([...newEventReceivers]);
+                      }}
+                    />
+                    <IconButton onClick={() => handleDeleteEventReceiver(index)}>
+                      <DeleteOutline style={{ color: '#8B8C9B' }} />
+                    </IconButton>
                   </Box>
                 </Grid>
                 <Grid
@@ -146,7 +210,7 @@ export const LocationManager = ({
                       height: '100%',
                     }}
                   >
-                    {item.position}
+                    {item.position || 'Người dùng'}
                   </Box>
                 </Grid>
                 <Grid
@@ -160,16 +224,7 @@ export const LocationManager = ({
                   }}
                 >
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                    <Switch
-                      sx={{ m: 1 }}
-                      checked={item.enabled}
-                      onChange={() => {
-                        const newItem = { ...item, enabled: !item.enabled };
-                        const newEventReceivers = [...eventReceivers];
-                        newEventReceivers[index] = newItem;
-                        enableEventNumber([...newEventReceivers]);
-                      }}
-                    />
+                    {item.phone}
                   </Box>
                 </Grid>
               </>

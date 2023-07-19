@@ -59,7 +59,7 @@ export const GatewayControl = ({
     <Box px={1}>
       <Box>
         <Grid container spacing={1}>
-          <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px', minHeight: '60%' }}>
+          <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px' }}>
             {nodes.length > 0 ? (
               <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -144,7 +144,7 @@ export const GatewayControl = ({
                   <InfoValue>{gateway.gateway_type_id || '--'}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-                  <InfoTitle>Serial::</InfoTitle>
+                  <InfoTitle>Serial:</InfoTitle>
                   <InfoValue>{gateway.serial || '--'}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>

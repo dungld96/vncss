@@ -73,7 +73,7 @@ export const LocationInfo = ({ location }: { location?: LocationType }) => {
     setValue(newValue);
   };
   return (
-    <Box pb={2} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box pb={1} sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Tabs
         value={value}
         onChange={handleChange}
