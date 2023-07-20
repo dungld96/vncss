@@ -89,7 +89,7 @@ export const ControlScreen = () => {
         properties: { cluster: false, location },
         geometry: {
           type: 'Point',
-          coordinates: [location.lat, location.lng],
+          coordinates: [location.lng, location.lat],
         },
       })),
     [locations]
@@ -197,8 +197,8 @@ export const ControlScreen = () => {
           return (
             <Marker
               key={`Marker-${location.id}`}
-              lat={location.lng}
-              lng={location.lat}
+              lat={location.lat}
+              lng={location.lng}
               text={location.name}
               color={color}
               name={location.name}
