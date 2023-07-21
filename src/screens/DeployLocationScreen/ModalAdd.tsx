@@ -77,7 +77,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           address: values.address,
           lat: Number(selectedPosition?.lat),
           lng: Number(selectedPosition?.lng),
-          tags: values.tags,
+          tags: values.tags.map((item) => item.tagName),
           contract_date: dayjs(values.contract_date).unix(),
         };
         await addLocation({ location: body, parent_uuid: currentUser?.sub_id })

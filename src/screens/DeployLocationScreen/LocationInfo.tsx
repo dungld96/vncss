@@ -14,7 +14,7 @@ import { ImageIcon } from '../../utils/UtilsComponent';
 import { EventReceiveType } from '../../state/modules/location/locationReducer';
 import { NormalInput } from 'common/input/NormalInput';
 
-const tagsList = [
+export const tagsList = [
   { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
   { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
 ];
@@ -53,7 +53,6 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
     value: item.name,
   }));
 
-  const tagsParsed = tagsList.filter((item) => tags.includes(item.tagName));
 
   return (
     <Box px={3} pb={3}>
@@ -222,13 +221,8 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
         <Box>
           <TableTag
             data={tagsList}
-            tags={tagsParsed}
-            onSelected={(tags) =>
-              setFieldValue(
-                'tags',
-                tagsParsed?.map((item) => item.tagName)
-              )
-            }
+            tags={tags}
+            onSelected={(tags) => setFieldValue('tags', tags)}
             error="Vui lòng chọn cơ quan, Đơn vị giám sát vị trí"
             errorEmpty={isSubmitting}
           />

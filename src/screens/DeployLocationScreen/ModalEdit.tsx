@@ -10,7 +10,7 @@ import { useUpdateLocationMutation, useGetLocationQuery } from '../../services/l
 import { EventReceiveType, LocationType } from '../../state/modules/location/locationReducer';
 import dayjs from 'dayjs';
 import { Close } from '@mui/icons-material';
-import LocationInfo from './LocationInfo';
+import LocationInfo, { tagsList } from './LocationInfo';
 import { useSnackbar } from '../../hooks/useSnackbar';
 
 interface Props {
@@ -45,7 +45,7 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId }) => 
     initialValues: {
       ...location,
       contract_date: dayjs(location?.contract_date)?.format('DD/MM/YYYY'),
-      tags: location?.tags || [],
+      tags: tagsList.filter((item) => (location?.tags || []).includes(item.tagName)),
       event_receivers: location?.event_receivers || [],
     },
     enableReinitialize: true,
@@ -62,7 +62,7 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId }) => 
         district: values.district,
         commune: values.commune,
         address: values.address,
-        tags: values.tags,
+        tags: values.tags.map((item) => item.tagName),
         contract_date: dayjs(values.contract_date, 'DD/MM/YYYY').unix(),
       };
       await updateLocation({ location: body, parent_uuid: currentUser?.sub_id })
