@@ -12,6 +12,7 @@ import agencyReducer from './modules/agency/agencyReducer';
 import appState from './modules/app/appReducer';
 import { controlApi } from '../services/control.service';
 import { camerasApi } from '../services/cameras.service';
+import { notificationsApi } from '../services/notifications.service';
 import authReducer from './modules/auth/authReducer';
 import gatewayReducer from './modules/gateway/gatewayReducer';
 import locationReducer from './modules/location/locationReducer';
@@ -22,6 +23,7 @@ import regulatoryReducer from './modules/regulatory/regulatoryReducer';
 import userReducer from './modules/user/userReducer';
 import controlReducer from './modules/control/controlReducer';
 import cameraReducer from './modules/camera/cameraReducer';
+import notificationReducer from './modules/notification/notificationReducer';
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +37,7 @@ export const store = configureStore({
     [organizationsApi.reducerPath]: organizationsApi.reducer,
     [controlApi.reducerPath]: controlApi.reducer,
     [camerasApi.reducerPath]: camerasApi.reducer,
+    [notificationsApi.reducerPath]: notificationsApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
@@ -47,6 +50,7 @@ export const store = configureStore({
     appState: appState,
     controlState: controlReducer,
     cameraState: cameraReducer,
+    notificationState: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([
@@ -60,6 +64,7 @@ export const store = configureStore({
       controlApi.middleware,
       organizationsApi.middleware,
       camerasApi.middleware,
+      notificationsApi.middleware,
     ]),
 });
 

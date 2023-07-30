@@ -5,6 +5,7 @@ import { PointFeature } from 'supercluster';
 import { useSelector } from 'react-redux';
 import useSupercluster from 'use-supercluster';
 import { BBox, GeoJsonProperties } from 'geojson';
+import { useQueryParams, StringParam } from 'use-query-params';
 import mapStyles from './MapStyles.json';
 import { useLazyGetControlLocationsQuery } from '../../services/control.service';
 import { selectLocation, ControlLocationType } from '../../state/modules/control/controlReducer';
@@ -31,19 +32,23 @@ export const ControlScreen = () => {
     auth: { currentUser },
   } = useAuth();
 
-  const locations = useSelector(selectLocation);
+  const locations = useSelector(selectLocation) as ControlLocationType[];
+  const [query, setQuery] = useQueryParams({
+    locationId: StringParam,
+  });
+  const queryLocationId = query.locationId;
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentUser && center) {
         trigger({
           agency_id: currentUser.sub_id,
-          params: {
-            center_lat: center.lat,
-            center_lng: center.lng,
-            visible_radius: 70,
-            // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
-          },
+          // params: {
+          //   center_lat: center.lat,
+          //   center_lng: center.lng,
+          //   visible_radius: 70,
+          //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
+          // },
         });
       }
     }, 30000);
@@ -54,17 +59,31 @@ export const ControlScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (currentUser && center) {
+    if (queryLocationId && locations.length > 0) {
+      const location = locations.find((item) => item.id === queryLocationId);
+      if (location && (!selectedLocation || (selectedLocation && selectedLocation.id !== location.id))) {
+        setSelectedLocation(location);
+        setCenter({
+          lat: location.lat,
+          lng: location.lng,
+        });
+        setZoom(19);
+      }
+    }
+  }, [locations, queryLocationId, selectedLocation]);
+
+  useEffect(() => {
+    if (currentUser) {
       trigger({
         agency_id: currentUser.sub_id,
-        params: {
-          center_lat: center.lat,
-          center_lng: center.lng,
-          visible_radius: 70,
-        },
+        // params: {
+        //   center_lat: center.lat,
+        //   center_lng: center.lng,
+        //   visible_radius: 70,
+        // },
       });
     }
-  }, [trigger, currentUser, center]);
+  }, [trigger, currentUser]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -121,6 +140,16 @@ export const ControlScreen = () => {
     }
   };
 
+  const handleOpenDetail = (localtion: ControlLocationType) => {
+    setSelectedLocation(localtion);
+    setQuery({ locationId: localtion.id });
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedLocation(undefined);
+    setQuery({ locationId: undefined });
+  };
+
   return (
     <Box
       style={{
@@ -134,7 +163,7 @@ export const ControlScreen = () => {
         <ControlDetail
           selectedLocationId={selectedLocation.id}
           locationName={selectedLocation.name}
-          onClose={() => setSelectedLocation(undefined)}
+          onClose={handleCloseDetail}
         />
       )}
       <GoogleMapReact
@@ -148,6 +177,7 @@ export const ControlScreen = () => {
         hoverDistance={30}
         options={mapOption}
         center={center}
+        zoom={zoom}
         ref={googleMapRef}
         yesIWantToUseGoogleMapApiInternals
         onChange={({ zoom, bounds: b, center: c }) => {
@@ -204,7 +234,7 @@ export const ControlScreen = () => {
               name={location.name}
               id={location.id}
               location={location}
-              onMarkerClick={(localtion: ControlLocationType) => setSelectedLocation(localtion)}
+              onMarkerClick={(localtion: ControlLocationType) => handleOpenDetail(localtion)}
             />
           );
         })}

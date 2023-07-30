@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Button } from '@mui/material';
 import get from 'lodash/get';
+import { v4 as uuidv4 } from 'uuid';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { onMessage } from 'firebase/messaging';
 import LoginScreen from './screens/Auth/LoginScreen';
 import UsersScreen from './screens/Users/UsersScreen';
@@ -27,13 +29,18 @@ import { CamerasScreen } from './screens/cameras/CamerasScreen';
 import { useAuth } from './hooks/useAuth';
 import { messaging, getTokenFcm } from './firebase';
 import { ROUTE_CONTROL } from './utils/routesMap';
+import { useSubNotificationMutation } from './services/notifications.service';
+import { addNotificationsAlertQueue } from './state/modules/notification/notificationReducer';
+import { unRegisterServiceWorker, registerServiceWorker } from './serviceWorker';
+import { GatewayAlert } from './common/gateway-alert/GatewayAlert';
 
 function App() {
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [fcmToken, setFcmToken] = React.useState<string>();
   const [targetLocationId, setTargetLocationId] = React.useState<string>();
+  const [subNotification] = useSubNotificationMutation();
 
   const {
     auth: { currentUser },
@@ -51,18 +58,17 @@ function App() {
 
   React.useEffect(() => {
     navigator.serviceWorker.addEventListener('message', ({ data }) => {
+      console.log(data);
       const messageBody = get(data, 'firebase-messaging-msg-data', {});
       const notificationCM = get(messageBody, 'notification', {});
-      const gatewaySerial = get(messageBody, 'data.gateway_serial', '');
+      const locationId = get(messageBody, 'data.location_id', '');
+      const locationName = get(messageBody, 'data.location_name', '');
       const toastType = get(messageBody, 'data.type', 'success');
       const timestamp = get(messageBody, 'data.timestamp');
       const agencyId = get(currentUser, 'sub_id', 1);
-      console.log(messageBody);
-      console.log(notificationCM);
-      console.log(gatewaySerial);
 
       const onclick = (e: any) => {
-        setTargetLocationId(gatewaySerial);
+        setTargetLocationId(locationId);
         e.preventDefault();
         navigate(ROUTE_CONTROL);
       };
@@ -91,13 +97,16 @@ function App() {
       //     },
       //   });
       // } else {
-      //   addNotificationToQueue({
-      //     id: guid(),
-      //     messageBody,
-      //     notificationText: notificationCM.body,
-      //     timestamp,
-      //     gatewaySerial,
-      //   });
+      dispatch(
+        addNotificationsAlertQueue({
+          id: uuidv4(),
+          locationId: locationId || 'citd2v9g1oa4iuj7tc10',
+          locationName,
+          type: toastType,
+          notificationText: notificationCM.body,
+          timestamp,
+        })
+      );
       // }
       // addNotification(agencyId, messageBody);
     });
@@ -108,9 +117,21 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    if (fcmToken && currentUser) {
+      const body = { data: { token: fcmToken }, agencyId: currentUser.sub_id };
+      const effect = async () => {
+        await registerServiceWorker();
+        await subNotification(body);
+      };
+      effect();
+    }
+  }, [fcmToken, currentUser]);
+
   return (
     <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh', fontFamily: 'Roboto' }}>
       <ModalConfirmContainer />
+      <GatewayAlert />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<RequireUser allowedRoles={['user']} />}>

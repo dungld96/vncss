@@ -18,6 +18,7 @@ interface Props {
   agencyId: string;
   locationId: string;
   onClose: () => void;
+  handleSuccess?: () => void;
 }
 
 const validationSchema = Yup.object().shape({
@@ -31,7 +32,7 @@ const validationSchema = Yup.object().shape({
   province: Yup.string().required(),
 });
 
-const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId }) => {
+const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handleSuccess }) => {
   const { fetchArea } = useApp();
   const [updateLocation] = useUpdateLocationMutation();
   const { data: location } = useGetLocationQuery<{ data: LocationType }>({ agencyId, locationId });
@@ -68,6 +69,9 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId }) => 
       await updateLocation({ location: body, parent_uuid: currentUser?.sub_id })
         .then((res) => {
           setSnackbar({ open: true, message: 'Thêm vị trí thành công', severity: 'success' });
+          if (handleSuccess) {
+            handleSuccess();
+          }
         })
         .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi thêm ví trí', severity: 'error' }));
       onClose();

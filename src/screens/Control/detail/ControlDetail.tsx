@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { IconButton, Typography, Tooltip, Card, Box, Grid } from '@mui/material';
+import { IconButton, Typography, Tooltip, Card, Box, Grid, Popover } from '@mui/material';
 import styled from '@emotion/styled';
 import RefreshIcon from '../../../assets/icons/refresh-icon.svg';
 import SettingIcon from '../../../assets/icons/setting-icon.svg';
@@ -12,6 +12,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { LocationType, EventReceiveType } from '../../../state/modules/location/locationReducer';
 import { useUpdateLocationControlMutation } from '../../../services/control.service';
 import { useSnackbar } from '../../../hooks/useSnackbar';
+import ModalEdit from '../../../screens/DeployLocationScreen/ModalEdit';
 
 const DLCard = styled(Card)({
   position: 'absolute',
@@ -40,6 +41,8 @@ interface Props {
 }
 
 export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Props) => {
+  const [locationSettingAnchorEl, setLocationSettingAnchorEl] = React.useState<any>();
+  const [openUpdateLocationDialog, setOpenUpdateLocationDialog] = React.useState(false);
   const [getControlLocation, result] = useLazyGetControlLocationQuery();
   const [updateLocationControl] = useUpdateLocationControlMutation();
   const { setSnackbar } = useSnackbar();
@@ -73,10 +76,23 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
     }
   };
 
+  const onClickLocationSetting = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setLocationSettingAnchorEl(event.currentTarget);
+  };
+
   const location = result.data as LocationType;
 
   return (
     <DLCard elevation={0}>
+      {selectedLocationId && currentUser && openUpdateLocationDialog && (
+        <ModalEdit
+          show={openUpdateLocationDialog}
+          onClose={() => setOpenUpdateLocationDialog(false)}
+          locationId={selectedLocationId}
+          agencyId={currentUser.sub_id}
+          handleSuccess={onRefresh}
+        />
+      )}
       <Box
         style={{
           display: 'flex',
@@ -103,7 +119,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           {locationName}
         </Typography>
         <Tooltip title="Cài đặt">
-          <IconButton aria-label="refresh" onClick={onRefresh}>
+          <IconButton aria-label="refresh" onClick={onClickLocationSetting}>
             <img src={SettingIcon} alt="" style={{ width: '20px', height: '20px' }} />
           </IconButton>
         </Tooltip>
@@ -112,6 +128,31 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
             <img src={RefreshIcon} alt="" style={{ width: '20px', height: '20px' }} />
           </IconButton>
         </Tooltip>
+        <Popover
+          open={!!locationSettingAnchorEl}
+          anchorEl={locationSettingAnchorEl}
+          onClose={() => setLocationSettingAnchorEl(undefined)}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
+          <Box py={2}>
+            <Typography style={{ fontSize: '16px', fontWeight: 'bold', padding: ' 0 16px 16px' }}>
+              Cài đặt vị trí triển khai
+            </Typography>
+            <Box
+              p={2}
+              style={{ fontSize: '14px', cursor: 'pointer', backgroundColor: '#F8F9FC', fontWeight: 500 }}
+              onClick={() => {
+                setOpenUpdateLocationDialog(true);
+                setLocationSettingAnchorEl(undefined);
+              }}
+            >
+              Chỉnh sửa thông tin vị trí
+            </Box>
+          </Box>
+        </Popover>
       </Box>
       <Box
         sx={{
