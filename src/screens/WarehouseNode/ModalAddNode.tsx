@@ -100,7 +100,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
         node_type_id: values.type,
         serial: values.serial,
         version: values.version,
-        mfg: dayjs(values.startDate).unix(),
+        mfg: dayjs(values.startDate, 'DD/MM/YYYY').unix(),
         description: values.description,
       };
       if (tab === 0) {

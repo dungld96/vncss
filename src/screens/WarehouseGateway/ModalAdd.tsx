@@ -99,7 +99,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
         gateway_type_id: values.type,
         serial: values.serial,
         hardware_version: values.version,
-        mfg: dayjs(values.startDate).unix(),
+        mfg: dayjs(values.startDate, 'DD/MM/YYYY').unix(),
         description: values.description,
       };
       if (tab === 0) {
