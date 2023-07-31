@@ -29,18 +29,24 @@ import { CamerasScreen } from './screens/cameras/CamerasScreen';
 import { useAuth } from './hooks/useAuth';
 import { messaging, getTokenFcm } from './firebase';
 import { ROUTE_CONTROL } from './utils/routesMap';
-import { useSubNotificationMutation } from './services/notifications.service';
-import { addNotificationsAlertQueue } from './state/modules/notification/notificationReducer';
-import { unRegisterServiceWorker, registerServiceWorker } from './serviceWorker';
+import { useLazyGetListNotificationsQuery, useSubNotificationMutation } from './services/notifications.service';
+import {
+  addNotificationsAlertQueue,
+  selectNotificationsAlertQueue,
+} from './state/modules/notification/notificationReducer';
+import { registerServiceWorker } from './serviceWorker';
 import { GatewayAlert } from './common/gateway-alert/GatewayAlert';
+import { useSelector } from 'react-redux';
 
 function App() {
   const { snackbar } = useSnackbar();
   const navigate = useNavigate();
+  const notificationsAlertQueue = useSelector(selectNotificationsAlertQueue);
   const dispatch = useDispatch();
   const [fcmToken, setFcmToken] = React.useState<string>();
   const [targetLocationId, setTargetLocationId] = React.useState<string>();
   const [subNotification] = useSubNotificationMutation();
+  const [getListNotificationsQuery] = useLazyGetListNotificationsQuery();
 
   const {
     auth: { currentUser },
@@ -57,58 +63,50 @@ function App() {
   }, [currentUser]);
 
   React.useEffect(() => {
+    if (currentUser) {
+      getListNotificationsQuery({ agencyId: currentUser.sub_id });
+    }
+  }, [currentUser, notificationsAlertQueue]);
+
+  React.useEffect(() => {
     navigator.serviceWorker.addEventListener('message', ({ data }) => {
-      console.log(data);
       const messageBody = get(data, 'firebase-messaging-msg-data', {});
       const notificationCM = get(messageBody, 'notification', {});
       const locationId = get(messageBody, 'data.location_id', '');
       const locationName = get(messageBody, 'data.location_name', '');
       const toastType = get(messageBody, 'data.type', 'success');
       const timestamp = get(messageBody, 'data.timestamp');
-      const agencyId = get(currentUser, 'sub_id', 1);
 
-      const onclick = (e: any) => {
-        setTargetLocationId(locationId);
-        e.preventDefault();
-        navigate(ROUTE_CONTROL);
-      };
-      const remove = (key: string) => () => {
-        // closeSnackbar(key);
-        // readNotification(agencyId, timestamp);
-      };
-      const action = (key: string) => (
-        <>
-          <Button style={{ color: 'white' }} onClick={onclick}>
-            Chi tiết
-          </Button>
-          <Button style={{ color: 'white' }} onClick={remove(key)}>
-            Xoá
-          </Button>
-        </>
-      );
-      // if (toastType === 'success') {
-      //   enqueueSnackbar(notificationCM.body, {
-      //     variant: toastType,
-      //     autoHideDuration: 10000,
-      //     action,
-      //     anchorOrigin: {
-      //       vertical: 'top',
-      //       horizontal: 'center',
-      //     },
-      //   });
-      // } else {
+      // const onclick = (e: any) => {
+      //   setTargetLocationId(locationId);
+      //   e.preventDefault();
+      //   navigate(ROUTE_CONTROL);
+      // };
+      // const remove = (key: string) => () => {
+      //   // closeSnackbar(key);
+      //   // readNotification(agencyId, timestamp);
+      // };
+      // const action = (key: string) => (
+      //   <>
+      //     <Button style={{ color: 'white' }} onClick={onclick}>
+      //       Chi tiết
+      //     </Button>
+      //     <Button style={{ color: 'white' }} onClick={remove(key)}>
+      //       Xoá
+      //     </Button>
+      //   </>
+      // );
+
       dispatch(
         addNotificationsAlertQueue({
           id: uuidv4(),
-          locationId: locationId || 'citd2v9g1oa4iuj7tc10',
+          locationId: locationId,
           locationName,
           type: toastType,
           notificationText: notificationCM.body,
           timestamp,
         })
       );
-      // }
-      // addNotification(agencyId, messageBody);
     });
 
     onMessage(messaging, (payload) => {
@@ -133,7 +131,7 @@ function App() {
       <ModalConfirmContainer />
       <GatewayAlert />
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout fcmToken={fcmToken} />}>
           <Route path="/" element={<RequireUser allowedRoles={['user']} />}>
             <Route index element={<DashboardScreen />} />
             <Route path="profile" element={<Profile />} />

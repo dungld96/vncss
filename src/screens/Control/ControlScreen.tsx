@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Card, IconButton, Tooltip } from '@mui/material';
+import { Cancel as CancelIcon } from '@mui/icons-material';
 import GoogleMapReact from 'google-map-react';
 import { PointFeature } from 'supercluster';
 import { useSelector } from 'react-redux';
@@ -12,6 +13,8 @@ import { selectLocation, ControlLocationType } from '../../state/modules/control
 import { useAuth } from '../../hooks/useAuth';
 import { Marker, ClusterMarker, MyLocation } from './Marker';
 import { ControlDetail } from './detail/ControlDetail';
+import { agencies } from 'screens/Agencies/mockData';
+import { FilterBar } from './FilterBar';
 
 export const centerDefault = {
   lat: 21.027627,
@@ -33,6 +36,24 @@ export const ControlScreen = () => {
   } = useAuth();
 
   const locations = useSelector(selectLocation) as ControlLocationType[];
+
+  const statistic =
+    locations && locations.length > 0
+      ? {
+          total: locations.length,
+          connected: locations.filter((item) => item.state === 'connected').length,
+          alert: locations.filter((item) => item.state === 'alert').length,
+          warning: locations.filter((item) => item.state === 'warning').length,
+          disconnected: locations.filter((item) => item.state === 'disconnected').length,
+        }
+      : {
+          total: 0,
+          connected: 0,
+          alert: 0,
+          warning: 0,
+          disconnected: 0,
+        };
+
   const [query, setQuery] = useQueryParams({
     locationId: StringParam,
   });
@@ -166,6 +187,87 @@ export const ControlScreen = () => {
           onClose={handleCloseDetail}
         />
       )}
+      <Card
+        style={{
+          position: 'absolute',
+          bottom: '50px',
+          zIndex: 1,
+          width: 'calc(100% - 64px)',
+          display: 'flex',
+          paddingRight: '10px',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+        }}
+        elevation={0}
+      >
+        {/* {filterExpand ? (
+          <Box height={'50px'} width="100%">
+            <Box
+              display="flex"
+              justifyContent={'space-between'}
+              pr="16px"
+              pl="8px"
+              boxShadow={'0px 1px 4px rgba(0, 0, 0, 0.1)'}
+            >
+              <FilterBar
+                filterStatus={filterStatus}
+                role={role}
+                gwListLength={gwListLength}
+                onStatusClick={onStatusClick}
+                onFilterExpandClick={onFilterExpandClick}
+                filterExpand={filterExpand}
+              />
+              <Box
+                display="flex"
+                alignItems="center"
+                px="8px"
+                style={{ cursor: 'pointer' }}
+                onClick={onFilterExpandClick}
+              >
+                {filterExpand && <ExpandMoreIcon />}
+              </Box>
+            </Box>
+            <FilterMore
+              agencies={agencies}
+              gatewayTypes={productTypes}
+              handleOpenGateway={onClickMarker}
+              filtersFormValue={filtersFormValue}
+              setFiltersFormValue={setFiltersFormValue}
+              handleClearFilter={handleClearFilter}
+              handleFilter={handleFilter}
+              filteredData={filteredData}
+              accessToken={accessToken}
+              setAgencyChildenIds={setAgencyChildenIds}
+            />
+          </Box>
+        ) : ( */}
+        <Box display={'flex'} position="relative">
+          <FilterBar
+            locationListLength={statistic}
+            onStatusClick={() => {}}
+            onFilterExpandClick={() => {}}
+            filterExpand={false}
+            isFitering={false}
+          />
+          {/* {isFitering && (
+            <Tooltip title="Huỷ bộ lọc">
+              <IconButton
+                aria-label="clear"
+                onClick={handleClearFilter}
+                className={cx([styles['btn-map']])}
+                style={{
+                  right: '-56px',
+                  width: '47px',
+                  height: '47px',
+                }}
+              >
+                <CancelIcon style={{ color: '#8F0A0C' }} />
+              </IconButton>
+            </Tooltip>
+          )} */}
+        </Box>
+        {/* )} */}
+      </Card>
       <GoogleMapReact
         bootstrapURLKeys={{
           key: 'AIzaSyAjDwo_TVHsOX1nC5u9ySilk6IShSHF5tM',

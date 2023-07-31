@@ -70,14 +70,14 @@ interface IRouteItem {
 }
 
 const listFeature = [
-  {
-    id: '31cbc275-67f2-44e9-9c86-4ecbf1e84459',
-    title: 'Thống kê',
-    icon: <ImageIcon image={dashboardIcon} />,
-    activeIcon: <ImageIcon image={dashboardActiveIcon} />,
-    permission: ['overview'],
-    route: ROUTE_HOME,
-  },
+  // {
+  //   id: '31cbc275-67f2-44e9-9c86-4ecbf1e84459',
+  //   title: 'Thống kê',
+  //   icon: <ImageIcon image={dashboardIcon} />,
+  //   activeIcon: <ImageIcon image={dashboardActiveIcon} />,
+  //   permission: ['overview'],
+  //   route: ROUTE_HOME,
+  // },
   {
     id: '68d536e2-eff0-4388-84ad-739c31867c8b',
     title: 'Cơ quan quản lý',

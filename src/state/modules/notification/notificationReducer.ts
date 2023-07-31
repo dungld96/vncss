@@ -12,7 +12,7 @@ export interface NotificationAlertType {
 }
 export interface NotificationType {
   receiver: string;
-  timestamp: string;
+  timestamp: number;
   title: string;
   message: string;
   location_id: string;

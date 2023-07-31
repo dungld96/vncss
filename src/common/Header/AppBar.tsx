@@ -3,14 +3,23 @@ import { Box, AppBar, Toolbar, Typography, IconButton, Avatar, Menu } from '@mui
 import { useNavigate } from 'react-router-dom';
 
 import AvatarImage from '../../assets/img/avatar-ex.png';
+import VNLang from '../../assets/icons/vietnam.svg';
 import { InnerProfileMenu } from './InnerProfileMenu';
 import { logout } from '../../state/modules/auth/authReducer';
 import { useAppDispatch } from '../../state/store';
+import { Notifier } from '../../common/notifier/Notifer';
+import { unRegisterServiceWorker } from '../../serviceWorker';
+import { useUnSubNotificationMutation } from '../../services/notifications.service';
+import { useAuth } from '../../hooks/useAuth';
 
-export default function AppBarHeader() {
+export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [unSubNotification] = useUnSubNotificationMutation();
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -25,6 +34,10 @@ export default function AppBarHeader() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('current_user');
+    unRegisterServiceWorker();
+    if (currentUser && fcmToken) {
+      unSubNotification({ data: { token: fcmToken }, agencyId: currentUser.sub_id }).unwrap();
+    }
     navigate('/login');
   };
 
@@ -52,6 +65,14 @@ export default function AppBarHeader() {
           >
             Hệ thống an ninh tập trung Việt Nam
           </Typography>
+          <Box mr={2}>
+            <Notifier />
+          </Box>
+          <Box mr={1}>
+            <IconButton edge="end" color="inherit" aria-label="open drawer">
+              <Avatar src={VNLang} style={{ height: 30, width: 30 }} />
+            </IconButton>
+          </Box>
           <Box>
             <IconButton edge="end" color="inherit" aria-label="open drawer" onClick={handleMenu}>
               <Avatar src={AvatarImage} sx={{ height: 30, width: 30, border: '1px solid #8f0a0c' }} />

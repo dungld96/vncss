@@ -3,10 +3,10 @@ import { Outlet } from 'react-router-dom';
 import AppBar from 'common/Header/AppBar';
 import Drawer from 'common/Sidebar/Drawer';
 
-function App() {
+function Layout({ fcmToken }: { fcmToken?: string }) {
   return (
     <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh' }}>
-      <AppBar />
+      <AppBar fcmToken={fcmToken} />
       <Drawer />
       <Box ml={7}>
         <Outlet />
@@ -15,4 +15,4 @@ function App() {
   );
 }
 
-export default App;
+export default Layout;
