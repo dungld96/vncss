@@ -141,12 +141,13 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
-    deleteGateway: build.mutation<null, { id: string; parent_uuid?: string }>({
+    deleteGateway: build.mutation<null, { ids: (number | string)[]; parent_uuid?: string }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/gateways/${body.id}`,
+            url: `agencies/${body.parent_uuid}/gateways`,
             method: 'DELETE',
+            body: { ids: body.ids },
           };
         } catch (error: any) {
           throw new error.message();

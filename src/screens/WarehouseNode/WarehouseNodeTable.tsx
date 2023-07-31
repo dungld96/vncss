@@ -216,7 +216,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
     });
   };
 
-  const handleDeleteNodes = (id: string, more?: boolean) => {
+  const handleDeleteNodes = (ids: (number | string)[], more?: boolean) => {
     showModalConfirm({
       type: 'warning',
       title: 'Xoá node',
@@ -224,7 +224,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
       confirm: {
         action: async () => {
           try {
-            await deleteNode({ id, parent_uuid: currentUser?.sub_id || '' }).unwrap();
+            await deleteNode({ ids, parent_uuid: currentUser?.sub_id || '' }).unwrap();
             hideModalConfirm();
             more && setSelection([]);
           } catch (error) {
@@ -268,7 +268,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
     } else if (type === 'recall') {
       handleRecall([item]);
     } else if (type === 'delete') {
-      handleDeleteNodes(item);
+      handleDeleteNodes([item]);
     }
   };
 
@@ -402,7 +402,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
                 <ButtonBase
                   sx={{ color: '#E5401C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={DeleteIcon} />}
-                  onClick={() => handleDeleteNodes(selection.join(','), true)}
+                  onClick={() => handleDeleteNodes(selection, true)}
                 >
                   Xóa
                 </ButtonBase>

@@ -96,12 +96,13 @@ export const nodesApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Node' }]),
     }),
-    deleteNode: build.mutation<null, { id: string; parent_uuid?: string }>({
+    deleteNode: build.mutation<null, { ids: (string | number)[]; parent_uuid?: string }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/nodes/${body.id}`,
+            url: `agencies/${body.parent_uuid}/nodes`,
             method: 'DELETE',
+            body: { ids: body.ids },
           };
         } catch (error: any) {
           throw new error.message();

@@ -281,7 +281,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     } else if (type === 'recall') {
       handleRecall([id]);
     } else if (type === 'delete') {
-      handleDeleteGatways(id);
+      handleDeleteGatways([id]);
     }
   };
 
@@ -295,7 +295,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     setSelection(selectedRowIds);
   };
 
-  const handleDeleteGatways = (id: string, more?: boolean) => {
+  const handleDeleteGatways = (ids: (number | string)[], more?: boolean) => {
     showModalConfirm({
       type: 'warning',
       title: 'Xoá gateway',
@@ -303,7 +303,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
       confirm: {
         action: async () => {
           try {
-            await deleteGateway({ id, parent_uuid: currentUser?.sub_id || '' }).unwrap();
+            await deleteGateway({ ids, parent_uuid: currentUser?.sub_id || '' }).unwrap();
             hideModalConfirm();
             more && setSelection([]);
           } catch (error) {
@@ -440,7 +440,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
                 <ButtonBase
                   sx={{ color: '#E5401C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={DeleteIcon} />}
-                  onClick={() => handleDeleteGatways(selection.join(','), true)}
+                  onClick={() => handleDeleteGatways(selection, true)}
                 >
                   Xóa
                 </ButtonBase>
