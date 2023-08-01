@@ -1,16 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
+import { SnackbarOrigin } from '@mui/material';
 
 type ObjectType = { [key: string]: any };
-export type SnackbarType = { severity: 'error' | 'success' | 'warning' | 'info'; message: string; open: boolean };
+export type SnackbarType = {
+  severity: 'error' | 'success' | 'warning' | 'info';
+  message: string;
+  open: boolean;
+  autoHideDuration?: number;
+  anchorOrigin?: SnackbarOrigin;
+};
 
 type AppState = {
   area: ObjectType[];
   snackbar: SnackbarType;
 };
 
-const initialState: AppState = { area: [], snackbar: { severity: 'info', message: '', open: false } };
+const initialState: AppState = {
+  area: [],
+  snackbar: { severity: 'info', message: '', open: false },
+};
 
 const slice = createSlice({
   name: 'appState',

@@ -116,6 +116,13 @@ export const AgenciesTable = () => {
     auth: { currentUser },
   } = useAuth();
 
+  const agenciesParsed = React.useMemo(() => {
+    return agencies.map((item) => ({
+      ...item,
+      parentId: item.parent_id === currentUser?.sub_id ? null : item.parent_id,
+    }));
+  }, [currentUser, agencies]);
+
   const [columns] = useState([
     { name: 'name', title: 'Tên' },
     { name: 'address', title: 'Địa chỉ' },
@@ -178,8 +185,8 @@ export const AgenciesTable = () => {
           <Typography sx={{ marginLeft: '8px' }}>Thêm mới đại lý</Typography>
         </Button>
       </Box>
-      <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={agencies} columns={columns}>
+      <Paper sx={{ boxShadow: 'none', maxHeight: 'calc(100vh - 150px)', overflow: 'auto' }}>
+        <Grid rows={agenciesParsed} columns={columns}>
           <TreeDataState />
           <CustomTreeData getChildRows={getChildRows} />
           <Table

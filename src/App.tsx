@@ -39,7 +39,7 @@ import { GatewayAlert } from './common/gateway-alert/GatewayAlert';
 import { useSelector } from 'react-redux';
 
 function App() {
-  const { snackbar } = useSnackbar();
+  const { snackbar, setSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const notificationsAlertQueue = useSelector(selectNotificationsAlertQueue);
   const dispatch = useDispatch();
@@ -70,6 +70,7 @@ function App() {
 
   React.useEffect(() => {
     navigator.serviceWorker.addEventListener('message', ({ data }) => {
+      console.log(data);
       const messageBody = get(data, 'firebase-messaging-msg-data', {});
       const notificationCM = get(messageBody, 'notification', {});
       const locationId = get(messageBody, 'data.location_id', '');
@@ -100,7 +101,7 @@ function App() {
       dispatch(
         addNotificationsAlertQueue({
           id: uuidv4(),
-          locationId: locationId,
+          locationId: locationId || 'citd2v9g1oa4iuj7tc10',
           locationName,
           type: toastType,
           notificationText: notificationCM.body,
@@ -116,6 +117,10 @@ function App() {
   }, []);
 
   useEffect(() => {
+    grantNotificationPermission();
+  }, []);
+
+  useEffect(() => {
     if (fcmToken && currentUser) {
       const body = { data: { token: fcmToken }, agencyId: currentUser.sub_id };
       const effect = async () => {
@@ -125,6 +130,36 @@ function App() {
       effect();
     }
   }, [fcmToken, currentUser]);
+
+  const grantNotificationPermission = () => {
+    if (!('Notification' in window)) {
+      alert('This browser does not support system notifications');
+      return;
+    }
+
+    console.log(Notification.permission);
+
+    if (Notification.permission === 'granted') {
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      setSnackbar({
+        open: true,
+        message: 'Không thể kích hoạt thông báo. Vui lòng bật thông báo trong phần cài đặt',
+        severity: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'center',
+        },
+      });
+      return;
+    }
+    Notification.requestPermission().then((result) => {
+      if (result === 'granted') {
+        new Notification('Welcome to CMS VNCSS');
+      }
+    });
+  };
 
   return (
     <Box sx={{ backgroundColor: '#F6F9FC', height: '100vh', fontFamily: 'Roboto' }}>

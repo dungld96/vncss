@@ -57,7 +57,7 @@ export const notificationsApi = createApi({
       query: ({ timestamp, agencyId }) => {
         try {
           return {
-            url: `agencies/${agencyId}/notifications/read?${timestamp ? `timestamp=${timestamp}` : ''}`,
+            url: `agencies/${agencyId}/notifications/read${timestamp ? `?timestamp=${timestamp}` : ''}`,
             method: 'POST',
           };
         } catch (error: any) {

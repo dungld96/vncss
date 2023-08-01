@@ -54,7 +54,7 @@ export const Notifier = () => {
   const readAll = () => {
     const agencyId = currentUser?.sub_id;
     if (agencyId) {
-      readNotificationMutation({ agencyId });
+      readNotificationMutation({ agencyId }).then(() => getListNotificationsQuery({ agencyId: currentUser.sub_id }));
     }
   };
 
