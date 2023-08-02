@@ -59,6 +59,15 @@ const SelectPosition: React.FC<Props> = ({ selectedPosition, handleSelectedPosit
     }
   }, []);
 
+  useEffect(() => {
+    if (selectedPosition) {
+      setCenter({
+        lat: selectedPosition.lat,
+        lng: selectedPosition.lng,
+      });
+    }
+  }, [selectedPosition]);
+
   const onMapClick = (e: any) => {
     handleSelectedPosition({
       lat: e.lat.toFixed(6),

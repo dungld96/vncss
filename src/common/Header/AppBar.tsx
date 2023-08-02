@@ -30,14 +30,21 @@ export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
   };
 
   const handleLogout = () => {
+    unRegisterServiceWorker();
+    if (currentUser && fcmToken) {
+      unSubNotification({ data: { token: fcmToken }, agencyId: currentUser.sub_id }).then(() => {
+        dispatch(logout);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('current_user');
+        navigate('/login');
+      });
+      return;
+    }
     dispatch(logout);
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('current_user');
-    unRegisterServiceWorker();
-    if (currentUser && fcmToken) {
-      unSubNotification({ data: { token: fcmToken }, agencyId: currentUser.sub_id }).unwrap();
-    }
     navigate('/login');
   };
 

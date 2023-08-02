@@ -5,7 +5,7 @@ import { queryRootConfig, ResponsiveInterface } from './http.service';
 export const notificationsApi = createApi({
   ...queryRootConfig,
   reducerPath: 'notificationsApi',
-  tagTypes: ['Notification', 'SubNotification', 'readNotification', 'unSubNotification'],
+  tagTypes: ['Notification', 'SubNotification', 'readNotification', 'unSubNotification', 'handleNotification'],
   endpoints: (build) => ({
     getListNotifications: build.query<any, { agencyId?: string; params?: any }>({
       query: (body) => ({ url: `agencies/${body.agencyId}/notifications`, params: body.params }),
@@ -66,6 +66,19 @@ export const notificationsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'readNotification' }]),
     }),
+    handleNotification: build.mutation<ResponsiveInterface, { timestamp: number; agencyId: string }>({
+      query: ({ timestamp, agencyId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/notifications/handle?timestamp=${timestamp}`,
+            method: 'POST',
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'handleNotification' }]),
+    }),
   }),
 });
 
@@ -74,4 +87,5 @@ export const {
   useSubNotificationMutation,
   useReadNotificationMutation,
   useUnSubNotificationMutation,
+  useHandleNotificationMutation,
 } = notificationsApi;

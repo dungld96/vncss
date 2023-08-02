@@ -13,6 +13,7 @@ import { LocationType, EventReceiveType } from '../../../state/modules/location/
 import { useUpdateLocationControlMutation } from '../../../services/control.service';
 import { useSnackbar } from '../../../hooks/useSnackbar';
 import ModalEdit from '../../../screens/DeployLocationScreen/ModalEdit';
+import { UpdateLatLng } from './dialogs/UpdateLatLng';
 
 const DLCard = styled(Card)({
   position: 'absolute',
@@ -43,6 +44,7 @@ interface Props {
 export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Props) => {
   const [locationSettingAnchorEl, setLocationSettingAnchorEl] = React.useState<any>();
   const [openUpdateLocationDialog, setOpenUpdateLocationDialog] = React.useState(false);
+  const [openUpdateLatLngDialog, setOpenUpdateLatLngDialog] = React.useState(false);
   const [getControlLocation, result] = useLazyGetControlLocationQuery();
   const [updateLocationControl] = useUpdateLocationControlMutation();
   const { setSnackbar } = useSnackbar();
@@ -79,6 +81,10 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const onClickLocationSetting = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLocationSettingAnchorEl(event.currentTarget);
   };
+  const onCloseLatLngUpdate = () => {
+    setOpenUpdateLatLngDialog(false);
+    onRefresh();
+  };
 
   const location = result.data as LocationType;
 
@@ -93,6 +99,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           handleSuccess={onRefresh}
         />
       )}
+      {location && <UpdateLatLng location={location} show={openUpdateLatLngDialog} onClose={onCloseLatLngUpdate} />}
       <Box
         style={{
           display: 'flex',
@@ -138,18 +145,37 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           }}
         >
           <Box py={2}>
-            <Typography style={{ fontSize: '16px', fontWeight: 'bold', padding: ' 0 16px 16px' }}>
+            <Typography
+              style={{ fontSize: '16px', fontWeight: 'bold', padding: ' 0 16px 16px', borderBottom: '1px solid #ddd' }}
+            >
               Cài đặt vị trí triển khai
             </Typography>
             <Box
               p={2}
-              style={{ fontSize: '14px', cursor: 'pointer', backgroundColor: '#F8F9FC', fontWeight: 500 }}
+              style={{
+                fontSize: '14px',
+                cursor: 'pointer',
+                fontWeight: 500,
+                borderBottom: '1px solid #ddd',
+              }}
               onClick={() => {
                 setOpenUpdateLocationDialog(true);
                 setLocationSettingAnchorEl(undefined);
               }}
             >
               Chỉnh sửa thông tin vị trí
+            </Box>
+            <Box
+              p={2}
+              style={{
+                fontSize: '14px',
+                cursor: 'pointer',
+                fontWeight: 500,
+                borderBottom: '1px solid #ddd',
+              }}
+              onClick={() => setOpenUpdateLatLngDialog(true)}
+            >
+              Chỉnh sửa toạ độ vị trí
             </Box>
           </Box>
         </Popover>

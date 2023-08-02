@@ -64,7 +64,7 @@ export const LocationDevice = ({ location }: { location?: LocationType }) => {
     setValue(newValue);
   };
   return (
-    <Box pb={2}>
+    <Box>
       <Tabs value={value} onChange={handleChange} sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tab label={<TabLabel>Gateway: {gateway?.name}</TabLabel>} value={0} />
         <Tab label={<TabLabel>Quản lý camera</TabLabel>} value={1} />

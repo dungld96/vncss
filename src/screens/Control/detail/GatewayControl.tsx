@@ -11,6 +11,8 @@ import {
   useLazyGetControlLocationGatewayNodesQuery,
   ControlLocationGatewayType,
   ControlLocationNodeType,
+  useLazyGetControlLocationLogsQuery,
+  ControlLocationLogType,
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { AddNodeDialog } from './dialogs/AddNodeDialog';
@@ -35,6 +37,7 @@ export const GatewayControl = ({
   const [selectedNode, setSelectedNode] = useState<ControlLocationNodeType>();
   const [gwSettingAnchorEl, setGwSettingAnchorEl] = useState<any>();
   const [getControlLocationGatewayNodes, { data }] = useLazyGetControlLocationGatewayNodesQuery();
+  const [getControlLocationLogs, { data: logsData }] = useLazyGetControlLocationLogsQuery();
   const {
     auth: { currentUser },
   } = useAuth();
@@ -44,6 +47,15 @@ export const GatewayControl = ({
       getControlLocationGatewayNodesFetch();
     }
   }, [currentUser, location, gateway]);
+
+  useEffect(() => {
+    if (currentUser && location) {
+      getControlLocationLogs({
+        agencyId: currentUser.sub_id,
+        locationId: location.id,
+      }).unwrap();
+    }
+  }, [currentUser, location]);
 
   const getControlLocationGatewayNodesFetch = async () => {
     if (currentUser && location && gateway) {
@@ -62,6 +74,7 @@ export const GatewayControl = ({
   };
 
   const nodes = (data || []) as ControlLocationNodeType[];
+  const logs = (logsData || []) as ControlLocationLogType[];
 
   return (
     <Box px={1}>
@@ -218,12 +231,131 @@ export const GatewayControl = ({
             <Box py={2} mb={2}>
               <Typography style={{ fontSize: '18px', fontWeight: 700 }}>Nhật ký hoạt động</Typography>
             </Box>
-            <Box display="flex" alignItems="center" justifyContent="center" minHeight="180px">
+            {logs.length > 0 ? (
               <Box>
-                <img src={DataEmpty} alt="" style={{ width: '120px' }} />
-                <Typography style={{ margin: '20px', color: '#C5C6D2' }}>Danh sách trống</Typography>
+                <Grid
+                  container
+                  style={{
+                    borderTop: '1px solid #F6F9FC',
+                    borderBottom: '1px solid #F6F9FC',
+                    height: '48px',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                  }}
+                >
+                  <Grid item xs={2}>
+                    <Box
+                      style={{
+                        color: '#8B8C9B',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                      }}
+                    >
+                      Thời gian
+                    </Box>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Box
+                      style={{
+                        color: '#8B8C9B',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                      }}
+                    >
+                      Loại nhật ký
+                    </Box>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Box
+                      style={{
+                        color: '#8B8C9B',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                      }}
+                    >
+                      Chi tiết nhật ký
+                    </Box>
+                  </Grid>
+                </Grid>
+
+                <Grid container style={{ fontSize: '14px', maxHeight: '294px', overflow: 'auto' }}>
+                  {logs.map((item, index) => (
+                    <>
+                      <Grid
+                        item
+                        xs={2}
+                        height="40px"
+                        style={{
+                          borderBottom: '1px solid #F8F9FC',
+                        }}
+                      >
+                        <Box
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%',
+                          }}
+                        >
+                          {item.timestamp}
+                        </Box>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={3}
+                        height="40px"
+                        style={{
+                          borderBottom: '1px solid #F8F9FC',
+                        }}
+                      >
+                        <Box
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%',
+                          }}
+                        >
+                          {item.kind}
+                        </Box>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={7}
+                        height="40px"
+                        style={{
+                          borderBottom: '1px solid #F8F9FC',
+                        }}
+                      >
+                        <Box
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%',
+                          }}
+                        >
+                          {item.message}
+                        </Box>
+                      </Grid>
+                    </>
+                  ))}
+                </Grid>
               </Box>
-            </Box>
+            ) : (
+              <Box display="flex" alignItems="center" justifyContent="center" minHeight="180px">
+                <Box>
+                  <img src={DataEmpty} alt="" style={{ width: '120px' }} />
+                  <Typography style={{ margin: '20px', color: '#C5C6D2' }}>Danh sách trống</Typography>
+                </Box>
+              </Box>
+            )}
           </Grid>
         </Grid>
       </Box>

@@ -83,6 +83,13 @@ export interface ControlLocationCameraType {
   websocketstream: string;
 }
 
+export interface ControlLocationLogType {
+  timestamp: number;
+  kind: string;
+  gateway_serial: string;
+  message: string;
+}
+
 export const controlApi = createApi({
   ...queryRootConfig,
   reducerPath: 'controlApi',
@@ -188,6 +195,15 @@ export const controlApi = createApi({
       },
       transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
     }),
+    getControlLocationLogs: build.query<any, { agencyId: string; locationId: string }>({
+      query: (body) => ({
+        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/logs`,
+      }),
+      providesTags() {
+        return [{ type: 'Control' }];
+      },
+      transformResponse: (response: { data: ControlLocationLogType }, meta, arg) => response.data,
+    }),
     getControlLocationCameraImage: build.query<
       any,
       { agencyId: string; locationId: string; cameraboxeId: string; cameraId: string }
@@ -262,4 +278,6 @@ export const {
   useUpdateLocationControlMutation,
   useUpdateGatewayControlMutation,
   useUpdateNodeControlMutation,
+  useGetControlLocationLogsQuery,
+  useLazyGetControlLocationLogsQuery,
 } = controlApi;
