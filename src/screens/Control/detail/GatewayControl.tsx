@@ -19,6 +19,7 @@ import { AddNodeDialog } from './dialogs/AddNodeDialog';
 import { NodeCard } from '../../../common/card/NodeCard';
 import { UpdateGatewayInfoDialog } from './dialogs/UpdateGatewayInfoDialog';
 import { NodeInfoDialog } from './dialogs/NodeInfoDialog';
+import dayjs from 'dayjs';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -303,7 +304,7 @@ export const GatewayControl = ({
                             height: '100%',
                           }}
                         >
-                          {item.timestamp}
+                          {dayjs(item.timestamp * 1000).format('HH:mm:ss DD-MM-YYYY')}
                         </Box>
                       </Grid>
                       <Grid
