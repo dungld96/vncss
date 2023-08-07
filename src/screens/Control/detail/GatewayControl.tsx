@@ -20,6 +20,7 @@ import { NodeCard } from '../../../common/card/NodeCard';
 import { UpdateGatewayInfoDialog } from './dialogs/UpdateGatewayInfoDialog';
 import { NodeInfoDialog } from './dialogs/NodeInfoDialog';
 import dayjs from 'dayjs';
+import { useGetGatewayTypesQuery, IGatewayType } from '../../../services/gateway.service';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -39,6 +40,8 @@ export const GatewayControl = ({
   const [gwSettingAnchorEl, setGwSettingAnchorEl] = useState<any>();
   const [getControlLocationGatewayNodes, { data }] = useLazyGetControlLocationGatewayNodesQuery();
   const [getControlLocationLogs, { data: logsData }] = useLazyGetControlLocationLogsQuery();
+  const { data: gatewayTypes } = useGetGatewayTypesQuery<{ data: IGatewayType[] }>(null);
+
   const {
     auth: { currentUser },
   } = useAuth();
@@ -76,6 +79,8 @@ export const GatewayControl = ({
 
   const nodes = (data || []) as ControlLocationNodeType[];
   const logs = (logsData || []) as ControlLocationLogType[];
+  const gatewayType = (gatewayTypes || []).find((item) => item.id === gateway.gateway_type_id)?.name;
+  const diffDay = dayjs(gateway.subscription_end_at).diff(dayjs(gateway.active_at), 'day');
 
   return (
     <Box px={1}>
@@ -150,7 +155,7 @@ export const GatewayControl = ({
                 <Typography style={{ fontSize: '18px', fontWeight: 700 }}>Thông tin Gateway</Typography>
                 <Box display="flex" alignItems="center">
                   <Box display="flex" alignItems="flex-end">
-                    <Typography style={{ color: '#8B8C9B' }}>98%</Typography>
+                    <Typography style={{ color: '#8B8C9B' }}>{gateway.state?.battery || 0}%</Typography>
                     <img src={PinIcon} alt="" style={{ width: '24px', height: '24px', marginLeft: '4px' }} />
                   </Box>
                   <Box ml={1} display="flex" alignItems="flex-end">
@@ -194,7 +199,7 @@ export const GatewayControl = ({
               <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Loại:</InfoTitle>
-                  <InfoValue>{gateway.gateway_type_id || '--'}</InfoValue>
+                  <InfoValue>{gatewayType || '--'}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Serial:</InfoTitle>
@@ -202,7 +207,7 @@ export const GatewayControl = ({
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Phiên bản:</InfoTitle>
-                  <InfoValue>{gateway.hardware_version}</InfoValue>
+                  <InfoValue>{gateway.version || '--'}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Số sim:</InfoTitle>
@@ -210,19 +215,21 @@ export const GatewayControl = ({
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Ngày kích hoạt:</InfoTitle>
-                  <InfoValue>05/12/2022 07:57</InfoValue>
+                  <InfoValue>{dayjs(gateway.active_at).format('DD/MM/YYYY HH:mm')}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Số ngày còn lại:</InfoTitle>
-                  <InfoValue>238 Ngày</InfoValue>
+                  <InfoValue>{diffDay} Ngày</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Trạng thái:</InfoTitle>
-                  <InfoValue>Đang hoạt động</InfoValue>
+                  <InfoValue>{gateway.status === 'activated' ? 'Đang hoạt động' : 'Lưu kho'}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Cập nhật lần cuối:</InfoTitle>
-                  <InfoValue>25/02/2023 15:01</InfoValue>
+                  <InfoValue>
+                    {gateway.state ? dayjs(gateway.state.timestamp * 1000).format('DD/MM/YYYY HH:mm') : '--'}
+                  </InfoValue>
                 </Box>
               </Box>
             </Box>
@@ -323,7 +330,7 @@ export const GatewayControl = ({
                             height: '100%',
                           }}
                         >
-                          {item.kind}
+                          {item.kind === 'event' ? 'Cảnh Báo' : 'Thông báo'}
                         </Box>
                       </Grid>
                       <Grid

@@ -32,14 +32,17 @@ export interface ControlLocationGatewayType {
   serial: string;
   hardware_version: string;
   firmware_version: string;
+  version?: string;
   mfg: string;
   alert: number;
   blocking: boolean;
   testing: boolean;
-  state: string | null;
+  state: { battery: number; charge: number; gsmLevel: number; hum: number; temp: number; timestamp: number } | null;
   status: string;
   secure_code: 'string';
   enable_callcenter: boolean;
+  active_at?: string;
+  subscription_end_at?: string;
 }
 export type NoteStateType = {
   battery: number;

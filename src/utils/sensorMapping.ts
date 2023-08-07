@@ -35,6 +35,7 @@ import RSBE from '../assets/sensor/remote-sos.svg';
 import RSBR from '../assets/sensor/remote-sos.svg';
 import SRB from '../assets/sensor/remote-sos.svg';
 import SRB1 from '../assets/sensor/remote-sos.svg';
+import SOS from '../assets/sensor/remote-sos.svg';
 import SDB from '../assets/sensor/door.svg';
 import SFDB from '../assets/sensor/spark.svg';
 import FM from '../assets/sensor/spark.svg';
@@ -112,4 +113,5 @@ export const sensorMapped = {
   A4E,
   bao_chay,
   ZONE,
+  SOS,
 };
