@@ -53,7 +53,7 @@ export interface GatewayRequestInterface {
     id?: string;
     gateway_type_id: string;
     serial: string;
-    hardware_version: string;
+    version: string;
     mfg: number;
   };
 }

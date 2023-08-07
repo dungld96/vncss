@@ -98,7 +98,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
         id: values.id || undefined,
         gateway_type_id: values.type,
         serial: values.serial,
-        hardware_version: values.version,
+        version: values.version,
         mfg: dayjs(values.startDate, 'DD/MM/YYYY').unix(),
         description: values.description,
       };
