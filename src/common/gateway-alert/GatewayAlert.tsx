@@ -51,10 +51,6 @@ export const GatewayAlert = () => {
     navigate(`${ROUTE_CONTROL}?locationId=${locationId}`);
     handleClose();
   };
-  const getNotifiTimeStamp = (time: number) => {
-    const dateTime = new Date(time * 1000);
-    return dayjs(dateTime).format('hh:mm:ss DD-MM-YYYY');
-  };
 
   useEffect(() => {
     if (open) {
@@ -95,10 +91,7 @@ export const GatewayAlert = () => {
 
   useEffect(() => {
     if (currentNotify) {
-      const type = currentNotify.type;
-      //   if (type === 'warning') {
       setOpen(true);
-      //   }
     }
   }, [currentNotify]);
 
@@ -121,7 +114,7 @@ export const GatewayAlert = () => {
         <DialogContentText
           style={{ fontSize: 16, fontWeight: 500, color: '#03294A', textAlign: 'center', padding: '0 10px' }}
         >
-          {`${currentNotify?.notificationText} - Địa chỉ: ${currentNotify?.locationName}`}
+          {`${currentNotify?.locationName || '--'} - Địa chỉ: ${currentNotify?.notificationText || '--'}`}
         </DialogContentText>
         <DialogContentText
           style={{ fontSize: 16, fontWeight: 500, color: '#03294A', textAlign: 'center', padding: '0 10px' }}
@@ -129,7 +122,7 @@ export const GatewayAlert = () => {
           Yêu cầu kiểm tra xử lý!
         </DialogContentText>
         <DialogContentText style={{ color: '#BDBDBD', textAlign: 'center', fontSize: 12 }}>
-          {currentNotify ? getNotifiTimeStamp(currentNotify.timestamp) : '--'}
+          {currentNotify ? dayjs(currentNotify.timestamp).format('HH:mm:ss DD/MM/YYYY') : '--'}
         </DialogContentText>
         <Box display="flex" justifyContent="center" mt={1}>
           <Button style={{ margin: '4px' }} color="primary" variant="outlined" onClick={handleProcessed}>

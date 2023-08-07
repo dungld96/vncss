@@ -75,6 +75,7 @@ function App() {
       const notificationCM = get(messageBody, 'notification', {});
       const locationId = get(messageBody, 'data.location_id', '');
       const locationName = get(messageBody, 'data.location_name', '');
+      const locationAdress = get(messageBody, 'data.location_address', '');
       const toastType = get(messageBody, 'data.type', 'success');
       const timestamp = get(messageBody, 'data.timestamp');
 
@@ -104,7 +105,7 @@ function App() {
           locationId: locationId || 'citd2v9g1oa4iuj7tc10',
           locationName,
           type: toastType,
-          notificationText: notificationCM.body,
+          notificationText: locationAdress,
           timestamp,
         })
       );
