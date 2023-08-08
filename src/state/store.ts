@@ -8,6 +8,7 @@ import { nodesApi } from '../services/node.service';
 import { organizationsApi } from '../services/organizations.service';
 import { regulatoryApi } from '../services/regulatory.service';
 import { usersApi } from '../services/users.service';
+import { simsApi } from '../services/sims.service';
 import agencyReducer from './modules/agency/agencyReducer';
 import appState from './modules/app/appReducer';
 import { controlApi } from '../services/control.service';
@@ -24,6 +25,7 @@ import userReducer from './modules/user/userReducer';
 import controlReducer from './modules/control/controlReducer';
 import cameraReducer from './modules/camera/cameraReducer';
 import notificationReducer from './modules/notification/notificationReducer';
+import simReducer from './modules/sim/simReducer';
 
 export const store = configureStore({
   reducer: {
@@ -38,6 +40,7 @@ export const store = configureStore({
     [controlApi.reducerPath]: controlApi.reducer,
     [camerasApi.reducerPath]: camerasApi.reducer,
     [notificationsApi.reducerPath]: notificationsApi.reducer,
+    [simsApi.reducerPath]: simsApi.reducer,
     auth: authReducer,
     modalConfirm: modalConfirmReducer,
     userState: userReducer,
@@ -51,6 +54,7 @@ export const store = configureStore({
     controlState: controlReducer,
     cameraState: cameraReducer,
     notificationState: notificationReducer,
+    simState: simReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([
@@ -65,6 +69,7 @@ export const store = configureStore({
       organizationsApi.middleware,
       camerasApi.middleware,
       notificationsApi.middleware,
+      simsApi.middleware,
     ]),
 });
 

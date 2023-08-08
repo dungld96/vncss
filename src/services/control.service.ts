@@ -86,6 +86,15 @@ export interface ControlLocationCameraType {
   websocketstream: string;
 }
 
+export interface ControlLocationCameraBoxType {
+  id: string;
+  serial: string;
+  agency_id: string;
+  version: string;
+  status: number;
+  blocking: boolean;
+}
+
 export interface ControlLocationLogType {
   timestamp: number;
   kind: string;
@@ -189,9 +198,18 @@ export const controlApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddCamera' }]),
     }),
-    getControlLocationCameras: build.query<any, { agencyId: string; locationId: string }>({
+    getControlLocationCameras: build.query<any, { agencyId: string; locationId: string; cameraBoxId: string }>({
       query: (body) => ({
-        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameras`,
+        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes/${body.cameraBoxId}/cameras`,
+      }),
+      providesTags() {
+        return [{ type: 'Control' }];
+      },
+      transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+    }),
+    getControlLocationCameraBoxs: build.query<any, { agencyId: string; locationId: string }>({
+      query: (body) => ({
+        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes`,
       }),
       providesTags() {
         return [{ type: 'Control' }];
@@ -283,4 +301,5 @@ export const {
   useUpdateNodeControlMutation,
   useGetControlLocationLogsQuery,
   useLazyGetControlLocationLogsQuery,
+  useLazyGetControlLocationCameraBoxsQuery,
 } = controlApi;

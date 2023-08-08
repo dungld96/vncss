@@ -8,6 +8,8 @@ import {
   ControlLocationCameraType,
   useLazyGetControlLocationCamerasQuery,
   useLazyGetControlLocationCameraImageQuery,
+  ControlLocationCameraBoxType,
+  useLazyGetControlLocationCameraBoxsQuery,
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { LocationType } from '../../../state/modules/location/locationReducer';
@@ -17,9 +19,11 @@ import { CameraImages } from './CameraImages';
 export const CameraControl = ({ location }: { location: LocationType }) => {
   const [getControlCameras, { data }] = useLazyGetControlLocationCamerasQuery();
   const [getControlCameraImages, { data: images }] = useLazyGetControlLocationCameraImageQuery();
+  const [getControlLocationCameraBoxs, { data: cameraBoxs }] = useLazyGetControlLocationCameraBoxsQuery();
   const [openAdd, setOpenAdd] = useState(false);
   const [imageMode, setImageMode] = useState(true);
   const [selectedCamera, setSelectedCamera] = useState<ControlLocationCameraType>();
+  const [selectedCameraBox, setSelectedCameraBox] = useState<ControlLocationCameraBoxType>();
   const {
     auth: { currentUser },
   } = useAuth();
@@ -30,9 +34,15 @@ export const CameraControl = ({ location }: { location: LocationType }) => {
 
   useEffect(() => {
     if (currentUser && location) {
-      getControlLocationCamerasFetch();
+      getControlLocationCameraBoxsFetch();
     }
   }, [currentUser, location]);
+
+  useEffect(() => {
+    if (currentUser && location && cameraBoxs) {
+      getControlLocationCamerasFetch();
+    }
+  }, [currentUser, location, cameraBoxs]);
 
   useEffect(() => {
     if (currentUser && location && selectedCamera) {
@@ -47,8 +57,22 @@ export const CameraControl = ({ location }: { location: LocationType }) => {
   }, [data]);
 
   const getControlLocationCamerasFetch = async () => {
-    if (currentUser && location) {
+    const cameraBox = cameraBoxs[0];
+    if (currentUser && location && cameraBox) {
       await getControlCameras(
+        {
+          agencyId: currentUser.sub_id,
+          locationId: location.id,
+          cameraBoxId: cameraBox?.id,
+        },
+        false
+      ).unwrap();
+    }
+  };
+
+  const getControlLocationCameraBoxsFetch = async () => {
+    if (currentUser && location) {
+      await getControlLocationCameraBoxs(
         {
           agencyId: currentUser.sub_id,
           locationId: location.id,

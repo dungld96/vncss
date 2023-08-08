@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { CursorsType } from '../../configs/constant';
 import { useSelector } from 'react-redux';
 import { selectCameraState } from '../../state/modules/camera/cameraReducer';
+import Pagination from '../../common/pagination/Pagination';
 
 export const CamerasScreen = () => {
   const [getCameras] = useLazyGetListCameraQuery();
@@ -26,6 +27,7 @@ export const CamerasScreen = () => {
   return (
     <Box mt={2} ml={2} mr={'12px'}>
       <CamerasTable />
+      <Pagination paginate={cursors} setPaginate={setPaginate} />
     </Box>
   );
 };

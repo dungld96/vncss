@@ -26,12 +26,12 @@ export const camerasApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursors },
+            data: { data, cursor },
           } = await queryFulfilled;
           dispatch(
             setCameras({
               cameras: data,
-              cursors,
+              cursors: cursor,
             })
           );
         } catch (error) {}

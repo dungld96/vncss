@@ -168,8 +168,8 @@ const listFeature = [
       {
         id: '0b2e42ed-00f9-4dbe-a1d3-12376f2671ff',
         title: 'Kho Camera',
-        icon: <ImageIcon image={simIcon} />,
-        activeIcon: <ImageIcon image={simActiveIcon} />,
+        icon: <ImageIcon image={ProductIcon} />,
+        activeIcon: <ImageIcon image={ProductActiveIcon} />,
         permission: ['warehouse-camera'],
         route: ROUTE_WAREHOUSE_CAMERA,
       },
