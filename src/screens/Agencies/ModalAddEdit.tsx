@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import { useSnackbar } from '../../hooks/useSnackbar';
 import { unionBy } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -47,11 +48,12 @@ const validationPassword = {
 };
 
 const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
-  const [addAgency] = useAddlAgencyMutation();
-  const [updateAgency, {}] = useUpdateAgencyMutation();
+  const [addAgency, { isLoading: isLoadingAdd }] = useAddlAgencyMutation();
+  const [updateAgency, { isLoading: isLoadingUpdate }] = useUpdateAgencyMutation();
   const isUpdate = type === 'update';
 
   const agencies = useSelector(selectAgencies);
+  const { setSnackbar } = useSnackbar();
 
   const {
     auth: { currentUser },
@@ -65,23 +67,33 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
     }),
     onSubmit: async ({ id, name, username, address, parent_id, password, phone }) => {
       if (isUpdate) {
-        await updateAgency({
-          agency: { id, name, phone, address },
-        }).unwrap();
-        onClose();
+        try {
+          await updateAgency({
+            agency: { id, name, phone, address },
+          }).unwrap();
+          setSnackbar({ open: true, message: 'Cập nhật đại lý thành công', severity: 'success' });
+          onClose();
+        } catch (error) {
+          setSnackbar({ open: true, message: 'Có lỗi khi cập nhật đại lý', severity: 'error' });
+        }
       } else {
-        await addAgency({
-          agency: {
-            name,
-            username,
-            password,
-            address,
-            phone,
-            parent_id,
-          },
-          parent_uuid: currentUser?.sub_id,
-        }).unwrap();
-        onClose();
+        try {
+          await addAgency({
+            agency: {
+              name,
+              username,
+              password,
+              address,
+              phone,
+              parent_id,
+            },
+            parent_uuid: currentUser?.sub_id,
+          }).unwrap();
+          onClose();
+          setSnackbar({ open: true, message: 'Thêm đại lý thành công', severity: 'success' });
+        } catch (error) {
+          setSnackbar({ open: true, message: 'Có lỗi khi thêm đại lý', severity: 'error' });
+        }
       }
     },
   });
@@ -167,7 +179,12 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
+            <Button
+              type="submit"
+              style={{ width: 131 }}
+              variant="contained"
+              disabled={!isValid || !dirty || isLoadingAdd || isLoadingUpdate}
+            >
               {isUpdate ? 'Thay đổi' : 'Thêm mới'}
             </Button>
           </DialogActions>

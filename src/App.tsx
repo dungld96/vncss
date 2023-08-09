@@ -70,7 +70,6 @@ function App() {
 
   React.useEffect(() => {
     navigator.serviceWorker.addEventListener('message', ({ data }) => {
-      console.log(data);
       const messageBody = get(data, 'firebase-messaging-msg-data', {});
       const notificationCM = get(messageBody, 'notification', {});
       const locationId = get(messageBody, 'data.location_id', '');
@@ -98,6 +97,14 @@ function App() {
       //     </Button>
       //   </>
       // );
+      console.log({
+        id: uuidv4(),
+        locationId: locationId,
+        locationName,
+        type: toastType,
+        notificationText: locationAdress,
+        timestamp,
+      });
 
       dispatch(
         addNotificationsAlertQueue({
