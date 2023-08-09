@@ -41,7 +41,7 @@ export const GatewayAlert = () => {
 
   const handleProcessed = () => {
     if (currentNotify && currentUser) {
-      handleNotification({ timestamp: currentNotify.timestamp, agencyId: currentUser.sub_id });
+      handleNotification({ timestamp: dayjs(currentNotify.timestamp).unix(), agencyId: currentUser.sub_id });
     }
     handleClose();
   };

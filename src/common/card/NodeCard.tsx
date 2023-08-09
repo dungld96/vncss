@@ -5,6 +5,7 @@ import { Box, Card, Typography } from '@mui/material';
 import { sensorMapped } from '../../utils/sensorMapping';
 import DefaultNode from '../../assets/sensor/default-node.svg';
 import { ControlLocationNodeType } from '../../services/control.service';
+import { INodeType } from '../../services/node.service';
 
 const DLNodeCard = styled(Card)({
   cursor: 'pointer',
@@ -17,12 +18,13 @@ const DLNodeCard = styled(Card)({
 
 type Props = {
   data: ControlLocationNodeType;
-  nodeTypes: any[];
+  nodeTypes: INodeType[];
   onClickCard: () => void;
 };
 
 export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
-  const nodeCodeType = data.state?.nType.split('-')[1];
+  const nodeType = nodeTypes.find((item) => item.id === data.node_type_id);
+  const nodeCodeType = nodeType?.code.split('-')[1];
   return (
     <DLNodeCard onClick={onClickCard}>
       <Box display="flex" justifyContent="space-between" alignItems="center" pb={2}>

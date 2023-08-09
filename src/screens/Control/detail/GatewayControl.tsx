@@ -21,6 +21,7 @@ import { UpdateGatewayInfoDialog } from './dialogs/UpdateGatewayInfoDialog';
 import { NodeInfoDialog } from './dialogs/NodeInfoDialog';
 import dayjs from 'dayjs';
 import { useGetGatewayTypesQuery, IGatewayType } from '../../../services/gateway.service';
+import { INodeType, useGetNodeTypesQuery } from '../../../services/node.service';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -41,6 +42,7 @@ export const GatewayControl = ({
   const [getControlLocationGatewayNodes, { data }] = useLazyGetControlLocationGatewayNodesQuery();
   const [getControlLocationLogs, { data: logsData }] = useLazyGetControlLocationLogsQuery();
   const { data: gatewayTypes } = useGetGatewayTypesQuery<{ data: IGatewayType[] }>(null);
+  const { data: nodeTypes } = useGetNodeTypesQuery<{ data: INodeType[] }>(null);
 
   const {
     auth: { currentUser },
@@ -114,7 +116,7 @@ export const GatewayControl = ({
                         <Grid key={item.id} item xs={4} lg={3}>
                           <NodeCard
                             data={item}
-                            nodeTypes={[]}
+                            nodeTypes={nodeTypes || []}
                             onClickCard={() => {
                               setSelectedNode(item);
                             }}

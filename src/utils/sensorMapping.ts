@@ -55,6 +55,8 @@ import A01 from '../assets/sensor/building.svg';
 import A4E from '../assets/sensor/atm.png';
 import bao_chay from '../assets/sensor/bao_chay.png';
 import ZONE from '../assets/sensor/zone.svg';
+import ARB from '../assets/sensor/energy-icon.svg';
+import ROUTER from '../assets/sensor/router-icon.svg';
 
 export const sensorMapped = {
   icon_error,
@@ -114,4 +116,6 @@ export const sensorMapped = {
   bao_chay,
   ZONE,
   SOS,
+  ARB,
+  ROUTER,
 };

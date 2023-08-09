@@ -102,7 +102,7 @@ function App() {
       dispatch(
         addNotificationsAlertQueue({
           id: uuidv4(),
-          locationId: locationId || 'citd2v9g1oa4iuj7tc10',
+          locationId: locationId,
           locationName,
           type: toastType,
           notificationText: locationAdress,
