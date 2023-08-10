@@ -89,6 +89,10 @@ export const ControlScreen = () => {
           lng: location.lng,
         });
         setZoom(19);
+        googleMapRef.current?.map_.panTo({
+          lat: location.lat,
+          lng: location.lng,
+        });
       }
     }
   }, [locations, queryLocationId, selectedLocation]);
@@ -117,6 +121,11 @@ export const ControlScreen = () => {
           lat: +position.coords.latitude.toFixed(5),
           lng: +position.coords.longitude.toFixed(5),
         });
+        googleMapRef.current?.map_.panTo({
+          lat: +position.coords.latitude.toFixed(5),
+          lng: +position.coords.longitude.toFixed(5),
+        });
+
         setLoadedGeoService(true);
       });
     }

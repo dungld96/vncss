@@ -29,7 +29,6 @@ export const NotificationList = ({
             key={entry.timestamp}
             onClick={() => onClickNotification(entry)}
             style={{
-              width: '100%',
               padding: ' 10px 30px 0 4px',
               display: 'flex',
               flexDirection: 'row',

@@ -42,7 +42,11 @@ const slice = createSlice({
       state.notifications = notifications;
     },
     addNotificationsAlertQueue: (state, { payload: notificationAlert }: PayloadAction<NotificationAlertType>) => {
-      state.notificationsAlertQueue = [...state.notificationsAlertQueue, notificationAlert];
+      const isInQueue = state.notificationsAlertQueue.find((item) => item.locationId === notificationAlert.locationId);
+      const newState = isInQueue
+        ? [...state.notificationsAlertQueue]
+        : [...state.notificationsAlertQueue, notificationAlert];
+      state.notificationsAlertQueue = [...newState];
     },
     removeNotificationAlertFromQueue: (state, { payload: notificationAlert }: PayloadAction<NotificationAlertType>) => {
       state.notificationsAlertQueue = state.notificationsAlertQueue.filter((item) => item.id !== notificationAlert.id);
