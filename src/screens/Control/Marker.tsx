@@ -156,6 +156,13 @@ interface Props {
 export const Marker = (props: Props) => {
   const { color, onMarkerClick = _.noop, location } = props;
   const { state, name } = location;
+  const [hovering, setHovering] = React.useState(false);
+  const hanleMouseEnter = () => {
+    setHovering(true);
+  };
+  const hanleMouseLeave = () => {
+    setHovering(false);
+  };
 
   // const getActiveMode = () => {
   //   const mode = _.get(location_config, 'mode', 1);
@@ -218,12 +225,33 @@ export const Marker = (props: Props) => {
 
   return (
     <>
+      {hovering && (
+        <div
+          style={{
+            width: '120px',
+            height: 'auto',
+            border: '1px solid #dadde9',
+            left: '20px',
+            top: '-20px',
+            backgroundColor: '#fff',
+            textAlign: 'left',
+            borderRadius: '6px',
+            padding: '6px 8px',
+            position: 'absolute',
+            zIndex: 1,
+          }}
+        >
+          <Typography style={{ fontSize: '12px', fontWeight: 600 }}>{location.name}</Typography>
+        </div>
+      )}
       <MarkerContainer
         style={{
           backgroundColor: color,
           cursor: 'pointer',
         }}
         onClick={() => onMarkerClick(location)}
+        onMouseEnter={hanleMouseEnter}
+        onMouseLeave={hanleMouseLeave}
       >
         <Box
           style={{

@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
 import KeyIcon from '@mui/icons-material/Key';
 import PersonIcon from '@mui/icons-material/Person';
-import { Box, Checkbox } from '@mui/material';
+import { Box, Checkbox, LinearProgress } from '@mui/material';
 import Field from '../../common/input/Field';
 import Button from '../../common/button/Button';
 import { Form, FormikProvider, useFormik } from 'formik';
 import useModalConfirm from '../../hooks/useModalConfirm';
-import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import background from '../../assets/img/BACKGROUND.svg';

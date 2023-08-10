@@ -13,6 +13,7 @@ import {
   ControlLocationNodeType,
   useLazyGetControlLocationLogsQuery,
   ControlLocationLogType,
+  useHandleAlertControlMutation,
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { AddNodeDialog } from './dialogs/AddNodeDialog';
@@ -22,6 +23,7 @@ import { NodeInfoDialog } from './dialogs/NodeInfoDialog';
 import dayjs from 'dayjs';
 import { useGetGatewayTypesQuery, IGatewayType } from '../../../services/gateway.service';
 import { INodeType, useGetNodeTypesQuery } from '../../../services/node.service';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -43,6 +45,8 @@ export const GatewayControl = ({
   const [getControlLocationLogs, { data: logsData }] = useLazyGetControlLocationLogsQuery();
   const { data: gatewayTypes } = useGetGatewayTypesQuery<{ data: IGatewayType[] }>(null);
   const { data: nodeTypes } = useGetNodeTypesQuery<{ data: INodeType[] }>(null);
+  const [handleAlert] = useHandleAlertControlMutation();
+  const { setSnackbar } = useSnackbar();
 
   const {
     auth: { currentUser },
@@ -79,6 +83,17 @@ export const GatewayControl = ({
     setGwSettingAnchorEl(event.currentTarget);
   };
 
+  const handleProcessed = () => {
+    if (currentUser && location) {
+      handleAlert({ agencyId: currentUser.sub_id, locationId: location.id })
+        .then((res) => {
+          refetchGateway();
+          setSnackbar({ open: true, message: 'Xử lý cảnh báo thành công', severity: 'success' });
+        })
+        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xử lý cảnh báo', severity: 'error' }));
+    }
+  };
+
   const nodes = (data || []) as ControlLocationNodeType[];
   const logs = (logsData || []) as ControlLocationLogType[];
   const gatewayType = (gatewayTypes || []).find((item) => item.id === gateway.gateway_type_id)?.name;
@@ -92,8 +107,18 @@ export const GatewayControl = ({
             {nodes.length > 0 ? (
               <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
+                  <Box flex={1}>
                     <Typography style={{ fontSize: '18px', fontWeight: 700 }}>Danh sách Node</Typography>
+                  </Box>
+                  <Box mt={1} mr={2}>
+                    <Button
+                      variant="contained"
+                      style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
+                      onClick={handleProcessed}
+                      disabled={location.state !== 'alert'}
+                    >
+                      Đã xử lý
+                    </Button>
                   </Box>
                   <Box mt={1}>
                     <Button

@@ -26,7 +26,13 @@ const TabPanel = (props: TabPanelProps) => {
 
 const TabLabel = styled(Typography)({ fontWeight: 700, fontSize: '14px', textTransform: 'none' });
 
-export const LocationDevice = ({ location }: { location?: LocationType }) => {
+export const LocationDevice = ({
+  location,
+  refetchLocation,
+}: {
+  location?: LocationType;
+  refetchLocation: () => void;
+}) => {
   const [value, setValue] = useState(0);
   const [gateways, setGateways] = useState<ControlLocationGatewayType[]>([]);
   const [getControlLocationGateways] = useLazyGetControlLocationGatewaysQuery();
@@ -49,6 +55,7 @@ export const LocationDevice = ({ location }: { location?: LocationType }) => {
 
   const refetchGateways = () => {
     if (currentUser && location) {
+      refetchLocation();
       getControlLocationGateways({ agencyId: currentUser.sub_id, locationId: location.id })
         .then(({ isSuccess, data }) => {
           if (isSuccess) {

@@ -113,6 +113,7 @@ export const controlApi = createApi({
     'UpdateControlLocation',
     'UpdateGatewayControl',
     'UpdateNodeControl',
+    'handleAlertControl',
   ],
   endpoints: (build) => ({
     getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
@@ -279,6 +280,19 @@ export const controlApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateNodeControl' }]),
     }),
+    handleAlertControl: build.mutation<ResponsiveInterface, { agencyId: string; locationId: string }>({
+      query: ({ agencyId, locationId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/monitoring/locations/${locationId}/handlealert`,
+            method: 'POST',
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'handleAlertControl' }]),
+    }),
   }),
 });
 
@@ -302,4 +316,5 @@ export const {
   useGetControlLocationLogsQuery,
   useLazyGetControlLocationLogsQuery,
   useLazyGetControlLocationCameraBoxsQuery,
+  useHandleAlertControlMutation,
 } = controlApi;

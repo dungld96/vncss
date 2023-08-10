@@ -38,6 +38,7 @@ export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('current_user');
         navigate('/login');
+        window.location.reload();
       });
       return;
     }

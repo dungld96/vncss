@@ -12,7 +12,7 @@ import {
   removeNotificationAlertFromQueue,
 } from '../../state/modules/notification/notificationReducer';
 import { ROUTE_CONTROL } from '../../utils/routesMap';
-import { useHandleNotificationMutation } from '../../services/notifications.service';
+import { useHandleAlertControlMutation } from '../../services/control.service';
 
 export const GatewayAlert = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ export const GatewayAlert = () => {
   const [open, setOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement>();
   const navigate = useNavigate();
-  const [handleNotification] = useHandleNotificationMutation();
+  const [handleNotification] = useHandleAlertControlMutation();
 
   const {
     auth: { currentUser },
@@ -41,7 +41,7 @@ export const GatewayAlert = () => {
 
   const handleProcessed = () => {
     if (currentNotify && currentUser) {
-      handleNotification({ timestamp: dayjs(currentNotify.timestamp).unix(), agencyId: currentUser.sub_id });
+      handleNotification({ agencyId: currentUser.sub_id, locationId: currentNotify.locationId });
     }
     handleClose();
   };

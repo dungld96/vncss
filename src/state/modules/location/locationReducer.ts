@@ -22,6 +22,7 @@ export interface LocationType {
   plan_building: string;
   province: string;
   tags: string[];
+  state?: string;
 }
 
 export type EventReceiveType = {

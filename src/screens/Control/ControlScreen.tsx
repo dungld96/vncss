@@ -61,23 +61,26 @@ export const ControlScreen = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (currentUser && center) {
-        trigger({
-          agency_id: currentUser.sub_id,
-          // params: {
-          //   center_lat: center.lat,
-          //   center_lng: center.lng,
-          //   visible_radius: 70,
-          //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
-          // },
-        });
+      if (currentUser) {
+        trigger(
+          {
+            agency_id: currentUser.sub_id,
+            // params: {
+            //   center_lat: center.lat,
+            //   center_lng: center.lng,
+            //   visible_radius: 70,
+            //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
+            // },
+          },
+          false
+        );
       }
     }, 30000);
 
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     if (queryLocationId && locations.length > 0) {
@@ -89,10 +92,6 @@ export const ControlScreen = () => {
           lng: location.lng,
         });
         setZoom(19);
-        googleMapRef.current?.map_.panTo({
-          lat: location.lat,
-          lng: location.lng,
-        });
       }
     }
   }, [locations, queryLocationId, selectedLocation]);
@@ -121,11 +120,6 @@ export const ControlScreen = () => {
           lat: +position.coords.latitude.toFixed(5),
           lng: +position.coords.longitude.toFixed(5),
         });
-        googleMapRef.current?.map_.panTo({
-          lat: +position.coords.latitude.toFixed(5),
-          lng: +position.coords.longitude.toFixed(5),
-        });
-
         setLoadedGeoService(true);
       });
     }

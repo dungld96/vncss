@@ -7,7 +7,7 @@ import CloseIcon from '../../../assets/icons/close-icon.svg';
 import { LocationInfo } from './LocationControlInfo';
 import { LocationManager } from './LocationManager';
 import { LocationDevice } from './LocationDevice';
-import { useLazyGetControlLocationQuery } from '../../../services/control.service';
+import { useLazyGetControlLocationQuery, useLazyGetControlLocationsQuery } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { LocationType, EventReceiveType } from '../../../state/modules/location/locationReducer';
 import { useUpdateLocationControlMutation } from '../../../services/control.service';
@@ -47,6 +47,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const [openUpdateLatLngDialog, setOpenUpdateLatLngDialog] = React.useState(false);
   const [getControlLocation, result] = useLazyGetControlLocationQuery();
   const [updateLocationControl] = useUpdateLocationControlMutation();
+  const [getControlLocations] = useLazyGetControlLocationsQuery();
   const { setSnackbar } = useSnackbar();
 
   const {
@@ -62,6 +63,13 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const onRefresh = () => {
     if (currentUser && selectedLocationId) {
       getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId }).unwrap();
+      // onRefreshLocationsStatus();
+    }
+  };
+
+  const onRefreshLocationsStatus = () => {
+    if (currentUser) {
+      getControlLocations({ agency_id: currentUser.sub_id }, false).unwrap();
     }
   };
 
@@ -205,7 +213,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
           </Grid>
           <Grid item xs={12} sm={9}>
             <ContentBox>
-              <LocationDevice location={location} />
+              <LocationDevice location={location} refetchLocation={onRefresh} />
             </ContentBox>
           </Grid>
         </Grid>
