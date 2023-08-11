@@ -63,7 +63,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const onRefresh = () => {
     if (currentUser && selectedLocationId) {
       getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId }).unwrap();
-      // onRefreshLocationsStatus();
+      onRefreshLocationsStatus();
     }
   };
 

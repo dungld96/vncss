@@ -3,7 +3,11 @@ import { Button, Typography, Box, Grid, IconButton, Tooltip, Popover } from '@mu
 import styled from '@emotion/styled';
 import { AddCircleOutline } from '@mui/icons-material';
 import SettingIcon from '../../../assets/icons/setting-grey-icon.svg';
-import WaveIcon from '../../../assets/icons/wave-icon.svg';
+import WaveIcon0 from '../../../assets/icons/wave-icon-0.svg';
+import WaveIcon1 from '../../../assets/icons/wave-icon-1.svg';
+import WaveIcon2 from '../../../assets/icons/wave-icon-2.svg';
+import WaveIcon3 from '../../../assets/icons/wave-icon-3.svg';
+import WaveIcon4 from '../../../assets/icons/wave-icon-4.svg';
 import PinIcon from '../../../assets/icons/pin-icon.svg';
 import DataEmpty from '../../../assets/img/data_empty.svg';
 import { LocationType } from '../../../state/modules/location/locationReducer';
@@ -27,6 +31,8 @@ import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
+
+const waveList = [WaveIcon0, WaveIcon1, WaveIcon2, WaveIcon3, WaveIcon4];
 
 export const GatewayControl = ({
   location,
@@ -186,7 +192,11 @@ export const GatewayControl = ({
                     <img src={PinIcon} alt="" style={{ width: '24px', height: '24px', marginLeft: '4px' }} />
                   </Box>
                   <Box ml={1} display="flex" alignItems="flex-end">
-                    <img src={WaveIcon} alt="" style={{ width: '24px', height: '24px' }} />
+                    <img
+                      src={waveList[gateway.state?.gsmLevel || 0]}
+                      alt=""
+                      style={{ width: '24px', height: '24px' }}
+                    />
                   </Box>
 
                   <Box ml={1} display="flex" alignItems="flex-end">
