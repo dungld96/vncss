@@ -233,7 +233,13 @@ export const CameraControl = ({ location }: { location: LocationType }) => {
             </ButtonGroup>
           </Box>
           {selectedCamera && (
-            <Box>{imageMode ? <CameraImages imageUrls={imageUrls} /> : <CameraLive camera={selectedCamera} />}</Box>
+            <Box>
+              {imageMode ? (
+                <CameraImages imageUrls={imageUrls} />
+              ) : (
+                <CameraLive camera={selectedCamera} isAlert={location.state === 'alert'} />
+              )}
+            </Box>
           )}
         </Grid>
       </Grid>

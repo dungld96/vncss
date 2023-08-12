@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import SoNamPlayer from '../../../assets/libs/SoNam/SoNamPlayer.oc';
 import { ControlLocationCameraType } from '../../../services/control.service';
 
-export const CameraLive = ({ camera }: { camera: ControlLocationCameraType }) => {
+export const CameraLive = ({ camera, isAlert }: { camera: ControlLocationCameraType; isAlert: boolean }) => {
   const sonamPlayerRef = useRef<SoNamPlayer>();
 
   const handlePlay = useCallback(() => {
@@ -11,10 +11,14 @@ export const CameraLive = ({ camera }: { camera: ControlLocationCameraType }) =>
       alert('Camera not null!');
       return;
     }
+    if (!isAlert) {
+      if (sonamPlayerRef.current) sonamPlayerRef.current.stop();
+      return;
+    }
     //init player
     if (sonamPlayerRef.current) sonamPlayerRef.current.stop();
     sonamPlayerRef.current = new SoNamPlayer('sonam-camera', { transport: camera.websocketstream });
-  }, [camera]);
+  }, [camera, isAlert]);
 
   useEffect(() => {
     handlePlay();
