@@ -51,7 +51,22 @@ export const camerasApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Camera' }]),
     }),
+    deleteCamera: build.mutation<any, { ids: (number | string)[]; agencyId: string }>({
+      query: ({ ids, agencyId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/cameraboxs`,
+            method: 'DELETE',
+            body: { ids },
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Camera' }]),
+    }),
   }),
 });
 
-export const { useCreateCameraMutation, useGetListCameraQuery, useLazyGetListCameraQuery } = camerasApi;
+export const { useCreateCameraMutation, useGetListCameraQuery, useLazyGetListCameraQuery, useDeleteCameraMutation } =
+  camerasApi;

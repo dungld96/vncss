@@ -26,7 +26,7 @@ export const CamerasScreen = () => {
 
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <CamerasTable />
+      <CamerasTable setPaginate={setPaginate}/>
       <Pagination paginate={cursors} setPaginate={setPaginate} />
     </Box>
   );

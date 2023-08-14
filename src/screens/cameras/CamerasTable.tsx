@@ -17,11 +17,12 @@ import Button from '../../common/button/Button';
 import ExportIcon from '../../assets/icons/export-red-icon.svg';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { IUser } from '../../services/auth.service';
-import { dataCamera } from './mockData';
 import ModalAddCamera from './ModalAddCamera';
 import ModalEditCamera from './ModalEditCamera';
 import { defaultValuesCamera } from './constants';
-import { selectCameras } from 'state/modules/camera/cameraReducer';
+import { selectCameras } from '../../state/modules/camera/cameraReducer';
+import { useDeleteCameraMutation } from '../../services/cameras.service';
+import { useAuth } from '../../hooks/useAuth';
 
 const ActionCellContent = ({
   cellProps,
@@ -69,13 +70,13 @@ const ActionCellContent = ({
         }}
       >
         <Divider sx={{ margin: '0 16px !important' }} />
-        <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
+        {/* <MenuItem onClick={() => onActionClick('edit', cellProps.row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
           <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa thông tin</ListItemText>
         </MenuItem>
-        <Divider sx={{ margin: '0 16px !important' }} />
+        <Divider sx={{ margin: '0 16px !important' }} /> */}
         <MenuItem onClick={() => onActionClick('delete', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
@@ -89,7 +90,7 @@ const ActionCellContent = ({
   );
 };
 
-const CamerasTable = () => {
+const CamerasTable = ({ setPaginate }: { setPaginate: (p: any) => void }) => {
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalEditCamera, setModalEditCamera] = useState({
     show: false,
@@ -97,11 +98,17 @@ const CamerasTable = () => {
   });
   const [showModalAdd, setShowModalAdd] = useState(false);
   const cameras = useSelector(selectCameras);
+  const [deleteCamera] = useDeleteCameraMutation();
+
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const [columns] = useState([
     { name: 'number', title: 'STT' },
     { name: 'serial', title: 'Serial' },
     { name: 'version', title: 'Phiên bản' },
+    { name: 'action', title: 'Hành động' },
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
@@ -120,6 +127,15 @@ const CamerasTable = () => {
     },
   };
 
+  const handleDeleteCamera = (id: string) => {
+    if (currentUser) {
+      deleteCamera({ ids: [id], agencyId: currentUser.sub_id }).then(() => {
+        hideModalConfirm();
+        setPaginate({});
+      });
+    }
+  };
+
   const handleClick = (type: string, row: string | any) => {
     if (type === 'delete') {
       showModalConfirm({
@@ -127,7 +143,7 @@ const CamerasTable = () => {
         title: 'Xoá camera',
         content: 'Bạn có chắc chắn muốn xoá camera này không?',
         confirm: {
-          action: hideModalConfirm,
+          action: () => handleDeleteCamera(row),
           text: 'Xoá camera',
         },
         cancel: {
