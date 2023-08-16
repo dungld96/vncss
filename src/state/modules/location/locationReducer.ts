@@ -23,6 +23,7 @@ export interface LocationType {
   province: string;
   tags: string[];
   state?: string;
+  alert_at?: string;
 }
 
 export type EventReceiveType = {

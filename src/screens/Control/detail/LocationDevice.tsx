@@ -85,7 +85,7 @@ export const LocationDevice = ({
           : location && <EmptyGateway location={location} refetch={refetchGateways} />}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {location && <CameraControl location={location} />}
+        {location && <CameraControl location={location} onRefresh={refetchLocation} />}
       </TabPanel>
     </Box>
   );

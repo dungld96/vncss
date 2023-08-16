@@ -15,8 +15,9 @@ import { useAuth } from '../../../hooks/useAuth';
 import { LocationType } from '../../../state/modules/location/locationReducer';
 import { AddCameraDialog } from './dialogs/AddCameraDialog';
 import { CameraImages } from './CameraImages';
+import dayjs from 'dayjs';
 
-export const CameraControl = ({ location }: { location: LocationType }) => {
+export const CameraControl = ({ location, onRefresh }: { location: LocationType; onRefresh: () => void }) => {
   const [getControlCameras, { data }] = useLazyGetControlLocationCamerasQuery();
   const [getControlCameraImages, { data: images }] = useLazyGetControlLocationCameraImageQuery();
   const [getControlLocationCameraBoxs, { data: cameraBoxs }] = useLazyGetControlLocationCameraBoxsQuery();
@@ -39,6 +40,12 @@ export const CameraControl = ({ location }: { location: LocationType }) => {
   }, [currentUser, location]);
 
   useEffect(() => {
+    if (currentUser && location) {
+      getControlLocationCameraBoxsFetch();
+    }
+  }, [location]);
+
+  useEffect(() => {
     if (currentUser && location && cameraBoxs) {
       getControlLocationCamerasFetch();
     }
@@ -55,6 +62,18 @@ export const CameraControl = ({ location }: { location: LocationType }) => {
       setSelectedCamera(data[0]);
     }
   }, [data]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (location && location.state === 'alert') {
+        onRefresh();
+      }
+    }, 60000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [location]);
 
   const getControlLocationCamerasFetch = async () => {
     const cameraBox = cameraBoxs[0];
@@ -237,7 +256,14 @@ export const CameraControl = ({ location }: { location: LocationType }) => {
               {imageMode ? (
                 <CameraImages imageUrls={imageUrls} />
               ) : (
-                <CameraLive camera={selectedCamera} isAlert={location.state === 'alert'} />
+                <CameraLive
+                  camera={selectedCamera}
+                  isAlert={
+                    location.state === 'alert' &&
+                    !!location.alert_at &&
+                    dayjs(location.alert_at).add(15, 'minute').isAfter(dayjs())
+                  }
+                />
               )}
             </Box>
           )}
