@@ -157,10 +157,16 @@ export const ControlScreen = () => {
     switch (state) {
       case 'auto':
         return '#00A550';
+      case 'connected':
+        return '#00A550';
       case 'alert':
         return '#DC3545';
+      case 'disconnected':
+        return '#989898';
+      case 'warning':
+        return 'orange';
       default:
-        return '#00A550';
+        return '#989898';
     }
   };
 
