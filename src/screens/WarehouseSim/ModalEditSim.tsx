@@ -7,21 +7,36 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import { listStatus } from './constants';
-import { SimType } from './mockData';
-
+import { useUpdateSimMutation } from '../../services/sims.service';
+import { useAuth } from '../../hooks/useAuth';
+import { useSnackbar } from '../../hooks/useSnackbar';
 interface Props {
   show: boolean;
   onClose: () => void;
-  initialValues: SimType;
+  initialValues: { id: string; phone: string; imei: string; status: number };
 }
 
 const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
+  const [updateSim, { isLoading }] = useUpdateSimMutation();
+  const { setSnackbar } = useSnackbar();
+  const {
+    auth: { currentUser },
+  } = useAuth();
+
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: Yup.object().shape({}),
     onSubmit: async (values) => {
-      console.log(values);
+      if (currentUser) {
+        try {
+          await updateSim({ data: values, agencyId: currentUser.sub_id }).unwrap();
+          setSnackbar({ open: true, message: 'Cập nhật sim thành công', severity: 'success' });
+          onClose();
+        } catch (error) {
+          setSnackbar({ open: true, message: 'Có lối khi cập nhật sim', severity: 'error' });
+        }
+      }
     },
   });
   const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue } = formik;
@@ -30,6 +45,7 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
     if (!show) return;
     resetForm();
   }, [show]);
+
   return (
     <Modal size="sm" show={show} close={onClose} title={'Chỉnh sửa thông tin sim'}>
       <FormikProvider value={formik}>
@@ -44,9 +60,8 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
               marginBottom: '32px',
             }}
           >
-            <Input style={{ width: 286 }} topLable="Số điện thoại" {...getFieldProps('phoneNumber')} />
+            <Input style={{ width: 286 }} topLable="Số điện thoại" {...getFieldProps('phone')} />
             <Input style={{ width: 286 }} topLable="Imei sim" {...getFieldProps('imei')} />
-            <Input style={{ width: 286 }} topLable="Ngày kích hoạt" {...getFieldProps('createdDate')} />
             <Select
               style={{ width: 286 }}
               fullWidth
@@ -60,7 +75,7 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
+            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty || isLoading}>
               Lưu chỉnh sửa
             </Button>
           </DialogActions>

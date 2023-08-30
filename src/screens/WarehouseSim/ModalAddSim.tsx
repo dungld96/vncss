@@ -2,19 +2,20 @@ import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import { useSnackbar } from '../../hooks/useSnackbar';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
-import Select from '../../common/Select/Select';
-import { listStatus } from './constants';
+import { useCreateSimMutation } from '../../services/sims.service';
+import { useAuth } from '../../hooks/useAuth';
 
 const MAX_FILE_SIZE = 5242880;
 
 interface Props {
   show: boolean;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 interface TabPanelProps {
@@ -64,18 +65,29 @@ const Title = styled(DialogTitle)({
 
 const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
   const [value, setValue] = useState(0);
+  const [createSim, { isLoading }] = useCreateSimMutation();
+  const { setSnackbar } = useSnackbar();
+  const {
+    auth: { currentUser },
+  } = useAuth();
 
   const formik = useFormik({
     initialValues: {
-      phoneNumber: '',
+      phone: '',
       imei: '',
-      status: 1,
-      createdDate: '03-01-2020',
     },
     enableReinitialize: true,
     validationSchema: Yup.object().shape({}),
     onSubmit: async (values) => {
-      console.log(values);
+      if (currentUser) {
+        try {
+          await createSim({ data: values, agencyId: currentUser.sub_id }).unwrap();
+          setSnackbar({ open: true, message: 'Thêm sim thành công', severity: 'success' });
+          onClose();
+        } catch (error) {
+          setSnackbar({ open: true, message: 'Có lối khi thêm sim', severity: 'error' });
+        }
+      }
     },
   });
   const { handleSubmit, getFieldProps, isValid, dirty, resetForm, setFieldValue } = formik;
@@ -127,7 +139,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
                 label="Thêm thủ công"
                 {...a11yProps(0)}
               />
-              <Tab
+              {/* <Tab
                 sx={{
                   textTransform: 'initial',
                   fontSize: '16px',
@@ -135,7 +147,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
                 }}
                 label="Thêm từ file"
                 {...a11yProps(1)}
-              />
+              /> */}
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
@@ -153,18 +165,9 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
                 style={{ width: 286 }}
                 topLable="Số điện thoại"
                 placeholder="Nhập số điện thoại"
-                {...getFieldProps('phoneNumber')}
+                {...getFieldProps('phone')}
               />
               <Input style={{ width: 286 }} topLable="Imei sim" placeholder="Nhập imei" {...getFieldProps('imei')} />
-              <Input style={{ width: 286 }} topLable="Ngày kích hoạt" {...getFieldProps('createdDate')} />
-              <Select
-                style={{ width: 286 }}
-                fullWidth
-                topLable="Trạng thái"
-                data={listStatus}
-                selected={0}
-                setSelected={(status) => setFieldValue('status', status)}
-              />
             </DialogContent>
           </TabPanel>
           <TabPanel value={value} index={1}>
@@ -182,7 +185,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
+            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty || isLoading}>
               Thêm mới
             </Button>
           </DialogActions>

@@ -30,5 +30,5 @@ export const { setSims, setLimit } = slice.actions;
 export default slice.reducer;
 
 export const selectSimState = (state: RootState) => state.simState;
-export const selectSim = (state: RootState) => state.simState.sims;
+export const selectSims = (state: RootState) => state.simState.sims;
 export const selectCursors = (state: RootState) => state.simState.cursors;

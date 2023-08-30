@@ -3,14 +3,13 @@ import { setSims } from '../state/modules/sim/simReducer';
 import { queryRootConfig } from './http.service';
 
 export interface ISimType {
-  id: string;
-  code: string;
-  name: string;
-  schema?: string;
-  can_stop_alert: boolean;
-  permission?: string;
+  id?: string;
+  activated_at: string;
+  agencyID: string;
   created_at: string;
-  updated_at: string;
+  imei: string;
+  phone: string;
+  status: number;
 }
 
 export const simsApi = createApi({
@@ -26,14 +25,14 @@ export const simsApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursors },
+            data: { data, cursor },
           } = await queryFulfilled;
           dispatch(
             setSims({
               sims: data,
               cursors: {
-                before: cursors.before || undefined,
-                after: cursors.after || undefined,
+                before: cursor.before || undefined,
+                after: cursor.after || undefined,
               },
             })
           );
@@ -41,12 +40,12 @@ export const simsApi = createApi({
       },
     }),
     createSim: build.mutation<any, any>({
-      query: ({ sim, parent_uuid }) => {
+      query: ({ data, agencyId }) => {
         try {
           return {
-            url: `agencies/${parent_uuid}/sims`,
+            url: `agencies/${agencyId}/sims`,
             method: 'POST',
-            body: sim,
+            body: data,
           };
         } catch (error: any) {
           throw new error.message();
@@ -55,12 +54,12 @@ export const simsApi = createApi({
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Sim' }]),
     }),
     updateSim: build.mutation<any, any>({
-      query: ({ sim, parent_uuid }) => {
+      query: ({ data, agencyId }) => {
         try {
           return {
-            url: `agencies/${parent_uuid}/sims/${sim.id}`,
+            url: `agencies/${agencyId}/sims/${data.id}`,
             method: 'PUT',
-            body: sim,
+            body: data,
           };
         } catch (error: any) {
           throw new error.message();
@@ -96,13 +95,12 @@ export const simsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Sim' }]),
     }),
-    deleteSim: build.mutation<null, { ids: (string | number)[]; parent_uuid?: string }>({
+    deleteSim: build.mutation<null, { id: string; agencyId: string }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/sims`,
+            url: `agencies/${body.agencyId}/sims/${body.id}`,
             method: 'DELETE',
-            body: { ids: body.ids },
           };
         } catch (error: any) {
           throw new error.message();
