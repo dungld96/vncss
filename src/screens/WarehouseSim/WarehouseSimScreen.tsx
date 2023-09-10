@@ -1,18 +1,20 @@
 import { Box } from '@mui/material';
-import { CursorsType } from '../../configs/constant';
+import { CursorType } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLazyGetListSimQuery } from '../../services/sims.service';
-import { selectSimState } from '../../state/modules/sim/simReducer';
+import { selectSimState, setLimit } from '../../state/modules/sim/simReducer';
 import WarehouseSimTable from './WarehouseSimTable';
 import Pagination from '../../common/pagination/Pagination';
+import { useAppDispatch } from '../../state/store';
 
 const WarehouseSimScreen = () => {
   const [trigger] = useLazyGetListSimQuery();
-  const [paginate, setPaginate] = useState<CursorsType>({});
+  const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { cursors, limit } = useSelector(selectSimState);
+  const { cursor, limit } = useSelector(selectSimState);
+  const dispatch = useAppDispatch();
 
   const {
     auth: { currentUser },
@@ -23,10 +25,15 @@ const WarehouseSimScreen = () => {
       trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
     }
   }, [trigger, paginate, currentUser, limit]);
+
+  const handleSetLimit = (limit: number) => {
+    dispatch(setLimit({ limit }));
+  };
+
   return (
     <Box mt={2} ml={2} mr={'12px'}>
       <WarehouseSimTable />
-      <Pagination paginate={cursors} setPaginate={setPaginate} />
+      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );
 };

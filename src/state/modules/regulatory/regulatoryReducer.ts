@@ -1,23 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
-import { CursorsType } from '../../../configs/constant';
+import { CursorType } from '../../../configs/constant';
 
 type RegulatoriesState = {
   regulatories: any[];
-  cursors: CursorsType;
+  cursor: CursorType;
   limit: number;
 };
 
-const initialState: RegulatoriesState = { regulatories: [], cursors: {}, limit: 10 };
+const initialState: RegulatoriesState = { regulatories: [], cursor: {}, limit: 10 };
 
 const slice = createSlice({
   name: 'regulatoryState',
   initialState: initialState,
   reducers: {
-    setRegulatories: (state, { payload: { regulatories, cursors } }: PayloadAction<{ regulatories: any[]; cursors: CursorsType }>) => {
+    setRegulatories: (state, { payload: { regulatories, cursor } }: PayloadAction<{ regulatories: any[]; cursor: CursorType }>) => {
       state.regulatories = regulatories;
-      state.cursors = cursors;
+      state.cursor = cursor;
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;
@@ -31,4 +31,4 @@ export default slice.reducer;
 
 export const selectRegulatoryState = (state: RootState) => state.regulatoryState;
 export const selectRegulatories = (state: RootState) => state.regulatoryState.regulatories;
-export const selectCursors = (state: RootState) => state.regulatoryState.cursors;
+export const selectCursor = (state: RootState) => state.regulatoryState.cursor;

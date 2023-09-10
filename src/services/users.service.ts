@@ -3,7 +3,7 @@ import { ResponsiveInterface, queryRootConfig } from './http.service';
 import { setCurrentUser } from '../state/modules/auth/authReducer';
 import type { IUser } from './auth.service';
 import { setUsers } from '../state/modules/user/userReducer';
-import { CursorsType } from '../configs/constant';
+import { CursorType } from '../configs/constant';
 
 export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
   data: IUser;
@@ -23,7 +23,7 @@ export interface PasswordRequestInterface {
 
 export interface UsersResponsiveInterface extends ResponsiveInterface {
   data: IUser[];
-  cursors: CursorsType;
+  cursors: CursorType;
 }
 
 export const usersApi = createApi({
@@ -82,8 +82,8 @@ export const usersApi = createApi({
         }
       },
     }),
-    getAllUsers: build.query<UsersResponsiveInterface, any>({
-      query: (params) => ({ url: 'users', params }),
+    getAllUsers: build.query<UsersResponsiveInterface, { agencyId?: string; params: any }>({
+      query: ({ agencyId, params }) => ({ url: `agencies/${agencyId}/users`, params }),
       providesTags(result) {
         if (result) {
           return [{ type: 'AllUsers' }];
@@ -104,13 +104,12 @@ export const usersApi = createApi({
           dispatch(
             setUsers({
               users: dataParse,
-              cursors: {
-                before: cursors.before || undefined,
-                after: cursors.after || undefined,
-              },
+              cursor: cursors,
             })
           );
-        } catch (error) {}
+        } catch (error) {
+          console.log(error);
+        }
       },
     }),
     addlUser: build.mutation<any, any>({

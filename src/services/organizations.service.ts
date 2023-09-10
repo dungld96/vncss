@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { CursorsType } from '../configs/constant';
+import { CursorType } from '../configs/constant';
 import { setOrganizations } from '../state/modules/organization/organizationReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
@@ -24,7 +24,7 @@ export interface OrganizationResponsiveInterface extends ResponsiveInterface {
 
 export interface OrganizationsResponsiveInterface extends ResponsiveInterface {
   data: IOrganization[];
-  cursor: CursorsType;
+  cursor: CursorType;
 }
 
 export interface OrganizationRequestInterface {
@@ -54,7 +54,7 @@ export const organizationsApi = createApi({
           dispatch(
             setOrganizations({
               organizations: dataParse,
-              cursors: {
+              cursor: {
                 before: cursor.before || undefined,
                 after: cursor.after || undefined,
               },

@@ -31,10 +31,7 @@ export const nodesApi = createApi({
           dispatch(
             setNodes({
               nodes: data,
-              cursors: {
-                before: cursors.before || undefined,
-                after: cursors.after || undefined,
-              },
+              cursor: cursors,
             })
           );
         } catch (error) {}

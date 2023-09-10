@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { CursorsType } from '../configs/constant';
+import { CursorType } from '../configs/constant';
 import { setGateways } from '../state/modules/gateway/gatewayReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
@@ -40,11 +40,11 @@ export interface DeltailGatewayResponsiveInterface extends ResponsiveInterface {
 
 export interface GatewaysResponsiveInterface extends ResponsiveInterface {
   data: IGateway[];
-  cursor: CursorsType;
+  cursor: CursorType;
 }
 export interface GatewayTypesResponsiveInterface extends ResponsiveInterface {
   data: IGatewayType[];
-  cursor: CursorsType;
+  cursor: CursorType;
 }
 
 export interface GatewayRequestInterface {
@@ -76,7 +76,7 @@ export const gatewaysApi = createApi({
           dispatch(
             setGateways({
               gateways: data,
-              cursors: {
+              cursor: {
                 before: cursor.before || undefined,
                 after: cursor.after || undefined,
               },

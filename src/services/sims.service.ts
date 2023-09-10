@@ -30,7 +30,7 @@ export const simsApi = createApi({
           dispatch(
             setSims({
               sims: data,
-              cursors: {
+              cursor: {
                 before: cursor.before || undefined,
                 after: cursor.after || undefined,
               },

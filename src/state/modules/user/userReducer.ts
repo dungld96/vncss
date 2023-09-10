@@ -2,23 +2,23 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { IUser } from '../../../services/auth.service';
 import type { RootState } from '../../store';
-import { CursorsType } from '../../../configs/constant';
+import { CursorType } from '../../../configs/constant';
 
 type UsersState = {
   users: IUser[];
-  cursors: CursorsType;
+  cursor: CursorType;
   limit: number;
 };
 
-const initialState: UsersState = { users: [], cursors: {}, limit: 10 };
+const initialState: UsersState = { users: [], cursor: {}, limit: 10 };
 
 const slice = createSlice({
   name: 'userState',
   initialState: initialState,
   reducers: {
-    setUsers: (state, { payload: { users, cursors } }: PayloadAction<{ users: IUser[]; cursors: CursorsType }>) => {
+    setUsers: (state, { payload: { users, cursor } }: PayloadAction<{ users: IUser[]; cursor: CursorType }>) => {
       state.users = users;
-      state.cursors = cursors;
+      state.cursor = cursor;
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;
@@ -32,4 +32,4 @@ export default slice.reducer;
 
 export const selectUsersState = (state: RootState) => state.userState;
 export const selectUsers = (state: RootState) => state.userState.users;
-export const selectCursors = (state: RootState) => state.userState.cursors;
+export const selectCursor = (state: RootState) => state.userState.cursor;

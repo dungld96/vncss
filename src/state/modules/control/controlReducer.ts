@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
-import { CursorsType } from '../../../configs/constant';
+import { CursorType } from '../../../configs/constant';
 
 export interface ControlLocationType {
   id: string;

@@ -77,7 +77,10 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
       imei: '',
     },
     enableReinitialize: true,
-    validationSchema: Yup.object().shape({}),
+    validationSchema: Yup.object().shape({
+      phone: Yup.string().required('Số điện thoại không được để trống'),
+      imei: Yup.string().required('Imei không được để trống'),
+    }),
     onSubmit: async (values) => {
       if (currentUser) {
         try {

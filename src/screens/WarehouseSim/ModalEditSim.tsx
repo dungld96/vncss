@@ -26,7 +26,10 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
-    validationSchema: Yup.object().shape({}),
+    validationSchema: Yup.object().shape({
+      phone: Yup.string().required('Số điện thoại không được để trống'),
+      imei: Yup.string().required('Imei không được để trống'),
+    }),
     onSubmit: async (values) => {
       if (currentUser) {
         try {

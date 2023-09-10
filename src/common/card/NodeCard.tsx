@@ -36,7 +36,7 @@ export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
           )}
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center">
-          <Box style={{ fontSize: '12px' }}>100%</Box>
+          <Box style={{ fontSize: '12px' }}>{data.state?.battery || 100}%</Box>
           <img style={{ width: '20px', margin: '5px' }} src={sensorMapped.power_100} alt="" />
         </Box>
       </Box>

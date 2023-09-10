@@ -34,7 +34,7 @@ export const regulatoryApi = createApi({
           }));
           dispatch(
             setRegulatories({
-              cursors: cursor,
+              cursor: cursor,
               regulatories: dataParse,
             })
           );

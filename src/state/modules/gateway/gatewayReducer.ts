@@ -1,16 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
-import { CursorsType } from '../../../configs/constant';
+import { CursorType } from '../../../configs/constant';
 import { IGateway } from '../../../services/gateway.service';
 
 type GatewayState = {
   gateways: IGateway[];
-  cursors: CursorsType;
+  cursor: CursorType;
   limit: number;
 };
 
-const initialState: GatewayState = { gateways: [], cursors: {}, limit: 10 };
+const initialState: GatewayState = { gateways: [], cursor: {}, limit: 10 };
 
 const slice = createSlice({
   name: 'gatewayState',
@@ -18,10 +18,10 @@ const slice = createSlice({
   reducers: {
     setGateways: (
       state,
-      { payload: { gateways, cursors } }: PayloadAction<{ gateways: IGateway[]; cursors: CursorsType }>
+      { payload: { gateways, cursor } }: PayloadAction<{ gateways: IGateway[]; cursor: CursorType }>
     ) => {
       state.gateways = gateways;
-      state.cursors = cursors;
+      state.cursor = cursor;
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;
@@ -35,4 +35,4 @@ export default slice.reducer;
 
 export const selectGatewayState = (state: RootState) => state.gatewayState;
 export const selectGateway = (state: RootState) => state.gatewayState.gateways;
-export const selectCursors = (state: RootState) => state.gatewayState.cursors;
+export const selectCursor = (state: RootState) => state.gatewayState.cursor;

@@ -15,7 +15,7 @@ export const loactionsApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data },
+            data: { data, cursor },
           } = await queryFulfilled;
           const dataParse = data.map((item: any) => ({
             ...item,
@@ -26,12 +26,13 @@ export const loactionsApi = createApi({
           dispatch(
             setLocations({
               locations: dataParse,
+              cursor,
             })
           );
         } catch (error) {}
       },
     }),
-    getLocation: build.query<any, { agencyId?: string; locationId?: string; }>({
+    getLocation: build.query<any, { agencyId?: string; locationId?: string }>({
       query: (body) => ({ url: `agencies/${body.agencyId}/locations/${body.locationId}` }),
       providesTags() {
         return [{ type: 'Location' }];

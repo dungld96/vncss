@@ -31,7 +31,7 @@ export const camerasApi = createApi({
           dispatch(
             setCameras({
               cameras: data,
-              cursors: cursor,
+              cursor: cursor,
             })
           );
         } catch (error) {}

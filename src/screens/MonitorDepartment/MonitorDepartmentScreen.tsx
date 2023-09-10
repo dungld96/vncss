@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Pagination from '../../common/pagination/Pagination';
-import { CursorsType } from '../../configs/constant';
+import { CursorType } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
 import { useLazyGetListOrganizationsQuery } from '../../services/organizations.service';
-import { selectOrganizationState } from '../../state/modules/organization/organizationReducer';
+import { selectOrganizationState, setLimit } from '../../state/modules/organization/organizationReducer';
 import { Box } from '@mui/material';
 import { MonitorDepartmentTable } from './MonitorDepartmentTable';
+import { useAppDispatch } from '../../state/store';
 
 const MonitorDepartmentScreen = () => {
   const [trigger] = useLazyGetListOrganizationsQuery();
-  const [paginate, setPaginate] = useState<CursorsType>({});
+  const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { cursors, limit } = useSelector(selectOrganizationState);
+  const { cursor, limit } = useSelector(selectOrganizationState);
+  const dispatch = useAppDispatch();
 
   const {
     auth: { currentUser },
@@ -24,10 +26,13 @@ const MonitorDepartmentScreen = () => {
     }
   }, [trigger, paginate, currentUser, limit]);
 
+  const handleSetLimit = (limit: number) => {
+    dispatch(setLimit({ limit }));
+  };
   return (
     <Box mt={2} ml={2} mr={'12px'}>
       <MonitorDepartmentTable />
-      <Pagination paginate={cursors} setPaginate={setPaginate} />
+      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );
 };
