@@ -7,8 +7,8 @@ export const notificationsApi = createApi({
   reducerPath: 'notificationsApi',
   tagTypes: ['Notification', 'SubNotification', 'readNotification', 'unSubNotification', 'handleNotification'],
   endpoints: (build) => ({
-    getListNotifications: build.query<any, { agencyId?: string; params?: any }>({
-      query: (body) => ({ url: `agencies/${body.agencyId}/notifications`, params: body.params }),
+    getListNotifications: build.query<any, { params?: any }>({
+      query: (body) => ({ url: `notifications`, params: body.params }),
       providesTags() {
         return [{ type: 'Notification' }];
       },
@@ -25,11 +25,11 @@ export const notificationsApi = createApi({
         } catch (error) {}
       },
     }),
-    subNotification: build.mutation<ResponsiveInterface, { data: { token: string }; agencyId: string }>({
-      query: ({ data, agencyId }) => {
+    subNotification: build.mutation<ResponsiveInterface, { data: { token: string } }>({
+      query: ({ data }) => {
         try {
           return {
-            url: `agencies/${agencyId}/notifications/subscribe`,
+            url: `notifications/subscribe`,
             method: 'POST',
             body: data,
           };
@@ -39,11 +39,11 @@ export const notificationsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'SubNotification' }]),
     }),
-    unSubNotification: build.mutation<ResponsiveInterface, { data: { token: string }; agencyId: string }>({
-      query: ({ data, agencyId }) => {
+    unSubNotification: build.mutation<ResponsiveInterface, { data: { token: string } }>({
+      query: ({ data }) => {
         try {
           return {
-            url: `agencies/${agencyId}/notifications/unsubscribe`,
+            url: `notifications/unsubscribe`,
             method: 'POST',
             body: data,
           };
@@ -53,11 +53,11 @@ export const notificationsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'unSubNotification' }]),
     }),
-    readNotification: build.mutation<ResponsiveInterface, { timestamp?: number; agencyId: string }>({
-      query: ({ timestamp, agencyId }) => {
+    readNotification: build.mutation<ResponsiveInterface, { timestamp?: number }>({
+      query: ({ timestamp }) => {
         try {
           return {
-            url: `agencies/${agencyId}/notifications/read${timestamp ? `?timestamp=${timestamp}` : ''}`,
+            url: `notifications/read${timestamp ? `?timestamp=${timestamp}` : ''}`,
             method: 'POST',
           };
         } catch (error: any) {
@@ -66,11 +66,11 @@ export const notificationsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'readNotification' }]),
     }),
-    handleNotification: build.mutation<ResponsiveInterface, { timestamp: number; agencyId: string }>({
-      query: ({ timestamp, agencyId }) => {
+    handleNotification: build.mutation<ResponsiveInterface, { timestamp: number }>({
+      query: ({ timestamp }) => {
         try {
           return {
-            url: `agencies/${agencyId}/notifications/handle?timestamp=${timestamp}`,
+            url: `notifications/handle?timestamp=${timestamp}`,
             method: 'POST',
           };
         } catch (error: any) {

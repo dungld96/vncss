@@ -9,10 +9,10 @@ export interface CurrentUserResponsiveInterface extends ResponsiveInterface {
   data: IUser;
 }
 
-export interface CurrentUserRequestInterface {
-  uuid: string;
-  firstName: string;
-  lastName: string;
+export interface UpdateCurrentUserRequestInterface {
+  id: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
 }
@@ -55,19 +55,19 @@ export const usersApi = createApi({
         } catch (error) {}
       },
     }),
-    updateCurrentUser: build.mutation<CurrentUserResponsiveInterface, CurrentUserRequestInterface>({
+    updateCurrentUser: build.mutation<CurrentUserResponsiveInterface, UpdateCurrentUserRequestInterface>({
       query: (body) => {
         try {
           return {
             url: 'users',
             method: 'PUT',
-            body: { ...body, first_name: body.firstName, last_name: body.lastName },
+            body: { ...body },
           };
         } catch (error: any) {
           throw new error.message();
         }
       },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Users', id: data.uuid }]),
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Users', id: data.id }]),
     }),
     changePassword: build.mutation<any, PasswordRequestInterface>({
       query: (body) => {

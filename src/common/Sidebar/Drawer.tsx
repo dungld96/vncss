@@ -50,13 +50,14 @@ import ControlIcon from '../../assets/icons/control-icon.svg';
 import ControlActiveIcon from '../../assets/icons/control-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-small.svg';
 import Logo from '../../assets/img/logo.svg';
+import { useAuth } from '../../hooks/useAuth';
 
 interface IRouteSubItem {
   id: string;
   title: string;
   icon: ReactNode;
   activeIcon: ReactNode;
-  permission: string[];
+  permission: (number | string)[];
   route: string;
 }
 interface IRouteItem {
@@ -64,7 +65,7 @@ interface IRouteItem {
   title: string;
   icon: ReactNode;
   activeIcon: ReactNode;
-  permission: string[];
+  permission: (number | string)[];
   route: string;
   subItems?: IRouteSubItem[];
 }
@@ -83,7 +84,7 @@ const listFeature = [
     title: 'Cơ quan quản lý',
     icon: <ImageIcon image={RegulatoryAgencyIcon} />,
     activeIcon: <ImageIcon image={RegulatoryAgencyActiveIcon} />,
-    permission: ['regulatory_agency'],
+    permission: [0, 1],
     route: ROUTE_REGULATORY_AGENCY,
   },
   {
@@ -91,7 +92,7 @@ const listFeature = [
     title: 'Đơn vị giám sát',
     icon: <ImageIcon image={MonitorDepartmentIcon} />,
     activeIcon: <ImageIcon image={MonitorDepartmentActiveIcon} />,
-    permission: ['monitor_department'],
+    permission: [0, 1],
     route: MONITOR_DEPARTMENT,
   },
   {
@@ -99,7 +100,7 @@ const listFeature = [
     title: 'Vị trí triển khai',
     icon: <ImageIcon image={MapIcon} />,
     activeIcon: <ImageIcon image={MapActiveIcon} />,
-    permission: ['deploy_location'],
+    permission: [0, 1, 2, 3, 4],
     route: DEPLOY_LOCATION,
   },
   {
@@ -107,7 +108,7 @@ const listFeature = [
     title: 'Đại lý',
     icon: <ImageIcon image={agencyIcon} />,
     activeIcon: <ImageIcon image={agencyActiveIcon} />,
-    permission: ['agency'],
+    permission: [0, 1, 2, 3, 4],
     route: ROUTE_AGENCY,
   },
   {
@@ -115,7 +116,7 @@ const listFeature = [
     title: 'Nhân viên',
     icon: <ImageIcon image={usersIcon} />,
     activeIcon: <ImageIcon image={usersActiveIcon} />,
-    permission: ['users'],
+    permission: [0, 1, 2, 3, 4],
     route: ROUTE_USER,
   },
   {
@@ -123,14 +124,14 @@ const listFeature = [
     title: 'Thiết bị',
     icon: <ImageIcon image={ProductIcon} />,
     activeIcon: <ImageIcon image={ProductActiveIcon} />,
-    permission: ['warehouse'],
+    permission: [0, 1, 2, 3, 4],
     subItems: [
       {
         id: '11115061-4494-4bdc-8a6e-5a59aadec5ii',
         title: 'Kho Gateway',
         icon: <ImageIcon image={GatewayIcon} />,
         activeIcon: <ImageIcon image={GatewayActiveIcon} />,
-        permission: ['warehouse-gateway'],
+        permission: [0, 1, 2, 3, 4],
         route: ROUTE_WAREHOUSE_GATEWAY,
       },
       {
@@ -138,7 +139,7 @@ const listFeature = [
         title: 'Kho Node',
         icon: <ImageIcon image={NodeIcon} />,
         activeIcon: <ImageIcon image={NodeActiveIcon} />,
-        permission: ['warehouse-node'],
+        permission: [0, 1, 2, 3, 4],
         route: ROUTE_WAREHOUSE_NODE,
       },
       {
@@ -146,7 +147,7 @@ const listFeature = [
         title: 'Phương tiện tuần tra',
         icon: <ImageIcon image={vehicleVitalIcon} />,
         activeIcon: <ImageIcon image={vehicleVitalActiveIcon} />,
-        permission: [''],
+        permission: [0, 1, 2, 3, 4],
         route: ROUTE_VITAL_VEHICLE,
       },
       {
@@ -154,7 +155,7 @@ const listFeature = [
         title: 'Phương tiện trọng yếu',
         icon: <ImageIcon image={CarProtectIcon} />,
         activeIcon: <ImageIcon image={CarProtectActiveIcon} />,
-        permission: [''],
+        permission: [0, 1, 2, 3, 4],
         route: ROUTE_VEHICLE_PROTECT,
       },
       {
@@ -162,7 +163,7 @@ const listFeature = [
         title: 'Kho Sim',
         icon: <ImageIcon image={simIcon} />,
         activeIcon: <ImageIcon image={simActiveIcon} />,
-        permission: ['warehouse-sim'],
+        permission: [0, 1, 2, 3, 4],
         route: ROUTE_WAREHOUSESIM,
       },
       {
@@ -170,7 +171,7 @@ const listFeature = [
         title: 'Kho Camera Box',
         icon: <ImageIcon image={ProductIcon} />,
         activeIcon: <ImageIcon image={ProductActiveIcon} />,
-        permission: ['warehouse-camera'],
+        permission: [0, 1, 2, 3, 4],
         route: ROUTE_WAREHOUSE_CAMERA,
       },
     ],
@@ -181,7 +182,7 @@ const listFeature = [
     title: 'Giám sát',
     icon: <ImageIcon image={ControlIcon} />,
     activeIcon: <ImageIcon image={ControlActiveIcon} />,
-    permission: ['report'],
+    permission: [0, 1, 2, 3, 4],
     route: ROUTE_CONTROL,
   },
   {
@@ -189,10 +190,10 @@ const listFeature = [
     title: 'Báo cáo',
     icon: <ImageIcon image={reportsIcon} />,
     activeIcon: <ImageIcon image={reportsActiveIcon} />,
-    permission: ['report'],
+    permission: [0],
     route: ROUTE_REPORTS,
   },
-];
+] as IRouteItem[];
 
 interface Props {
   open?: boolean;
@@ -202,7 +203,9 @@ export default function DrawerSidebar({ open }: Props) {
   const [hovering, setHovering] = useState(false);
   const navigate = useNavigate();
   const localtion = useLocation();
-
+  const {
+    auth: { currentAgency, currentUser },
+  } = useAuth();
   const handleMouseEnterChild = () => {
     setHovering(true);
   };
@@ -291,77 +294,89 @@ export default function DrawerSidebar({ open }: Props) {
           </Box>
         </Box>
         <Box sx={{ height: '100%', backgroundColor: '#ffffff', paddingTop: '10px' }}>
-          {listFeature.map((item) => (
-            <List key={item.id} component="div" disablePadding>
-              <ListItem
-                button
-                onClick={() => onClickDrawerItem(item)}
-                style={{
-                  backgroundColor: highlighting(item) ? '#FFF3F4' : '',
-                  borderLeft: highlighting(item) ? '4px solid #A53B3D' : '',
-                  padding: highlighting(item) ? '12px 16px' : '12px 16px 12px 20px',
-                }}
-              >
-                <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>
-                  {highlighting(item) ? item.activeIcon : item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  sx={{
-                    color: highlighting(item) ? '#8F0A0C' : '#8B8C9B',
-                    fontWeight: '500 !important',
-                    fontSize: '14px !important',
+          {listFeature.map((item) => {
+            if (!currentAgency || !currentUser) return null;
+
+            if (
+              (!item.permission.includes(currentAgency.level) && currentUser.type === 'agency') ||
+              currentUser.type !== 'agency'
+            ) {
+              return null;
+            }
+
+            return (
+              <List key={item.id} component="div" disablePadding>
+                <ListItem
+                  button
+                  onClick={() => onClickDrawerItem(item)}
+                  style={{
+                    backgroundColor: highlighting(item) ? '#FFF3F4' : '',
+                    borderLeft: highlighting(item) ? '4px solid #A53B3D' : '',
+                    padding: highlighting(item) ? '12px 16px' : '12px 16px 12px 20px',
                   }}
-                  primary={item.title}
-                  primaryTypographyProps={{
-                    sx: {
+                >
+                  <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>
+                    {highlighting(item) ? item.activeIcon : item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    sx={{
                       color: highlighting(item) ? '#8F0A0C' : '#8B8C9B',
                       fontWeight: '500 !important',
                       fontSize: '14px !important',
-                    },
-                  }}
-                ></ListItemText>
-                {expandedIcon(item)}
-              </ListItem>
-              <Collapse in={expanded.includes(item.id) && (open || hovering)} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {item.subItems &&
-                    item.subItems.map((subItem) => {
-                      return (
-                        <ListItem
-                          button
-                          key={subItem.id}
-                          style={{
-                            backgroundColor: highlighting(subItem) ? '#FFF3F4' : '',
-                            borderLeft: highlighting(subItem) ? '4px solid #A53B3D' : '',
-                            padding: highlighting(subItem) ? '12px 16px 12px 32px' : '12px 16px 12px 36px',
-                          }}
-                          onClick={() => onClickDrawerItem(subItem)}
-                        >
-                          <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>
-                            {highlighting(subItem) ? subItem.activeIcon : subItem.icon}
-                          </ListItemIcon>
-                          <ListItemText
-                            sx={{
-                              color: highlighting(subItem) ? '#8F0A0C' : '#8B8C9B',
-                              fontWeight: '500 !important',
-                              fontSize: '14px !important',
+                    }}
+                    primary={item.title}
+                    primaryTypographyProps={{
+                      sx: {
+                        color: highlighting(item) ? '#8F0A0C' : '#8B8C9B',
+                        fontWeight: '500 !important',
+                        fontSize: '14px !important',
+                      },
+                    }}
+                  ></ListItemText>
+                  {expandedIcon(item)}
+                </ListItem>
+
+                <Collapse in={expanded.includes(item.id) && (open || hovering)} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {item.subItems &&
+                      item.subItems.map((subItem) => {
+                        return (
+                          <ListItem
+                            button
+                            key={subItem.id}
+                            style={{
+                              backgroundColor: highlighting(subItem) ? '#FFF3F4' : '',
+                              borderLeft: highlighting(subItem) ? '4px solid #A53B3D' : '',
+                              padding: highlighting(subItem) ? '12px 16px 12px 32px' : '12px 16px 12px 36px',
                             }}
-                            primary={subItem.title}
-                            primaryTypographyProps={{
-                              sx: {
+                            onClick={() => onClickDrawerItem(subItem)}
+                          >
+                            <ListItemIcon sx={{ color: '#8B8C9B', minWidth: 40 }}>
+                              {highlighting(subItem) ? subItem.activeIcon : subItem.icon}
+                            </ListItemIcon>
+                            <ListItemText
+                              sx={{
                                 color: highlighting(subItem) ? '#8F0A0C' : '#8B8C9B',
                                 fontWeight: '500 !important',
                                 fontSize: '14px !important',
-                              },
-                            }}
-                          ></ListItemText>
-                        </ListItem>
-                      );
-                    })}
-                </List>
-              </Collapse>
-            </List>
-          ))}
+                              }}
+                              primary={subItem.title}
+                              primaryTypographyProps={{
+                                sx: {
+                                  color: highlighting(subItem) ? '#8F0A0C' : '#8B8C9B',
+                                  fontWeight: '500 !important',
+                                  fontSize: '14px !important',
+                                },
+                              }}
+                            ></ListItemText>
+                          </ListItem>
+                        );
+                      })}
+                  </List>
+                </Collapse>
+              </List>
+            );
+          })}
         </Box>
       </Drawer>
     </Box>

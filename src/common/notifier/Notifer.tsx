@@ -23,7 +23,7 @@ export const Notifier = () => {
 
   React.useEffect(() => {
     if (currentUser) {
-      getListNotificationsQuery({ agencyId: currentUser.sub_id });
+      getListNotificationsQuery({});
     }
   }, [currentUser]);
 
@@ -40,9 +40,7 @@ export const Notifier = () => {
     const timestamp = dayjs(notification.timestamp).unix();
     const locationId = notification.location_id;
     if (!notification.readed && agencyId) {
-      readNotificationMutation({ agencyId, timestamp }).then(() =>
-        getListNotificationsQuery({ agencyId: currentUser.sub_id })
-      );
+      readNotificationMutation({ timestamp }).then(() => getListNotificationsQuery({}));
     }
     setAnchorEl(null);
     navigate(`${ROUTE_CONTROL}?locationId=${locationId}`);
@@ -54,7 +52,7 @@ export const Notifier = () => {
   const readAll = () => {
     const agencyId = currentUser?.sub_id;
     if (agencyId) {
-      readNotificationMutation({ agencyId }).then(() => getListNotificationsQuery({ agencyId: currentUser.sub_id }));
+      readNotificationMutation({}).then(() => getListNotificationsQuery({}));
     }
   };
 

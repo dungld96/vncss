@@ -5,10 +5,10 @@ import DefaultAvatar from '../../assets/img/avatar.svg';
 
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { useAuth } from '../../hooks/useAuth';
-import { useGetAgencyQuery } from '../../services/agencies.service';
 import ModalChangePassword from './ModalChangePassword';
 import ModalProfileStore from './ModalProfileStore';
 import ModalProfileUser from './ModalProfileUser';
+import { UpdateCurrentUserRequestInterface } from '../../services/users.service';
 
 const ProfileContainer = styled.div({
   width: '100%',
@@ -137,49 +137,46 @@ const RenderInfor = ({ label, infor, action }: { label: string; infor: string; a
 
 const Profile: React.FC = () => {
   const inputRef = useRef<any>();
-  const [modalUser, setModalUser] = useState({
-    show: false,
-    initialValues: { uuid: '', firstName: '', lastName: '', email: '', phone: '' },
-  });
-  const [modalStore, setModalStore] = useState({ show: false, initialValues: { id: '', name: '', address: '' } });
+  const [showModalUser, setShowtModalUser] = useState(false);
+  const [showModalStore, setShowModalStore] = useState(false);
   const [modalChangePass, setModalChangePass] = useState({ show: false });
-
   const {
-    auth: { currentUser },
-  } = useAuth() as any;
+    auth: { currentUser, currentAgency },
+  } = useAuth();
 
-  const { data: agency } = useGetAgencyQuery({ id: currentUser?.sub_id });
-
-  const currentAgency: any = agency?.data;
-
-  const showModalUser = () => {
-    setModalUser({
-      show: true,
-      initialValues: {
-        uuid: currentUser.uuid,
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
-        email: currentUser.email,
-        phone: currentUser.phone,
-      },
-    });
+  const initialUserValues = {
+    id: currentUser?.id ?? '',
+    first_name: currentUser?.first_name ?? '',
+    last_name: currentUser?.last_name ?? '',
+    email: currentUser?.email ?? '',
+    phone: currentUser?.phone ?? '',
+  };
+  const initialAgencyValues = {
+    id: currentAgency?.id ?? '',
+    name: currentAgency?.name ?? '',
+    address: currentAgency?.address ?? '',
   };
 
-  const showModalStore = () => {
-    setModalStore({
-      show: true,
-      initialValues: {
-        id: currentAgency.id,
-        name: currentAgency.name,
-        address: currentAgency.address,
-      },
-    });
+  const showModalUserClick = () => {
+    setShowtModalUser(true);
+  };
+
+  const showModalStoreClick = () => {
+    setShowModalStore(true);
   };
 
   return (
     <>
-      <ModalProfileUser {...modalUser} onClose={() => setModalUser({ ...modalUser, show: false })} />
-      <ModalProfileStore {...modalStore} onClose={() => setModalStore({ ...modalStore, show: false })} />
+      <ModalProfileUser
+        show={showModalUser}
+        onClose={() => setShowtModalUser(false)}
+        initialValues={initialUserValues}
+      />
+      <ModalProfileStore
+        show={showModalStore}
+        onClose={() => setShowModalStore(false)}
+        initialValues={initialAgencyValues}
+      />
       <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
       <ProfileContainer>
         <ProfileWrapper>
@@ -205,15 +202,15 @@ const Profile: React.FC = () => {
               </IconChange>
               <input ref={inputRef} type="file" accept="image/x-png,image/jpeg" style={{ display: 'none' }} />
             </AvatarWrapper>
-            <FullName>{`${currentUser?.firstName} ${currentUser?.lastName}`}</FullName>
+            <FullName>{`${currentUser?.first_name} ${currentUser?.last_name}`}</FullName>
           </Stack>
           <ProfileInfor>
             <InforUser>
-              <RenderTitle title={'Thông tin'} action={showModalUser} />
-              <RenderInfor label="Tên đăng nhập" infor={currentUser?.username} />
-              <RenderInfor label="Tên người sử dụng" infor={`${currentUser?.firstName} ${currentUser?.lastName}`} />
-              <RenderInfor label="Email" infor={currentUser?.email} />
-              <RenderInfor label="Số điện thoại" infor={currentUser?.phone} />
+              <RenderTitle title={'Thông tin'} action={showModalUserClick} />
+              <RenderInfor label="Tên đăng nhập" infor={currentUser?.username || '--'} />
+              <RenderInfor label="Tên người sử dụng" infor={`${currentUser?.first_name} ${currentUser?.last_name}`} />
+              <RenderInfor label="Email" infor={currentUser?.email || '--'} />
+              <RenderInfor label="Số điện thoại" infor={currentUser?.phone || '--'} />
               <RenderInfor
                 label="Mật khẩu"
                 infor="Thay đổi mật khẩu"
@@ -222,14 +219,11 @@ const Profile: React.FC = () => {
             </InforUser>
             <SeperateLine />
             <InforUser>
-              <RenderTitle title={'Thông tin'} action={showModalStore} />
+              <RenderTitle title={'Thông tin'} action={showModalStoreClick} />
               <RenderInfor label="Tên cửa hàng" infor={currentAgency?.name || ''} />
               <RenderInfor label="Địa chỉ" infor={currentAgency?.address || ''} />
-              <RenderInfor label="Level" infor={currentAgency?.level} />
-              <RenderInfor
-                label="Trạng thái"
-                infor={currentAgency?.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-              />
+              <RenderInfor label="Level" infor={`${currentAgency?.level}` || '--'} />
+              <RenderInfor label="Trạng thái" infor={currentAgency?.active ? 'Hoạt động' : 'Không hoạt động'} />
             </InforUser>
           </ProfileInfor>
         </ProfileWrapper>

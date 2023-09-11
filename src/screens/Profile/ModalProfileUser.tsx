@@ -6,12 +6,12 @@ import * as Yup from 'yup';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import Modal from '../../common/modal/Modal';
-import { CurrentUserRequestInterface, useUpdateCurrentUserMutation } from '../../services/users.service';
+import { UpdateCurrentUserRequestInterface, useUpdateCurrentUserMutation } from '../../services/users.service';
 
 interface Props {
   show: boolean;
   onClose: () => void;
-  initialValues: CurrentUserRequestInterface;
+  initialValues: UpdateCurrentUserRequestInterface;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -26,7 +26,7 @@ const ContentWrapper = styled(DialogContent)({
 const validationSchema = Yup.object().shape({});
 
 const ModalProfileUser: React.FC<Props> = ({ show, onClose, initialValues }) => {
-  const [updateCurrentUser, {}] = useUpdateCurrentUserMutation();
+  const [updateCurrentUser] = useUpdateCurrentUserMutation();
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
@@ -46,8 +46,8 @@ const ModalProfileUser: React.FC<Props> = ({ show, onClose, initialValues }) => 
       <FormikProvider value={formik}>
         <Form noValidate onSubmit={handleSubmit}>
           <ContentWrapper>
-            <Input style={{ width: 286 }} topLable="Tên người sử dụng" {...getFieldProps('firstName')} />
-            <Input style={{ width: 286 }} topLable="Họ người sử dụng" {...getFieldProps('lastName')} />
+            <Input style={{ width: 286 }} topLable="Tên người sử dụng" {...getFieldProps('first_name')} />
+            <Input style={{ width: 286 }} topLable="Họ người sử dụng" {...getFieldProps('last_name')} />
             <Input style={{ width: 286 }} topLable="Email" {...getFieldProps('email')} />
             <Input style={{ width: 286 }} topLable="Số điện thoại" {...getFieldProps('phone')} />
           </ContentWrapper>

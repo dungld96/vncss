@@ -21,4 +21,5 @@ export const defaultInitialValue: AgencyType = {
     phone: '',
     username: '',
   },
+  active: false,
 };

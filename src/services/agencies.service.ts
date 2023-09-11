@@ -1,4 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { setCurrentAgency } from '../state/modules/auth/authReducer';
 import { setAgencies } from '../state/modules/agency/agencyReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
@@ -7,7 +8,7 @@ export interface IAgency {
   parent_id?: string | null;
   name: string;
   address: string;
-  level?: string | number;
+  level: string | number;
   username?: string;
   password?: string;
   phone?: string;
@@ -15,6 +16,7 @@ export interface IAgency {
     phone: string;
     username: string;
   };
+  active: boolean;
 }
 export interface CurrentAgencyResponsiveInterface extends ResponsiveInterface {
   data: IAgency;
@@ -25,7 +27,20 @@ export interface AgenciesResponsiveInterface extends ResponsiveInterface {
 
 export interface AgencyRequestInterface {
   parent_uuid?: string;
-  agency: IAgency;
+  agency: {
+    id?: string;
+    parent_id?: string | null;
+    name: string;
+    address: string;
+    level?: string | number;
+    username?: string;
+    password?: string;
+    phone?: string;
+    user?: {
+      phone: string;
+      username: string;
+    };
+  };
 }
 
 export const agenciesApi = createApi({
@@ -40,6 +55,27 @@ export const agenciesApi = createApi({
           return [{ type: 'Agencies', id: result.data.id }];
         }
         return [{ type: 'Agencies', id: 'LIST' }];
+      },
+    }),
+    getCurrentAgency: build.query<CurrentAgencyResponsiveInterface, { id: string }>({
+      query: (body) => ({ url: `agencies/${body.id}` }),
+      providesTags(result) {
+        if (result) {
+          return [{ type: 'Agencies', id: result.data.id }];
+        }
+        return [{ type: 'Agencies', id: 'LIST' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data },
+          } = await queryFulfilled;
+          dispatch(
+            setCurrentAgency({
+              currentAgency: data,
+            })
+          );
+        } catch (error) {}
       },
     }),
     getAllAgencies: build.query<AgenciesResponsiveInterface, { id: string; params?: any }>({
@@ -140,4 +176,5 @@ export const {
   useDeleteAgencyMutation,
   useUpdateCurrentAgencyMutation,
   useLazyGetAgencyQuery,
+  useLazyGetCurrentAgencyQuery,
 } = agenciesApi;

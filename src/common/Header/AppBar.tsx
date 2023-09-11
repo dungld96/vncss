@@ -32,7 +32,7 @@ export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
   const handleLogout = () => {
     unRegisterServiceWorker();
     if (currentUser && fcmToken) {
-      unSubNotification({ data: { token: fcmToken }, agencyId: currentUser.sub_id }).then(() => {
+      unSubNotification({ data: { token: fcmToken } }).then(() => {
         dispatch(logout);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');

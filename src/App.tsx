@@ -37,6 +37,7 @@ import {
 import { registerServiceWorker } from './serviceWorker';
 import { GatewayAlert } from './common/gateway-alert/GatewayAlert';
 import { useSelector } from 'react-redux';
+import { useLazyGetCurrentAgencyQuery } from './services/agencies.service';
 
 function App() {
   const { snackbar, setSnackbar } = useSnackbar();
@@ -47,6 +48,7 @@ function App() {
   const [targetLocationId, setTargetLocationId] = React.useState<string>();
   const [subNotification] = useSubNotificationMutation();
   const [getListNotificationsQuery] = useLazyGetListNotificationsQuery();
+  const [getCurrentAgencyQuery] = useLazyGetCurrentAgencyQuery();
 
   const {
     auth: { currentUser },
@@ -64,7 +66,8 @@ function App() {
 
   React.useEffect(() => {
     if (currentUser) {
-      getListNotificationsQuery({ agencyId: currentUser.sub_id });
+      getListNotificationsQuery({});
+      getCurrentAgencyQuery({ id: currentUser.sub_id });
     }
   }, [currentUser, notificationsAlertQueue]);
 
@@ -175,7 +178,7 @@ function App() {
       <GatewayAlert />
       <Routes>
         <Route path="/" element={<Layout fcmToken={fcmToken} />}>
-          <Route path="/" element={<RequireUser allowedRoles={['user']} />}>
+          <Route path="/" element={<RequireUser />}>
             <Route index element={<DashboardScreen />} />
             <Route path="profile" element={<Profile />} />
             <Route path="users" element={<UsersScreen />} />

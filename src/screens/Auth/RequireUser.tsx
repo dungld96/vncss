@@ -3,7 +3,7 @@ import { useGetCurrentUserQuery } from '../../services/users.service';
 import FullScreenLoader from '../../common/Loader/FullScreenLoader';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
-const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
+const RequireUser = () => {
   const location = useLocation();
   const [token] = useLocalStorage<string>('access_token', '');
   const { data, isLoading, isFetching } = useGetCurrentUserQuery(null);
