@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DialogActions, DialogContent } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
+import { useSnackbar } from '../../hooks/useSnackbar';
 import React from 'react';
 import * as Yup from 'yup';
 import KeyIcon from '../../assets/icons/key-icon.svg';
@@ -25,6 +26,7 @@ const validationSchema = Yup.object().shape({});
 
 const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
   const [changePassword] = useChangePasswordMutation();
+  const { setSnackbar } = useSnackbar();
 
   const formik = useFormik({
     initialValues: {
@@ -36,10 +38,12 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
     validationSchema,
     onSubmit: async ({ current_password, new_password }) => {
       try {
-        await changePassword({ current_password, new_password }).unwrap();
+        await changePassword({ old: current_password, new: new_password }).unwrap();
+        setSnackbar({ open: true, message: 'Đổi mật khẩu thành công', severity: 'success' });
         onClose();
       } catch (error) {
         console.error('rejected', error);
+        setSnackbar({ open: true, message: 'Có lỗi khi đổi mật khẩu', severity: 'error' });
       }
     },
   });

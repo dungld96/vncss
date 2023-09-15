@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import background from '../../assets/img/BACKGROUND.svg';
 import imgLogo from '../../assets/img/logo.svg';
 import { useLoginMutation } from '../../services/auth.service';
+import { useSnackbar } from '../../hooks/useSnackbar';
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
@@ -97,6 +98,7 @@ const LoginScreen = () => {
   const [loginUser, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { setSnackbar } = useSnackbar();
 
   const from = ((location.state as any)?.from.pathname as string) || '/control';
 
@@ -112,6 +114,7 @@ const LoginScreen = () => {
         navigate(from);
       } catch (error) {
         console.error('rejected', error);
+        setSnackbar({ open: true, message: 'Sai tài khoản hoặc mật khẩu', severity: 'error' });
       }
     },
   });

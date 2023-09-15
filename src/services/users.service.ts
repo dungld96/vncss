@@ -17,8 +17,8 @@ export interface UpdateCurrentUserRequestInterface {
   phone: string;
 }
 export interface PasswordRequestInterface {
-  current_password: string;
-  new_password: string;
+  old: string;
+  new: string;
 }
 
 export interface UsersResponsiveInterface extends ResponsiveInterface {
@@ -73,7 +73,7 @@ export const usersApi = createApi({
       query: (body) => {
         try {
           return {
-            url: 'users/change-password',
+            url: 'users/password',
             method: 'POST',
             body,
           };
