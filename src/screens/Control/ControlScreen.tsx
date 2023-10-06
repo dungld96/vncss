@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Card, IconButton, Tooltip } from '@mui/material';
-import { Cancel as CancelIcon } from '@mui/icons-material';
+import { Box, Card, IconButton, styled, Tooltip } from '@mui/material';
+import { Cancel as CancelIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import GoogleMapReact from 'google-map-react';
 import { PointFeature } from 'supercluster';
 import { useSelector } from 'react-redux';
@@ -8,19 +8,38 @@ import useSupercluster from 'use-supercluster';
 import { BBox, GeoJsonProperties } from 'geojson';
 import { useQueryParams, StringParam } from 'use-query-params';
 import mapStyles from './MapStyles.json';
-import { useLazyGetControlLocationsQuery } from '../../services/control.service';
+import { useLazyGetControlLocationsFilterQuery, useLazyGetControlLocationsQuery } from '../../services/control.service';
 import { selectLocation, ControlLocationType } from '../../state/modules/control/controlReducer';
 import { useAuth } from '../../hooks/useAuth';
 import { Marker, ClusterMarker, MyLocation } from './Marker';
 import { ControlDetail } from './detail/ControlDetail';
-import { agencies } from 'screens/Agencies/mockData';
-import { FilterBar } from './FilterBar';
+import { FilterBar } from './filter/FilterBar';
+import { isEqual } from 'lodash';
+import { FilterMore } from './filter/FilterMore';
+
+export const IconButtonMap = styled(IconButton)({
+  position: 'absolute',
+  borderRadius: '5px',
+  padding: '5px',
+  zIndex: 1,
+  backgroundColor: '#ffffff',
+  '& img': {
+    padding: '2px',
+    width: '32px',
+  },
+  boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
+});
 
 export const centerDefault = {
   lat: 21.027627,
   lng: 105.833166,
 };
 export const ControlScreen = () => {
+  const [query, setQuery] = useQueryParams({
+    locationId: StringParam,
+    agencyId: StringParam,
+    status: StringParam,
+  });
   const googleMapRef = useRef<any>();
   const containerMapRef = useRef<HTMLDivElement>();
   const [center, setCenter] = useState(centerDefault);
@@ -29,8 +48,16 @@ export const ControlScreen = () => {
   const [zoom, setZoom] = useState(10);
   const [selectedLocation, setSelectedLocation] = useState<ControlLocationType>();
   const [loadedGeoService, setLoadedGeoService] = React.useState(false);
+  const [filterExpand, setFilterExpand] = React.useState(false);
 
-  const [trigger] = useLazyGetControlLocationsQuery();
+  const defaultFiltersFormValue = {
+    status: query.status || 'all',
+    agencyId: query.agencyId || 'all',
+  };
+
+  const [filtersFormValue, setFiltersFormValue] = React.useState(defaultFiltersFormValue);
+  const [getControlLocationsQuery] = useLazyGetControlLocationsQuery();
+  const [getControlFilterLocationsQuery] = useLazyGetControlLocationsFilterQuery();
   const {
     auth: { currentUser },
   } = useAuth();
@@ -54,33 +81,32 @@ export const ControlScreen = () => {
           disconnected: 0,
         };
 
-  const [query, setQuery] = useQueryParams({
-    locationId: StringParam,
-  });
   const queryLocationId = query.locationId;
+  const queryAgencyId = query.agencyId;
+  const queryStatus = query.status;
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentUser) {
-        trigger(
-          {
-            agency_id: currentUser.sub_id,
-            // params: {
-            //   center_lat: center.lat,
-            //   center_lng: center.lng,
-            //   visible_radius: 70,
-            //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
-            // },
-          },
-          false
-        );
-      }
-    }, 30000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (currentUser) {
+  //       trigger(
+  //         {
+  //           agency_id: currentUser.sub_id,
+  //           // params: {
+  //           //   center_lat: center.lat,
+  //           //   center_lng: center.lng,
+  //           //   visible_radius: 70,
+  //           //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
+  //           // },
+  //         },
+  //         false
+  //       );
+  //     }
+  //   }, 30000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [currentUser]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [currentUser]);
 
   useEffect(() => {
     if (queryLocationId && locations.length > 0) {
@@ -98,7 +124,7 @@ export const ControlScreen = () => {
 
   useEffect(() => {
     if (currentUser) {
-      trigger({
+      getControlLocationsQuery({
         agency_id: currentUser.sub_id,
         // params: {
         //   center_lat: center.lat,
@@ -107,7 +133,19 @@ export const ControlScreen = () => {
         // },
       });
     }
-  }, [trigger, currentUser]);
+  }, [getControlLocationsQuery, currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      getControlFilterLocationsQuery({
+        agency_id: currentUser.sub_id,
+        params: {
+          agency_id: queryAgencyId !== 'all' ? queryAgencyId : undefined,
+          status: queryStatus !== 'all' ? queryStatus : undefined,
+        },
+      });
+    }
+  }, [getControlFilterLocationsQuery, currentUser, queryAgencyId, queryStatus]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -180,6 +218,25 @@ export const ControlScreen = () => {
     setQuery({ locationId: undefined });
   };
 
+  const onZoomOut = () => {
+    googleMapRef.current.map_.setZoom(googleMapRef.current.map_.getZoom() - 1);
+  };
+
+  const handleFilter = () => {
+    setQuery({ agencyId: filtersFormValue.agencyId, status: filtersFormValue.status });
+  };
+
+  const handleClearFilter = () => {
+    setFiltersFormValue({ status: 'all', agencyId: 'all' });
+    setQuery({
+      agencyId: undefined,
+      status: undefined,
+    });
+    onZoomOut();
+  };
+
+  const isFitering = Boolean(queryAgencyId || queryStatus);
+
   return (
     <Box
       style={{
@@ -199,17 +256,19 @@ export const ControlScreen = () => {
       <Card
         style={{
           position: 'absolute',
-          bottom: '50px',
-          zIndex: 1,
-          width: 'calc(100% - 64px)',
+          bottom: filterExpand ? 0 : '50px',
+          zIndex: filterExpand ? 10 : 1,
+          width: filterExpand ? '100%' : 'calc(100% - 64px)',
+          boxShadow: filterExpand ? '0px 1px 4px rgba(0, 0, 0, 0.1)' : 'none',
+          borderRadius: filterExpand ? '5px' : 0,
           display: 'flex',
-          paddingRight: '10px',
           justifyContent: 'center',
-          backgroundColor: 'rgba(0, 0, 0, 0)',
+          height: filterExpand ? '540px' : 'auto',
+          backgroundColor: filterExpand ? '#ffffff' : 'rgba(0, 0, 0, 0)',
         }}
         elevation={0}
       >
-        {/* {filterExpand ? (
+        {filterExpand ? (
           <Box height={'50px'} width="100%">
             <Box
               display="flex"
@@ -219,63 +278,56 @@ export const ControlScreen = () => {
               boxShadow={'0px 1px 4px rgba(0, 0, 0, 0.1)'}
             >
               <FilterBar
-                filterStatus={filterStatus}
-                role={role}
-                gwListLength={gwListLength}
-                onStatusClick={onStatusClick}
-                onFilterExpandClick={onFilterExpandClick}
+                locationListLength={statistic}
+                onStatusClick={() => {}}
+                onFilterExpandClick={() => setFilterExpand(!filterExpand)}
                 filterExpand={filterExpand}
+                isFitering={isFitering}
               />
               <Box
                 display="flex"
                 alignItems="center"
                 px="8px"
                 style={{ cursor: 'pointer' }}
-                onClick={onFilterExpandClick}
+                onClick={() => setFilterExpand(!filterExpand)}
               >
                 {filterExpand && <ExpandMoreIcon />}
               </Box>
             </Box>
             <FilterMore
-              agencies={agencies}
-              gatewayTypes={productTypes}
-              handleOpenGateway={onClickMarker}
+              handleOpenLocation={(localtion: ControlLocationType) => handleOpenDetail(localtion)}
               filtersFormValue={filtersFormValue}
               setFiltersFormValue={setFiltersFormValue}
               handleClearFilter={handleClearFilter}
               handleFilter={handleFilter}
-              filteredData={filteredData}
-              accessToken={accessToken}
-              setAgencyChildenIds={setAgencyChildenIds}
             />
           </Box>
-        ) : ( */}
-        <Box display={'flex'} position="relative">
-          <FilterBar
-            locationListLength={statistic}
-            onStatusClick={() => {}}
-            onFilterExpandClick={() => {}}
-            filterExpand={false}
-            isFitering={false}
-          />
-          {/* {isFitering && (
-            <Tooltip title="Huỷ bộ lọc">
-              <IconButton
-                aria-label="clear"
-                onClick={handleClearFilter}
-                className={cx([styles['btn-map']])}
-                style={{
-                  right: '-56px',
-                  width: '47px',
-                  height: '47px',
-                }}
-              >
-                <CancelIcon style={{ color: '#8F0A0C' }} />
-              </IconButton>
-            </Tooltip>
-          )} */}
-        </Box>
-        {/* )} */}
+        ) : (
+          <Box display={'flex'} position="relative" justifyContent={'center'}>
+            <FilterBar
+              locationListLength={statistic}
+              onStatusClick={() => {}}
+              onFilterExpandClick={() => setFilterExpand(!filterExpand)}
+              filterExpand={filterExpand}
+              isFitering={isFitering}
+            />
+            {isFitering && (
+              <Tooltip title="Huỷ bộ lọc">
+                <IconButtonMap
+                  aria-label="clear"
+                  style={{
+                    right: '-56px',
+                    width: '47px',
+                    height: '47px',
+                  }}
+                  onClick={handleClearFilter}
+                >
+                  <CancelIcon style={{ color: '#8F0A0C' }} />
+                </IconButtonMap>
+              </Tooltip>
+            )}
+          </Box>
+        )}
       </Card>
       <GoogleMapReact
         bootstrapURLKeys={{

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setControlLocations } from '../state/modules/control/controlReducer';
+import { setControlFilterLocations, setControlLocations } from '../state/modules/control/controlReducer';
 import { LocationType } from '../state/modules/location/locationReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
@@ -115,185 +115,243 @@ export const controlApi = createApi({
     'UpdateNodeControl',
     'handleAlertControl',
   ],
-  endpoints: (build) => ({
-    getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
-      query: (body) => ({ url: `agencies/${body.agency_id}/monitoring/locations/status`, params: body.params }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          const {
-            data: { data },
-          } = await queryFulfilled;
-          dispatch(
-            setControlLocations({
-              locations: data,
-            })
-          );
-        } catch (error) {}
-      },
-    }),
-    getControlLocation: build.query<any, { agencyId: string; locationId: string }>({
-      query: (body) => ({ url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}` }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
-    }),
-    getControlLocationGateways: build.query<any, { agencyId: string; locationId: string }>({
-      query: (body) => ({ url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/gateways` }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: ControlLocationGatewayType }, meta, arg) => response.data,
-    }),
-    getControlLocationGatewayNodes: build.query<any, { agencyId: string; locationId: string; gatewayId: string }>({
-      query: (body) => ({
-        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/gateways/${body.gatewayId}/nodes`,
+  endpoints: (build) => {
+    const item = localStorage.getItem('current_user');
+    const currentUser = item ? JSON.parse(item) : null;
+    return {
+      getControlLocations: build.query<any, { agency_id?: string; params?: any }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agency_id}/monitoring/locations/status`
+              : `monitoring/locations/status`,
+          params: body.params,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        async onQueryStarted(args, { dispatch, queryFulfilled }) {
+          try {
+            const {
+              data: { data },
+            } = await queryFulfilled;
+            dispatch(
+              setControlLocations({
+                locations: data,
+              })
+            );
+          } catch (error) {}
+        },
       }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: ControlLocationNodeType }, meta, arg) => response.data,
-    }),
-    addGateway: build.mutation<AddGatewayResponsiveInterface, AddGatewayRequestInterface>({
-      query: ({ data, agencyId, locationId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}/addgateway`,
-            method: 'POST',
-            body: data,
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddGateway' }]),
-    }),
-    addNode: build.mutation<AddGatewayResponsiveInterface, AddNodeRequestInterface>({
-      query: ({ data, agencyId, locationId, gatewayId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}/addnode`,
-            method: 'POST',
-            body: data,
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddNode' }]),
-    }),
-    addCamera: build.mutation<AddGatewayResponsiveInterface, AddCameraRequestInterface>({
-      query: ({ data, agencyId, locationId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}/cameraboxes`,
-            method: 'POST',
-            body: data,
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddCamera' }]),
-    }),
-    getControlLocationCameras: build.query<any, { agencyId: string; locationId: string; cameraBoxId: string }>({
-      query: (body) => ({
-        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes/${body.cameraBoxId}/cameras`,
+      getControlLocation: build.query<any, { agencyId?: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}`
+              : `monitoring/locations/${body.locationId}`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
       }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
-    }),
-    getControlLocationCameraBoxs: build.query<any, { agencyId: string; locationId: string }>({
-      query: (body) => ({
-        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes`,
+      getControlLocationGateways: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/gateways`
+              : `monitoring/locations/${body.locationId}/gateways`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationGatewayType }, meta, arg) => response.data,
       }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
-    }),
-    getControlLocationLogs: build.query<any, { agencyId: string; locationId: string }>({
-      query: (body) => ({
-        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/logs`,
+      getControlLocationGatewayNodes: build.query<any, { agencyId: string; locationId: string; gatewayId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/gateways/${body.gatewayId}/nodes`
+              : `monitoring/locations/${body.locationId}/gateways/${body.gatewayId}/nodes`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationNodeType }, meta, arg) => response.data,
       }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: ControlLocationLogType }, meta, arg) => response.data,
-    }),
-    getControlLocationCameraImage: build.query<
-      any,
-      { agencyId: string; locationId: string; cameraboxeId: string; cameraId: string }
-    >({
-      query: (body) => ({
-        url: `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes/${body.cameraboxeId}/cameras/${body.cameraId}/images`,
+      addGateway: build.mutation<AddGatewayResponsiveInterface, AddGatewayRequestInterface>({
+        query: ({ data, agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/addgateway`,
+              method: 'POST',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddGateway' }]),
       }),
-      providesTags() {
-        return [{ type: 'Control' }];
-      },
-      transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
-    }),
-    updateLocationControl: build.mutation<ResponsiveInterface, any>({
-      query: ({ data, agencyId, locationId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}`,
-            method: 'PUT',
-            body: data,
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
-    }),
-    updateGatewayControl: build.mutation<ResponsiveInterface, any>({
-      query: ({ data, agencyId, locationId, gatewayId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}`,
-            method: 'PUT',
-            body: data,
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateGatewayControl' }]),
-    }),
-    updateNodeControl: build.mutation<ResponsiveInterface, any>({
-      query: ({ data, agencyId, locationId, gatewayId, nodeId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}/nodes/${nodeId}`,
-            method: 'PUT',
-            body: data,
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateNodeControl' }]),
-    }),
-    handleAlertControl: build.mutation<ResponsiveInterface, { agencyId: string; locationId: string }>({
-      query: ({ agencyId, locationId }) => {
-        try {
-          return {
-            url: `agencies/${agencyId}/monitoring/locations/${locationId}/handlealert`,
-            method: 'POST',
-          };
-        } catch (error: any) {
-          throw new error.message();
-        }
-      },
-      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'handleAlertControl' }]),
-    }),
-  }),
+      addNode: build.mutation<AddGatewayResponsiveInterface, AddNodeRequestInterface>({
+        query: ({ data, agencyId, locationId, gatewayId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}/addnode`,
+              method: 'POST',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddNode' }]),
+      }),
+      addCamera: build.mutation<AddGatewayResponsiveInterface, AddCameraRequestInterface>({
+        query: ({ data, agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/cameraboxes`,
+              method: 'POST',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddCamera' }]),
+      }),
+      getControlLocationCameras: build.query<any, { agencyId: string; locationId: string; cameraBoxId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes/${body.cameraBoxId}/cameras`
+              : `monitoring/locations/${body.locationId}/cameraboxes/${body.cameraBoxId}/cameras`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
+      getControlLocationCameraBoxs: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes`
+              : `monitoring/locations/${body.locationId}/cameraboxes`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
+      getControlLocationLogs: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/logs`
+              : `monitoring/locations/${body.locationId}/logs`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationLogType }, meta, arg) => response.data,
+      }),
+      getControlLocationCameraImage: build.query<
+        any,
+        { agencyId: string; locationId: string; cameraboxeId: string; cameraId: string }
+      >({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/cameraboxes/${body.cameraboxeId}/cameras/${body.cameraId}/images`
+              : `monitoring/locations/${body.locationId}/cameraboxes/${body.cameraboxeId}/cameras/${body.cameraId}/images`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
+      updateLocationControl: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}`,
+              method: 'PUT',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
+      }),
+      updateGatewayControl: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId, gatewayId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}`,
+              method: 'PUT',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateGatewayControl' }]),
+      }),
+      updateNodeControl: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId, gatewayId, nodeId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}/nodes/${nodeId}`,
+              method: 'PUT',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateNodeControl' }]),
+      }),
+      handleAlertControl: build.mutation<ResponsiveInterface, { agencyId: string; locationId: string }>({
+        query: ({ agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/handlealert`,
+              method: 'POST',
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'handleAlertControl' }]),
+      }),
+      getControlLocationsFilter: build.query<any, { agency_id?: string; params?: any }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency' ? `agencies/${body.agency_id}/monitoring/locations` : `monitoring/locations`,
+          params: body.params,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        async onQueryStarted(args, { dispatch, queryFulfilled }) {
+          try {
+            const {
+              data: { data, cursor },
+            } = await queryFulfilled;
+            dispatch(
+              setControlFilterLocations({
+                locations: data,
+                cursor: cursor,
+              })
+            );
+          } catch (error) {}
+        },
+      }),
+    };
+  },
 });
 
 export const {
@@ -317,4 +375,5 @@ export const {
   useLazyGetControlLocationLogsQuery,
   useLazyGetControlLocationCameraBoxsQuery,
   useHandleAlertControlMutation,
+  useLazyGetControlLocationsFilterQuery,
 } = controlApi;

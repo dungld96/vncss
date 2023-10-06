@@ -1,7 +1,7 @@
 import React from 'react';
 import { ListItem, ListItemIcon, ListItemText, Box, Icon, Tooltip } from '@mui/material';
 import { ExpandLess as ExpandLessIcon } from '@mui/icons-material';
-import Gateway from '../../assets/icons/product-icon-filter.svg';
+import Gateway from '../../../assets/icons/product-icon-filter.svg';
 
 export const locationStatus = ['Hoạt động', 'Đang cảnh báo', 'Lỗi cảm biến', 'Mất kết nối'];
 
@@ -225,11 +225,11 @@ export const FilterBar = ({
           </ListItemText>
         )}
       </ListItem>
-      {/* <Tooltip title={isFitering ? 'Đang áp dụng bộ lọc' : 'Bộ lọc'}>
+      <Tooltip title={isFitering ? 'Đang áp dụng bộ lọc' : 'Bộ lọc'}>
         <Box display="flex" alignItems="center" px="8px" style={{ cursor: 'pointer' }} onClick={onFilterExpandClick}>
           {!filterExpand && <ExpandLessIcon style={{ color: isFitering ? '#8F0A0C' : 'unset' }} />}
         </Box>
-      </Tooltip> */}
+      </Tooltip>
     </Box>
   );
 };

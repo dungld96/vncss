@@ -182,7 +182,7 @@ const listFeature = [
     title: 'Giám sát',
     icon: <ImageIcon image={ControlIcon} />,
     activeIcon: <ImageIcon image={ControlActiveIcon} />,
-    permission: [0, 1, 2, 3, 4],
+    permission: [0, 1, 2, 3, 4, 'org', 'regulatory'],
     route: ROUTE_CONTROL,
   },
   {
@@ -295,11 +295,13 @@ export default function DrawerSidebar({ open }: Props) {
         </Box>
         <Box sx={{ height: '100%', backgroundColor: '#ffffff', paddingTop: '10px' }}>
           {listFeature.map((item) => {
-            if (!currentAgency || !currentUser) return null;
+            if (!currentUser) return null;
 
             if (
-              (!item.permission.includes(currentAgency.level) && currentUser.type === 'agency') ||
-              currentUser.type !== 'agency'
+              currentAgency &&
+              !item.permission.includes(currentAgency.level) &&
+              !item.permission.includes('org') &&
+              !item.permission.includes('regulatory')
             ) {
               return null;
             }

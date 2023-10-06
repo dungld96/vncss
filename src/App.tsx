@@ -67,7 +67,9 @@ function App() {
   React.useEffect(() => {
     if (currentUser) {
       getListNotificationsQuery({});
-      getCurrentAgencyQuery({ id: currentUser.sub_id });
+      if (currentUser.type === 'agency') {
+        getCurrentAgencyQuery({ id: currentUser.sub_id });
+      }
     }
   }, [currentUser, notificationsAlertQueue]);
 
