@@ -26,12 +26,12 @@ export const nodesApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursors },
+            data: { data, cursor },
           } = await queryFulfilled;
           dispatch(
             setNodes({
               nodes: data,
-              cursor: cursors,
+              cursor: cursor,
             })
           );
         } catch (error) {}
