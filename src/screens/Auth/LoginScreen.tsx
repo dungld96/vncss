@@ -9,7 +9,7 @@ import useModalConfirm from '../../hooks/useModalConfirm';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import background from '../../assets/img/BACKGROUND.svg';
-import imgLogo from '../../assets/img/logo.svg';
+import imgLogo from '../../assets/img/logo-2.jpg';
 import { useLoginMutation } from '../../services/auth.service';
 import { useSnackbar } from '../../hooks/useSnackbar';
 
@@ -205,7 +205,9 @@ const LoginScreen = () => {
               </FormikProvider>
             </Box>
           </Box>
-          <LabelCopyRight>Sản phẩm thuộc bản quyền công ty Sesaco Việt Nam. Hotline: 02432262556</LabelCopyRight>
+          <LabelCopyRight>
+            Hệ thống thuộc bản quyền công ty Vntech24h.,Jsc. Hotline 0934.88.83.86 hoặc 0706.90.3333
+          </LabelCopyRight>
         </Box>
       </AuthBox>
     </>

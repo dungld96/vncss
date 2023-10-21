@@ -48,8 +48,8 @@ import ProductIcon from '../../assets/icons/product-icon.svg';
 import ProductActiveIcon from '../../assets/icons/product-active-icon.svg';
 import ControlIcon from '../../assets/icons/control-icon.svg';
 import ControlActiveIcon from '../../assets/icons/control-active-icon.svg';
-import LogoSmall from '../../assets/img/logo-small.svg';
-import Logo from '../../assets/img/logo.svg';
+import LogoSmall from '../../assets/img/logo-2.jpg';
+import Logo from '../../assets/img/logo-2.jpg';
 import { useAuth } from '../../hooks/useAuth';
 
 interface IRouteSubItem {
