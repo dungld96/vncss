@@ -11,8 +11,14 @@ import { Switch } from '../../common/Switch/Switch';
 import TableTag from '../../common/TableTag/TableTag';
 import useApp from '../../hooks/useApp';
 import { ImageIcon } from '../../utils/UtilsComponent';
-import { EventReceiveType } from '../../state/modules/location/locationReducer';
 import { NormalInput } from 'common/input/NormalInput';
+
+export type EventReceiveType = {
+  enabled: boolean;
+  name: string;
+  phone: string;
+  position: string;
+};
 
 export const tagsList = [
   { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
@@ -52,7 +58,6 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
     label: item.name,
     value: item.name,
   }));
-
 
   return (
     <Box px={3} pb={3}>

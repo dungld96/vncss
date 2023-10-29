@@ -27,7 +27,8 @@ export interface LocationType {
 }
 
 export type EventReceiveType = {
-  enabled: boolean;
+  enabled_sms: boolean;
+  enabled_call: boolean;
   name: string;
   phone: string;
   position: string;
