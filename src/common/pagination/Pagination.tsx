@@ -8,9 +8,10 @@ interface Props {
   paginate: CursorType;
   setLimit: (limit: number) => void;
   limit: number;
+  total?: number;
 }
 
-const Pagination: React.FC<Props> = ({ setPaginate, setLimit, paginate, limit = 10 }) => {
+const Pagination: React.FC<Props> = ({ setPaginate, setLimit, paginate, limit = 10, total }) => {
   const handlePerPageChange = (e: SelectChangeEvent) => {
     setLimit(+e.target.value);
   };
@@ -18,6 +19,7 @@ const Pagination: React.FC<Props> = ({ setPaginate, setLimit, paginate, limit = 
   return (
     <Box display="flex" alignItems="center" marginTop="16px" justifyContent="flex-end">
       <Box display="flex" alignItems="center" mr={2}>
+        {total && <InputLabel sx={{ marginRight: '16px' }}>Tổng số hàng: {total}</InputLabel>}
         <InputLabel sx={{ marginRight: '16px' }}>Số hàng mỗi trang</InputLabel>
         <Select id="demo-simple-select" value={`${limit}`} variant="standard" onChange={handlePerPageChange}>
           <MenuItem value={10}>10</MenuItem>

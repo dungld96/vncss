@@ -14,8 +14,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { Marker, ClusterMarker, MyLocation } from './Marker';
 import { ControlDetail } from './detail/ControlDetail';
 import { FilterBar } from './filter/FilterBar';
-import { isEqual } from 'lodash';
 import { FilterMore } from './filter/FilterMore';
+import ControlSearch from './search/ControlSearch';
 
 export const IconButtonMap = styled(IconButton)({
   position: 'absolute',
@@ -329,6 +329,17 @@ export const ControlScreen = () => {
           </Box>
         )}
       </Card>
+      {/* <div
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          zIndex: 1,
+          boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1) !important',
+        }}
+      >
+        <ControlSearch data={locations} />
+      </div> */}
       <GoogleMapReact
         bootstrapURLKeys={{
           key: 'AIzaSyAjDwo_TVHsOX1nC5u9ySilk6IShSHF5tM',

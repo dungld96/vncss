@@ -55,6 +55,7 @@ export const authApi = createApi({
           localStorage.setItem('access_token', JSON.stringify(access_token));
           localStorage.setItem('refresh_token', JSON.stringify(refresh_token));
           await dispatch(usersApi.endpoints.getCurrentUser.initiate(null));
+          window.location.reload();
         } catch (error) {}
       },
     }),

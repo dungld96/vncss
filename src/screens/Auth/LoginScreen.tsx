@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import KeyIcon from '@mui/icons-material/Key';
 import PersonIcon from '@mui/icons-material/Person';
-import { Box, Checkbox, LinearProgress } from '@mui/material';
+import { Box, Checkbox } from '@mui/material';
 import Field from '../../common/input/Field';
 import Button from '../../common/button/Button';
 import { Form, FormikProvider, useFormik } from 'formik';
@@ -12,6 +13,7 @@ import background from '../../assets/img/BACKGROUND.svg';
 import imgLogo from '../../assets/img/logo-2.jpg';
 import { useLoginMutation } from '../../services/auth.service';
 import { useSnackbar } from '../../hooks/useSnackbar';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
@@ -99,8 +101,15 @@ const LoginScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setSnackbar } = useSnackbar();
+  const [token] = useLocalStorage<string>('access_token', '');
 
   const from = ((location.state as any)?.from.pathname as string) || '/control';
+
+  useEffect(() => {
+    if (token) {
+      navigate(from);
+    }
+  }, [token]);
 
   const formik = useFormik({
     initialValues: {

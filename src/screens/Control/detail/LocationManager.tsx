@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Tabs, Tab, Box, Typography, Grid, Switch, IconButton } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Grid, Switch } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import { EventReceiveType } from '../../../state/modules/location/locationReducer';
 import { UpdatePhoneNotiDialog } from './dialogs/UpdatePhoneNotiDialog';
@@ -113,14 +113,15 @@ export const LocationManager = ({
               borderRadius: '6px 6px 0 0',
               fontWeight: 500,
               fontSize: '14px',
+              paddingRight: '15px',
             }}
           >
-            <Grid item xs={5} style={{ borderRight: '1px solid #C5C6D2' }}>
+            <Grid item xs={6} style={{ borderRight: '1px solid #C5C6D2' }}>
               <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 Họ Tên
               </Box>
             </Grid>
-            <Grid item xs={7}>
+            <Grid item xs={6}>
               <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <Box>{`SMS`}</Box>
                 <Switch
@@ -153,7 +154,7 @@ export const LocationManager = ({
               <>
                 <Grid
                   item
-                  xs={5}
+                  xs={6}
                   height="40px"
                   style={{
                     borderLeft: '1px solid #C5C6D2',
@@ -177,7 +178,7 @@ export const LocationManager = ({
                 </Grid>
                 <Grid
                   item
-                  xs={7}
+                  xs={6}
                   height="40px"
                   style={{
                     borderRight: '1px solid #C5C6D2',
@@ -186,35 +187,36 @@ export const LocationManager = ({
                   }}
                 >
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                    <Box>{`SMS`}</Box>
-                    <Switch
-                      checked={item.enabled_sms}
-                      onChange={() => {
-                        const newItem = { ...item, enabled_sms: !item.enabled_sms };
-                        const newEventReceivers = [...eventReceivers];
-                        newEventReceivers[index] = newItem;
-                        enableEventNumber([...newEventReceivers]);
-                      }}
-                    />
-                    <Box>{`Call`}</Box>
-                    <Switch
-                      checked={item.enabled_call}
-                      onChange={() => {
-                        const newItem = { ...item, enabled_call: !item.enabled_call };
-                        const newEventReceivers = [...eventReceivers];
-                        newEventReceivers[index] = newItem;
-                        enableEventNumber([...newEventReceivers]);
-                      }}
-                    />
-                    <DeleteOutline
-                      onClick={() => handleDeleteEventReceiver(index)}
-                      style={{ color: '#8B8C9B', cursor: 'pointer' }}
-                    />
+                    <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {`SMS`}
+                      <Switch
+                        checked={item.enabled_sms}
+                        onChange={() => {
+                          const newItem = { ...item, enabled_sms: !item.enabled_sms };
+                          const newEventReceivers = [...eventReceivers];
+                          newEventReceivers[index] = newItem;
+                          enableEventNumber([...newEventReceivers]);
+                        }}
+                      />
+                    </Box>
+
+                    <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {`Call`}
+                      <Switch
+                        checked={item.enabled_call}
+                        onChange={() => {
+                          const newItem = { ...item, enabled_call: !item.enabled_call };
+                          const newEventReceivers = [...eventReceivers];
+                          newEventReceivers[index] = newItem;
+                          enableEventNumber([...newEventReceivers]);
+                        }}
+                      />
+                    </Box>
                   </Box>
                 </Grid>
                 <Grid
                   item
-                  xs={5}
+                  xs={6}
                   height="40px"
                   style={{
                     borderLeft: '1px solid #C5C6D2',
@@ -236,7 +238,7 @@ export const LocationManager = ({
                 </Grid>
                 <Grid
                   item
-                  xs={7}
+                  xs={6}
                   height="40px"
                   style={{
                     borderRight: '1px solid #C5C6D2',
@@ -245,7 +247,11 @@ export const LocationManager = ({
                   }}
                 >
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                    {item.phone}
+                    <Typography style={{ marginRight: '16px' }}>{item.phone}</Typography>
+                    <DeleteOutline
+                      onClick={() => handleDeleteEventReceiver(index)}
+                      style={{ color: '#8B8C9B', cursor: 'pointer' }}
+                    />
                   </Box>
                 </Grid>
               </>
@@ -295,7 +301,7 @@ export const LocationManager = ({
               fontSize: '14px',
             }}
           >
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <Box
                 style={{
                   display: 'flex',
@@ -308,7 +314,7 @@ export const LocationManager = ({
                 Tên Tài khoản
               </Box>
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <Box
                 style={{
                   display: 'flex',
@@ -336,7 +342,7 @@ export const LocationManager = ({
           <Grid container style={{ fontSize: '14px' }}>
             <Grid
               item
-              xs={5}
+              xs={6}
               height="48px"
               style={{
                 borderLeft: '1px solid #C5C6D2',
@@ -359,7 +365,7 @@ export const LocationManager = ({
             </Grid>
             <Grid
               item
-              xs={5}
+              xs={6}
               height="48px"
               style={{
                 borderRight: '1px solid #C5C6D2',

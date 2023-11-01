@@ -25,7 +25,7 @@ export const simsApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursor },
+            data: { data, cursor, total },
           } = await queryFulfilled;
           dispatch(
             setSims({
@@ -34,6 +34,7 @@ export const simsApi = createApi({
                 before: cursor.before || undefined,
                 after: cursor.after || undefined,
               },
+              total,
             })
           );
         } catch (error) {}

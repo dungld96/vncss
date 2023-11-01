@@ -13,7 +13,7 @@ const WarehouseSimScreen = () => {
   const [trigger] = useLazyGetListSimQuery();
   const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { cursor, limit } = useSelector(selectSimState);
+  const { cursor, limit, total } = useSelector(selectSimState);
   const dispatch = useAppDispatch();
 
   const {
@@ -33,7 +33,7 @@ const WarehouseSimScreen = () => {
   return (
     <Box mt={2} ml={2} mr={'12px'}>
       <WarehouseSimTable />
-      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
+      <Pagination paginate={cursor} total={total} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );
 };

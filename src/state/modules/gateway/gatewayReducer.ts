@@ -8,9 +8,10 @@ type GatewayState = {
   gateways: IGateway[];
   cursor: CursorType;
   limit: number;
+  total: number;
 };
 
-const initialState: GatewayState = { gateways: [], cursor: {}, limit: 10 };
+const initialState: GatewayState = { gateways: [], cursor: {}, limit: 10, total: 0 };
 
 const slice = createSlice({
   name: 'gatewayState',
@@ -18,10 +19,13 @@ const slice = createSlice({
   reducers: {
     setGateways: (
       state,
-      { payload: { gateways, cursor } }: PayloadAction<{ gateways: IGateway[]; cursor: CursorType }>
+      {
+        payload: { gateways, cursor, total },
+      }: PayloadAction<{ gateways: IGateway[]; cursor: CursorType; total: number }>
     ) => {
       state.gateways = gateways;
       state.cursor = cursor;
+      state.total = state.total || (total && state.total === total) ? state.total : total;
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;

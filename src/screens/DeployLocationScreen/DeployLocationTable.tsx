@@ -107,6 +107,7 @@ export const DeployLocationTable: React.FC = () => {
     { name: 'business_id', title: 'Loại hình KD' },
     { name: 'contact_name', title: 'Người liên hệ' },
     { name: 'contact_number', title: 'SĐT người liên hệ' },
+    { name: 'event_receiver_count', title: 'Người nhận thông báo' },
     { name: 'maintaint_date', title: 'Ngày bảo trì' },
     { name: 'tags', title: 'Thẻ tag' },
     { name: 'action', title: 'Hành động' },
@@ -115,6 +116,7 @@ export const DeployLocationTable: React.FC = () => {
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
     { columnName: 'name', width: 200 },
     { columnName: 'action', width: 200, align: 'center' },
+    { columnName: 'event_receiver_count', align: 'center' },
   ]);
 
   const [customField] = useState<CustomFieldType>({

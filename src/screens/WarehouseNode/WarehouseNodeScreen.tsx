@@ -14,7 +14,7 @@ const WarehouseNodeScreen = () => {
   const { data: nodeTypes } = useGetNodeTypesQuery(null);
   const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { cursor, limit } = useSelector(selectNodeState);
+  const { cursor, limit, total } = useSelector(selectNodeState);
   const dispatch = useAppDispatch();
 
   const {
@@ -34,7 +34,7 @@ const WarehouseNodeScreen = () => {
   return (
     <Box mt={2} ml={2} mr={'12px'}>
       <WarehouseNodeTable nodeTypes={nodeTypes || []} />
-      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
+      <Pagination paginate={cursor} total={total} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );
 };

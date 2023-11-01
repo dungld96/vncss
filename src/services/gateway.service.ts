@@ -41,6 +41,7 @@ export interface DeltailGatewayResponsiveInterface extends ResponsiveInterface {
 export interface GatewaysResponsiveInterface extends ResponsiveInterface {
   data: IGateway[];
   cursor: CursorType;
+  total: number;
 }
 export interface GatewayTypesResponsiveInterface extends ResponsiveInterface {
   data: IGatewayType[];
@@ -71,7 +72,7 @@ export const gatewaysApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursor },
+            data: { data, cursor, total },
           } = await queryFulfilled;
           dispatch(
             setGateways({
@@ -80,6 +81,7 @@ export const gatewaysApi = createApi({
                 before: cursor.before || undefined,
                 after: cursor.after || undefined,
               },
+              total,
             })
           );
         } catch (error) {}
