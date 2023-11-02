@@ -18,10 +18,13 @@ const slice = createSlice({
     setAgencies: (state, { payload: { agencies } }: PayloadAction<{ agencies: IAgency[] }>) => {
       state.agencies = agencies;
     },
+    setAgencyChilds: (state, { payload: { agencies } }: PayloadAction<{ agencies: IAgency[] }>) => {
+      state.agencies = agencies.concat(...state.agencies);
+    },
   },
 });
 
-export const { setAgencies } = slice.actions;
+export const { setAgencies, setAgencyChilds } = slice.actions;
 
 export default slice.reducer;
 

@@ -1,8 +1,20 @@
 import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
-import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import {
+  Backdrop,
+  Box,
+  CircularProgress,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+} from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ExpandButtonTableTree,
   getTableCell,
@@ -13,7 +25,7 @@ import {
 import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { useSelector } from 'react-redux';
-import { useDeleteAgencyMutation } from 'services/agencies.service';
+import { useDeleteAgencyMutation, useLazyGetAgencyChildsQuery } from '../../services/agencies.service';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
@@ -30,7 +42,7 @@ import { useAuth } from '../../hooks/useAuth';
 
 const getChildRows = (row: IAgency, rootRows: IAgency[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
-  return childRows.length ? childRows : null;
+  return childRows.length ? childRows : [];
 };
 
 const ActionCellContent = ({
@@ -101,11 +113,13 @@ const ActionCellContent = ({
     </div>
   );
 };
-
+const getRowId = (row: any) => row.id;
 export const AgenciesTable = () => {
+  const [expandedRowIds, setExpandedRowIds] = useState<Array<string | number>>([]);
+  const [loading, setLoading] = useState(false);
   const agencies = useSelector(selectAgencies);
-
   const [deleteAgency] = useDeleteAgencyMutation();
+  const [getAgencyChilds] = useLazyGetAgencyChildsQuery();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
@@ -171,6 +185,16 @@ export const AgenciesTable = () => {
     });
   };
 
+  const handleExpanded = (ids: Array<string | number>) => {
+    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) =>
+      agenciesParsed.every((item) => item.parentId !== rowId)
+    );
+    if (rowIdsWithNotLoadedChilds.length) {
+      Promise.all(rowIdsWithNotLoadedChilds.map((rowId) => getAgencyChilds({ id: `${rowId}` })));
+    }
+    setExpandedRowIds(ids);
+  };
+
   return (
     <>
       <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
@@ -185,9 +209,9 @@ export const AgenciesTable = () => {
           <Typography sx={{ marginLeft: '8px' }}>Thêm mới đại lý</Typography>
         </Button>
       </Box>
-      <Paper sx={{ boxShadow: 'none', maxHeight: 'calc(100vh - 150px)', overflow: 'auto' }}>
-        <Grid rows={agenciesParsed} columns={columns}>
-          <TreeDataState />
+      <Paper sx={{ boxShadow: 'none', maxHeight: 'calc(100vh - 180px)', overflow: 'auto', marginBottom: '24px' }}>
+        <Grid rows={agenciesParsed} columns={columns} getRowId={getRowId}>
+          <TreeDataState expandedRowIds={expandedRowIds} onExpandedRowIdsChange={handleExpanded} />
           <CustomTreeData getChildRows={getChildRows} />
           <Table
             columnExtensions={tableColumnExtensions}

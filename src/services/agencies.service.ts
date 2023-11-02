@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { setCurrentAgency } from '../state/modules/auth/authReducer';
-import { setAgencies } from '../state/modules/agency/agencyReducer';
+import { setAgencies, setAgencyChilds } from '../state/modules/agency/agencyReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
 export interface IAgency {
@@ -46,7 +46,7 @@ export interface AgencyRequestInterface {
 export const agenciesApi = createApi({
   ...queryRootConfig,
   reducerPath: 'agenciesApi',
-  tagTypes: ['Agencies', 'AllAgencies'],
+  tagTypes: ['Agencies', 'AllAgencies', 'AgencyChilds'],
   endpoints: (build) => ({
     getAgency: build.query<CurrentAgencyResponsiveInterface, { id: string }>({
       query: (body) => ({ url: `agencies/${body.id}` }),
@@ -73,6 +73,34 @@ export const agenciesApi = createApi({
           dispatch(
             setCurrentAgency({
               currentAgency: data,
+            })
+          );
+        } catch (error) {}
+      },
+    }),
+    getAgencyChilds: build.query<AgenciesResponsiveInterface, { id: string }>({
+      query: (body) => ({ url: `agencies/${body.id}/list` }),
+      providesTags(result) {
+        if (result) {
+          return [{ type: 'AgencyChilds' }];
+        }
+        return [{ type: 'AgencyChilds' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data },
+          } = await queryFulfilled;
+
+          const dataParse = data.map((item) => ({
+            ...item,
+            phone: item.user?.phone,
+            username: item.user?.username,
+            parentId: item.parent_id || null,
+          }));
+          dispatch(
+            setAgencyChilds({
+              agencies: dataParse,
             })
           );
         } catch (error) {}
@@ -177,4 +205,5 @@ export const {
   useUpdateCurrentAgencyMutation,
   useLazyGetAgencyQuery,
   useLazyGetCurrentAgencyQuery,
+  useLazyGetAgencyChildsQuery,
 } = agenciesApi;
