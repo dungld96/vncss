@@ -13,7 +13,7 @@ const DLNodeCard = styled(Card)({
   boxShadow: 'none',
   border: '1.5px solid #EEF2FA',
   borderRadius: '8px',
-  padding: '16px',
+  padding: '16px 16px 8px',
 });
 
 type Props = {
@@ -48,8 +48,8 @@ export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
             <img src={DefaultNode} alt="" />
           )}
         </Box>
-        <Box py={2}>
-          <Typography style={{ fontWeight: 500, lineHeight: '22px' }}>{data.name}</Typography>
+        <Box mt={1} minHeight={'48px'}>
+          <Typography style={{ fontWeight: 500, lineHeight: '22px', textAlign: 'center' }}>{data.name}</Typography>
         </Box>
       </Box>
     </DLNodeCard>
