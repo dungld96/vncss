@@ -45,10 +45,12 @@ export const AddNodeDialog: React.FC<Props> = ({ locationId, gatewayId, open, on
           locationId: locationId,
           gatewayId: gatewayId,
           data: values,
-        }).then((res) => {
-          onSuccess();
-          setSnackbar({ open: true, message: 'Thêm node thành công', severity: 'success' });
-        });
+        })
+          .then((res) => {
+            onSuccess();
+            setSnackbar({ open: true, message: 'Thêm node thành công', severity: 'success' });
+          })
+          .catch((e) => setSnackbar({ open: true, message: 'Có lỗi khi thêm node', severity: 'error' }));
         onClose?.();
       }
     },

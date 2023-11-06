@@ -113,18 +113,19 @@ export const LocationManager = ({
               borderRadius: '6px 6px 0 0',
               fontWeight: 500,
               fontSize: '14px',
-              paddingRight: '15px',
+              paddingRight: eventReceivers.length > 3 ? '15px' : 0,
             }}
           >
-            <Grid item xs={6} style={{ borderRight: '1px solid #C5C6D2' }}>
+            <Grid item xs={5} style={{ borderRight: '1px solid #C5C6D2' }}>
               <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 Họ Tên
               </Box>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={7}>
               <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <Box>{`SMS`}</Box>
                 <Switch
+                  size="small"
                   checked={eventReceivers.every((item) => item.enabled_sms)}
                   onChange={(e) => {
                     const checked = e.target.checked;
@@ -136,6 +137,7 @@ export const LocationManager = ({
                 />
                 <Box>{`Call`}</Box>
                 <Switch
+                  size="small"
                   checked={eventReceivers.every((item) => item.enabled_call)}
                   onChange={(e) => {
                     const checked = e.target.checked;
@@ -154,7 +156,7 @@ export const LocationManager = ({
               <>
                 <Grid
                   item
-                  xs={6}
+                  xs={5}
                   height="40px"
                   style={{
                     borderLeft: '1px solid #C5C6D2',
@@ -178,7 +180,7 @@ export const LocationManager = ({
                 </Grid>
                 <Grid
                   item
-                  xs={6}
+                  xs={7}
                   height="40px"
                   style={{
                     borderRight: '1px solid #C5C6D2',
@@ -191,6 +193,7 @@ export const LocationManager = ({
                       {`SMS`}
                       <Switch
                         checked={item.enabled_sms}
+                        size="small"
                         onChange={() => {
                           const newItem = { ...item, enabled_sms: !item.enabled_sms };
                           const newEventReceivers = [...eventReceivers];
@@ -204,6 +207,7 @@ export const LocationManager = ({
                       {`Call`}
                       <Switch
                         checked={item.enabled_call}
+                        size="small"
                         onChange={() => {
                           const newItem = { ...item, enabled_call: !item.enabled_call };
                           const newEventReceivers = [...eventReceivers];
@@ -216,7 +220,7 @@ export const LocationManager = ({
                 </Grid>
                 <Grid
                   item
-                  xs={6}
+                  xs={5}
                   height="40px"
                   style={{
                     borderLeft: '1px solid #C5C6D2',
@@ -238,7 +242,7 @@ export const LocationManager = ({
                 </Grid>
                 <Grid
                   item
-                  xs={6}
+                  xs={7}
                   height="40px"
                   style={{
                     borderRight: '1px solid #C5C6D2',

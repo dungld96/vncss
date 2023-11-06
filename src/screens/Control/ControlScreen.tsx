@@ -85,28 +85,28 @@ export const ControlScreen = () => {
   const queryAgencyId = query.agencyId;
   const queryStatus = query.status;
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (currentUser) {
-  //       trigger(
-  //         {
-  //           agency_id: currentUser.sub_id,
-  //           // params: {
-  //           //   center_lat: center.lat,
-  //           //   center_lng: center.lng,
-  //           //   visible_radius: 70,
-  //           //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
-  //           // },
-  //         },
-  //         false
-  //       );
-  //     }
-  //   }, 30000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentUser) {
+        getControlLocationsQuery(
+          {
+            agency_id: currentUser.sub_id,
+            // params: {
+            //   center_lat: center.lat,
+            //   center_lng: center.lng,
+            //   visible_radius: 70,
+            //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
+            // },
+          },
+          false
+        );
+      }
+    }, 30000);
 
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [currentUser]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [currentUser]);
 
   useEffect(() => {
     if (queryLocationId && locations.length > 0) {

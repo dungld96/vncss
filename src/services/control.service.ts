@@ -4,6 +4,7 @@ import { LocationType } from '../state/modules/location/locationReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
 export interface AddGatewayResponsiveInterface extends ResponsiveInterface {}
+export interface AddNodeResponsiveInterface extends ResponsiveInterface {}
 export interface AddGatewayRequestInterface {
   data: { name: string; serial: string; enableCallCenter: boolean };
   agencyId: string;
@@ -193,7 +194,7 @@ export const controlApi = createApi({
         },
         invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'AddGateway' }]),
       }),
-      addNode: build.mutation<AddGatewayResponsiveInterface, AddNodeRequestInterface>({
+      addNode: build.mutation<AddNodeResponsiveInterface, AddNodeRequestInterface>({
         query: ({ data, agencyId, locationId, gatewayId }) => {
           try {
             return {

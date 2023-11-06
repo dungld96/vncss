@@ -137,14 +137,11 @@ export const GatewayControl = ({
                     </Button>
                   </Box>
                 </Box>
-                <Box mt={3}>
+                <Box mt={3} mb={2}>
                   <Grid container spacing={2}>
                     {nodes.map((item) => {
-                      // const typeId = _.get(item, 'product_type_id', 1);
-                      // const ComponentType = getComponentType(typeId);
-                      // const Card = NodeCard[ComponentType] ? NodeCard[ComponentType] : NodeCard.DefaultCard;
                       return (
-                        <Grid key={item.id} item xs={4} lg={3}>
+                        <Grid key={item.id} item xs={4} sm={4} md={4} lg={3}>
                           <NodeCard
                             data={item}
                             nodeTypes={nodeTypes || []}
