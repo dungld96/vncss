@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, AppBar, Toolbar, Typography, IconButton, Avatar, Menu } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import AvatarImage from '../../assets/img/avatar-ex.png';
 import VNLang from '../../assets/icons/vietnam.svg';
@@ -11,11 +11,13 @@ import { Notifier } from '../../common/notifier/Notifer';
 import { unRegisterServiceWorker } from '../../serviceWorker';
 import { useUnSubNotificationMutation } from '../../services/notifications.service';
 import { useAuth } from '../../hooks/useAuth';
+import { routeTitle } from '../../utils/routesMap';
 
 export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [unSubNotification] = useUnSubNotificationMutation();
   const {
     auth: { currentUser },
@@ -53,6 +55,9 @@ export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
     navigate('/profile');
   };
 
+  const path = location.pathname;
+  const route = path.split('/')[1];
+  const routeTitleList = routeTitle as any;
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -66,13 +71,16 @@ export default function AppBarHeader({ fcmToken }: { fcmToken?: string }) {
         }}
       >
         <Toolbar>
-          <Typography
-            component="h1"
-            variant="h6"
-            sx={{ flexGrow: 1, textTransform: 'uppercase', color: '#8F0A0C', fontSize: 18, fontWeight: 600 }}
-          >
-            Hệ thống an ninh tập trung Việt Nam
-          </Typography>
+          <Box flexGrow={1}>
+            <Typography sx={{ textTransform: 'uppercase', color: '#8B8C9B', fontSize: 14, fontWeight: 500 }}>
+              Hệ thống an ninh tập trung Việt Nam
+            </Typography>
+            <Typography
+              sx={{ textTransform: 'uppercase', color: '#E13153', fontSize: 18, fontWeight: 700, lineHeight: '28px' }}
+            >
+              {routeTitleList[route]}
+            </Typography>
+          </Box>
           <Box mr={2}>
             <Notifier />
           </Box>

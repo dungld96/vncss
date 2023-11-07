@@ -13,3 +13,16 @@ export const ROUTE_VITAL_VEHICLE = '/vehicle-vital';
 export const MONITOR_DEPARTMENT = '/organizations';
 export const DEPLOY_LOCATION = '/depoy-location';
 export const ROUTE_CONTROL = '/control';
+
+export const routeTitle = {
+  control: 'Giám sát',
+  agencies: 'Đại lý',
+  users: 'Nhân viên',
+  'warehouse-gateway': 'Kho Gateway',
+  'warehouse-node': 'Kho Note',
+  'warehouse-sim': 'Kho Sim',
+  'warehouse-cameras': 'Kho Camera',
+  'depoy-location': 'Vị trí triển khai',
+  'regulatory-agency': 'Cơ quan quản lý',
+  organizations: 'Đơn vị giám sát',
+};

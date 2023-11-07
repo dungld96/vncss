@@ -9,8 +9,8 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import background from '../../assets/img/BACKGROUND.svg';
-import imgLogo from '../../assets/img/logo-2.jpg';
+import background from '../../assets/img/BACKGROUND-2.svg';
+import imgLogo from '../../assets/img/logo-login.svg';
 import { useLoginMutation } from '../../services/auth.service';
 import { useSnackbar } from '../../hooks/useSnackbar';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -30,7 +30,7 @@ const AuthBox = styled(Box)({
 });
 
 const ImgLogo = styled.img({
-  width: 144,
+  width: 110,
   display: 'block',
   textAlign: 'center',
 });
@@ -215,7 +215,7 @@ const LoginScreen = () => {
             </Box>
           </Box>
           <LabelCopyRight>
-            Hệ thống thuộc bản quyền công ty Vntech24h.,Jsc. Hotline 0934.88.83.86 hoặc 0706.90.3333
+            Hệ thống thuộc bản quyền của Vntech24h.,Jsc. Hotline 0934.88.83.86 hoặc 0706.90.3333
           </LabelCopyRight>
         </Box>
       </AuthBox>

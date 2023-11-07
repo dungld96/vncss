@@ -49,7 +49,7 @@ import ProductActiveIcon from '../../assets/icons/product-active-icon.svg';
 import ControlIcon from '../../assets/icons/control-icon.svg';
 import ControlActiveIcon from '../../assets/icons/control-active-icon.svg';
 import LogoSmall from '../../assets/img/logo-2.jpg';
-import Logo from '../../assets/img/logo-2.jpg';
+import Logo from '../../assets/img/logo-large.svg';
 import { useAuth } from '../../hooks/useAuth';
 
 interface IRouteSubItem {
@@ -278,14 +278,14 @@ export default function DrawerSidebar({ open }: Props) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '0 10px',
+            padding: '0 4px',
             backgroundColor: '#ffffff',
             color: 'white',
             boxShadow: 'none',
-            minHeight: '100px !important',
+            minHeight: '88px !important',
           }}
         >
-          <Box display="table" maxWidth="80px">
+          <Box display="table">
             {open || hovering ? (
               <img src={Logo} alt="VNCSS" style={{ width: '100%' }} />
             ) : (
