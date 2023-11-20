@@ -14,7 +14,7 @@ import {
 import { useAuth } from '../../../hooks/useAuth';
 import { LocationType } from '../../../state/modules/location/locationReducer';
 import { AddCameraDialog } from './dialogs/AddCameraDialog';
-import { CameraImages } from './CameraImages';
+import { LocationImages } from './LocationImages';
 import dayjs from 'dayjs';
 
 export const CameraControl = ({ location, onRefresh }: { location: LocationType; onRefresh: () => void }) => {
@@ -254,7 +254,7 @@ export const CameraControl = ({ location, onRefresh }: { location: LocationType;
           {selectedCamera && (
             <Box>
               {imageMode ? (
-                <CameraImages imageUrls={imageUrls} />
+                <LocationImages imageUrls={imageUrls} />
               ) : (
                 <CameraLive
                   camera={selectedCamera}

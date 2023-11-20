@@ -37,6 +37,7 @@ import SRB from '../assets/sensor/remote-sos.svg';
 import SRB1 from '../assets/sensor/remote-sos.svg';
 import SOS from '../assets/sensor/remote-sos.svg';
 import SDB from '../assets/sensor/door.svg';
+import DOOR from '../assets/sensor/door.svg';
 import SFDB from '../assets/sensor/spark.svg';
 import FM from '../assets/sensor/spark.svg';
 import FM1 from '../assets/sensor/spark.svg';
@@ -47,8 +48,10 @@ import SSB from '../assets/sensor/smoke-heat.svg';
 import SB from '../assets/sensor/smoke-heat.svg';
 import SB1 from '../assets/sensor/smoke-heat.svg';
 import SSHB from '../assets/sensor/smoke-heat.svg';
+import SMOKE from '../assets/sensor/smoke.svg';
 import STHB from '../assets/sensor/nhietdo-doam.svg';
 import SVB from '../assets/sensor/va-dap.svg';
+import VIBRATE from '../assets/sensor/va-dap.svg';
 import SMB from '../assets/sensor/ic_vibration_move.svg'; //cam bien dich chuyen
 import alertImage from '../assets/sensor/alert.svg';
 import A01 from '../assets/sensor/building.svg';
@@ -118,4 +121,7 @@ export const sensorMapped = {
   SOS,
   ARB,
   ROUTER,
+  SMOKE,
+  DOOR,
+  VIBRATE,
 };

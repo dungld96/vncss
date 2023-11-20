@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
-import { Tabs, Tab, Box, Typography } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Backdrop, CircularProgress } from '@mui/material';
 import { GatewayControl } from './GatewayControl';
 import { CameraControl } from './CameraControl';
 import { LocationType } from '../../../state/modules/location/locationReducer';
 import { useLazyGetControlLocationGatewaysQuery, ControlLocationGatewayType } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { EmptyGateway } from './EmptyGateway';
+import { useGetGatewayTypesQuery } from '../../../services/gateway.service';
+import Loading from 'common/Loading/Loading';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -35,7 +37,8 @@ export const LocationDevice = ({
 }) => {
   const [value, setValue] = useState(0);
   const [gateways, setGateways] = useState<ControlLocationGatewayType[]>([]);
-  const [getControlLocationGateways] = useLazyGetControlLocationGatewaysQuery();
+  const [getControlLocationGateways, { isLoading }] = useLazyGetControlLocationGatewaysQuery();
+  const { data: gatewayTypes, isLoading: isLoadingGatewayTypes } = useGetGatewayTypesQuery(null);
 
   const {
     auth: { currentUser },
@@ -70,22 +73,41 @@ export const LocationDevice = ({
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const gatewayType = useMemo(() => {
+    return gatewayTypes && gateway ? gatewayTypes.find((item: any) => item.id === gateway.gateway_type_id) : null;
+  }, [gatewayTypes, gateway]);
+
+  if (!location) return null;
+
   return (
     <Box>
       <Tabs value={value} onChange={handleChange} sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tab label={<TabLabel>Gateway: {gateway?.name}</TabLabel>} value={0} />
-        <Tab label={<TabLabel>Quản lý camera</TabLabel>} value={1} />
+        {gatewayType && gatewayType.code !== 'GW-ATM4G' && (
+          <Tab label={<TabLabel>Quản lý camera</TabLabel>} value={1} />
+        )}
         {/* <Box display="flex" flexDirection="row" width="100%" justifyContent="flex-end" alignItems="center" p="12px">
           <AddCircleOutline color="primary" style={{ cursor: 'pointer' }} />
         </Box> */}
       </Tabs>
       <TabPanel value={value} index={0}>
-        {gateway
-          ? location && <GatewayControl location={location} refetchGateway={refetchGateways} gateway={gateway} />
-          : location && <EmptyGateway location={location} refetch={refetchGateways} />}
+        {isLoading || isLoadingGatewayTypes ? (
+          <Loading />
+        ) : gateway ? (
+          <GatewayControl
+            gatewayTypeCode={gatewayType?.code || ''}
+            gatewayTypeName={gatewayType?.name || ''}
+            location={location}
+            refetchGateway={refetchGateways}
+            gateway={gateway}
+          />
+        ) : (
+          <EmptyGateway location={location} refetch={refetchGateways} />
+        )}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {location && <CameraControl location={location} onRefresh={refetchLocation} />}
+        <CameraControl location={location} onRefresh={refetchLocation} />
       </TabPanel>
     </Box>
   );
