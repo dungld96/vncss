@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import dayjs from 'dayjs';
 import { Form, FormikProvider, useFormik } from 'formik';
+import { useSnackbar } from '../../hooks/useSnackbar';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import Button from '../../common/button/Button';
@@ -78,6 +79,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
   const [tab, setTab] = useState(0);
   const [file, setFile] = useState<any>(null);
 
+  const { setSnackbar } = useSnackbar();
   const {
     auth: { currentUser },
   } = useAuth();
@@ -107,7 +109,13 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
         await addNode({
           parent_uuid: currentUser?.sub_id,
           node: body,
-        }).unwrap();
+        })
+          .then(() => {
+            setSnackbar({ open: true, message: 'Thêm node thành công', severity: 'success' });
+          })
+          .catch(() => {
+            setSnackbar({ open: true, message: 'Có lỗi khi thêm node', severity: 'error' });
+          });
         onClose?.();
       }
     },

@@ -34,6 +34,7 @@ import RCB4 from '../assets/sensor/remote-sos.svg';
 import RSBE from '../assets/sensor/remote-sos.svg';
 import RSBR from '../assets/sensor/remote-sos.svg';
 import SRB from '../assets/sensor/remote-sos.svg';
+import REMOTE from '../assets/sensor/remote-sos.svg';
 import SRB1 from '../assets/sensor/remote-sos.svg';
 import SOS from '../assets/sensor/remote-sos.svg';
 import SDB from '../assets/sensor/door.svg';
@@ -43,7 +44,9 @@ import FM from '../assets/sensor/spark.svg';
 import FM1 from '../assets/sensor/spark.svg';
 import SGB from '../assets/sensor/gas.svg';
 import SHB from '../assets/sensor/heat.svg';
+import HEAT from '../assets/sensor/heat.svg';
 import SPB from '../assets/sensor/move-sensor.svg';
+import PIR from '../assets/sensor/move-sensor.svg';
 import SSB from '../assets/sensor/smoke-heat.svg';
 import SB from '../assets/sensor/smoke-heat.svg';
 import SB1 from '../assets/sensor/smoke-heat.svg';
@@ -60,6 +63,7 @@ import bao_chay from '../assets/sensor/bao_chay.png';
 import ZONE from '../assets/sensor/zone.svg';
 import ARB from '../assets/sensor/energy-icon.svg';
 import ROUTER from '../assets/sensor/router-icon.svg';
+import PRESENCE from '../assets/sensor/presence.svg';
 
 export const sensorMapped = {
   icon_error,
@@ -124,4 +128,8 @@ export const sensorMapped = {
   SMOKE,
   DOOR,
   VIBRATE,
+  HEAT,
+  PIR,
+  REMOTE,
+  PRESENCE,
 };

@@ -127,7 +127,7 @@ const LoginScreen = () => {
       }
     },
   });
-  const { handleSubmit } = formik;
+  const { handleSubmit, isValid, dirty } = formik;
 
   const handleForgotPass = () => {
     showModalConfirm({
@@ -171,7 +171,7 @@ const LoginScreen = () => {
             </Box>
             <Box>
               <FormikProvider value={formik}>
-                <Form noValidate onSubmit={handleSubmit}>
+                <Form onSubmit={handleSubmit}>
                   <Field
                     topLable="Tên đăng nhập"
                     placeholder="Nhập mật khẩu"
@@ -191,7 +191,7 @@ const LoginScreen = () => {
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}
                   >
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
-                      <CheckBox sx={{}} />
+                      <CheckBox />
                       <LabelSaveLogin>Nhớ đăng nhập</LabelSaveLogin>
                     </Box>
                     <LabelFotgotPass type="button" onClick={handleForgotPass}>
@@ -205,7 +205,7 @@ const LoginScreen = () => {
                       color="primary"
                       variant="contained"
                       type="submit"
-                      disabled={isLoading}
+                      disabled={!isValid || !dirty || isLoading}
                     >
                       Đăng nhập
                     </Button>

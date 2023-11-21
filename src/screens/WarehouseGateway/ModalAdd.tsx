@@ -13,6 +13,7 @@ import FormikWrappedField from '../../common/input/Field';
 import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
 import dayjs from 'dayjs';
+import { useSnackbar } from '../../hooks/useSnackbar';
 
 interface Props {
   show: boolean;
@@ -76,6 +77,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
   const [importGateway] = useImportGatewayMutation();
   const [tab, setTab] = useState(0);
   const [file, setFile] = useState<any>(null);
+  const { setSnackbar } = useSnackbar();
 
   const {
     auth: { currentUser },
@@ -103,10 +105,16 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
         description: values.description,
       };
       if (tab === 0) {
-        await addGateway({
+        addGateway({
           parent_uuid: currentUser?.sub_id,
           gateway: body,
-        }).unwrap();
+        })
+          .then(() => {
+            setSnackbar({ open: true, message: 'Thêm gateway thành công', severity: 'success' });
+          })
+          .catch(() => {
+            setSnackbar({ open: true, message: 'Có lỗi khi thêm gateway', severity: 'error' });
+          });
         onClose?.();
       }
     },

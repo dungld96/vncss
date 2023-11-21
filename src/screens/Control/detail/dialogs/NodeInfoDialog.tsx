@@ -7,7 +7,11 @@ import dayjs from 'dayjs';
 import styled from '@emotion/styled';
 import FormikWrappedField from '../../../../common/input/Field';
 import Modal from '../../../../common/modal/Modal';
-import { ControlLocationNodeType, useUpdateNodeControlMutation } from '../../../../services/control.service';
+import {
+  ControlLocationNodeType,
+  useUpdateNodeControlMutation,
+  useRemoveNodeMutation,
+} from '../../../../services/control.service';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useSnackbar } from '../../../../hooks/useSnackbar';
 import EditIcon from '../../../../assets/icons/edit-icon.svg';
@@ -32,7 +36,8 @@ const validationSchema = {
 export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, open, onClose, onSuccess }) => {
   const [edit, setEdit] = React.useState(false);
 
-  const [updateNodeControl] = useUpdateNodeControlMutation();
+  const [updateNodeControl, { isLoading: isLoadingUpdate }] = useUpdateNodeControlMutation();
+  const [removeNode, { isLoading }] = useRemoveNodeMutation();
   const { data: nodeTypes } = useGetNodeTypesQuery<{ data: INodeType[] }>(null);
 
   const {
@@ -65,6 +70,24 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
       }
     },
   });
+
+  const onRemoveNode = () => {
+    if (currentUser && locationId && gatewayId) {
+      removeNode({
+        agencyId: currentUser.sub_id,
+        locationId: locationId,
+        gatewayId: gatewayId,
+        nodeId: node.id,
+      })
+        .then(() => {
+          setSnackbar({ open: true, message: 'Gỡ node thành công', severity: 'success' });
+          onClose?.();
+        })
+        .catch(() => {
+          setSnackbar({ open: true, message: 'Có lỗi khi gỡ node', severity: 'error' });
+        });
+    }
+  };
   const { handleSubmit, getFieldProps, isValid, dirty } = formik;
 
   return (
@@ -129,18 +152,32 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Lần cập nhật cuối:</InfoTitle>
-                  <InfoValue>{dayjs(node.updated_at).format('hh:mm:ss DD/MM/YYYY') || '--'}</InfoValue>
+                  <InfoValue>{dayjs(node.updated_at).format('HH:mm:ss DD/MM/YYYY') || '--'}</InfoValue>
                 </Box>
               </Grid>
             </Grid>
           )}
           <DialogActions sx={{ padding: 0 }}>
-            <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
+            {!edit && (
+              <Button
+                disabled={isLoadingUpdate || isLoading}
+                style={{ width: 131 }}
+                variant="outlined"
+                onClick={onRemoveNode}
+              >
+                Gỡ Node
+              </Button>
+            )}
+            <Button disabled={isLoadingUpdate || isLoading} style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Đóng
             </Button>
-
             {edit && (
-              <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty}>
+              <Button
+                type="submit"
+                style={{ width: 131 }}
+                variant="contained"
+                disabled={!isValid || !dirty || isLoadingUpdate || isLoading}
+              >
                 Lưu
               </Button>
             )}

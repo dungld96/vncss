@@ -88,7 +88,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
           setSnackbar({ open: true, message: 'Thêm sim thành công', severity: 'success' });
           onClose();
         } catch (error) {
-          setSnackbar({ open: true, message: 'Có lối khi thêm sim', severity: 'error' });
+          setSnackbar({ open: true, message: 'Có lỗi khi thêm sim', severity: 'error' });
         }
       }
     },

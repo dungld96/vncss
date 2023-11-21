@@ -95,7 +95,7 @@ const Input: React.FC<Props> = (props) => {
       }
       field.onChange(event);
     },
-    [onChange]
+    [onChange, field]
   );
 
   const helperText = !isFocusing && error !== true ? error : undefined;

@@ -177,7 +177,7 @@ const WarehouseSimTable = () => {
                 setSnackbar({ open: true, message: 'Xoá sim thành công', severity: 'success' });
                 hideModalConfirm();
               } catch (error) {
-                setSnackbar({ open: true, message: 'Có lối khi xoá sim', severity: 'error' });
+                setSnackbar({ open: true, message: 'Có lỗi khi xoá sim', severity: 'error' });
                 hideModalConfirm();
               }
             }

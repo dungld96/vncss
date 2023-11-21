@@ -37,7 +37,7 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
           setSnackbar({ open: true, message: 'Cập nhật sim thành công', severity: 'success' });
           onClose();
         } catch (error) {
-          setSnackbar({ open: true, message: 'Có lối khi cập nhật sim', severity: 'error' });
+          setSnackbar({ open: true, message: 'Có lỗi khi cập nhật sim', severity: 'error' });
         }
       }
     },

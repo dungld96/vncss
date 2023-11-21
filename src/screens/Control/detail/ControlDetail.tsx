@@ -63,7 +63,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
 
   const onRefresh = () => {
     if (currentUser && selectedLocationId) {
-      getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId }).unwrap();
+      getControlLocation({ agencyId: currentUser.sub_id, locationId: selectedLocationId }, false).unwrap();
       onRefreshLocationsStatus();
     }
   };
@@ -110,7 +110,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
       )}
       {location && <UpdateLatLng location={location} show={openUpdateLatLngDialog} onClose={onCloseLatLngUpdate} />}
 
-      {result.isLoading ? (
+      {result.isLoading || result.isFetching ? (
         <Loading />
       ) : (
         <>
@@ -118,7 +118,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
             style={{
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: '#8F0A0C',
+              backgroundColor: '#E13153',
               padding: '0 8px 0 20px',
               color: '#FFFFFF',
             }}
