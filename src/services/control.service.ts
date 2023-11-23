@@ -45,7 +45,20 @@ export interface ControlLocationGatewayType {
   alert: number;
   blocking: boolean;
   testing: boolean;
-  state: { battery: number; charge: number; gsmLevel: number; hum: number; temp: number; timestamp: number } | null;
+  state: {
+    battery: number;
+    charge: number;
+    gsmLevel: number;
+    hum: number;
+    temp: number;
+    timestamp: number;
+    sensors: {
+      mode: number;
+      type: string;
+      status: number;
+      temp?: number[];
+    }[];
+  } | null;
   status: string;
   secure_code: 'string';
   enable_callcenter: boolean;
@@ -372,6 +385,19 @@ export const controlApi = createApi({
           } catch (error) {}
         },
       }),
+
+      getControlLocationEventImage: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/event-images`
+              : `monitoring/locations/${body.locationId}/event-images`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
     };
   },
 });
@@ -398,5 +424,7 @@ export const {
   useLazyGetControlLocationCameraBoxsQuery,
   useHandleAlertControlMutation,
   useLazyGetControlLocationsFilterQuery,
+  useGetControlLocationEventImageQuery,
+  useLazyGetControlLocationEventImageQuery,
   useRemoveNodeMutation,
 } = controlApi;

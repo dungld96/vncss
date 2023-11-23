@@ -2,7 +2,7 @@ export const randomId = () => Math.random().toString(36).substr(2, 6);
 
 export const defaultInitialValues = {
   name: '',
-  business_id: '',
+  business: '',
   contact_name: '',
   contact_number: '',
   contract_date: '',

@@ -12,6 +12,7 @@ import TableTag from '../../common/TableTag/TableTag';
 import useApp from '../../hooks/useApp';
 import { ImageIcon } from '../../utils/UtilsComponent';
 import { NormalInput } from 'common/input/NormalInput';
+import { BusinessTypes } from '../../configs/constant';
 
 export type EventReceiveType = {
   enabled: boolean;
@@ -31,7 +32,7 @@ interface Props {
 const LocationInfo: React.FC<Props> = ({ formik }) => {
   const { area, fetchArea } = useApp();
   const { setFieldValue, values, getFieldProps, isSubmitting, touched } = formik;
-  const { event_receivers, contract_date, province, district, commune, tags } = values;
+  const { event_receivers, contract_date, province, district, commune, tags, business } = values;
 
   useEffect(() => {
     fetchArea();
@@ -58,6 +59,8 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
     label: item.name,
     value: item.name,
   }));
+
+  const businessTypes = BusinessTypes.map((item) => ({ label: item.value, value: item.value }));
 
   return (
     <Box px={3} pb={3}>
@@ -138,10 +141,14 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
           />
           <Select
             fullWidth
-            disabled
+            data={businessTypes}
+            selected={business}
+            setSelected={(data) => setFieldValue('business', data)}
             style={{ width: '312px' }}
             topLable="Loại hình kinh doanh"
             placeholder="Chọn loại hình kinh doanh"
+            error={!business ? 'Vui lòng chọn loại hình kinh doanh' : ''}
+            errorEmpty={isSubmitting}
           />
           <DatePickers
             {...getFieldProps('contract_date')}

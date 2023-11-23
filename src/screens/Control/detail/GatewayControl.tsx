@@ -20,6 +20,7 @@ import {
   useLazyGetControlLocationLogsQuery,
   ControlLocationLogType,
   useHandleAlertControlMutation,
+  useGetControlLocationEventImageQuery,
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { AddNodeDialog } from './dialogs/AddNodeDialog';
@@ -55,7 +56,7 @@ export const GatewayControl = ({
         <Grid container spacing={1}>
           <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px' }}>
             {gatewayTypeCode === 'GW-ATM4G' ? (
-              <ATMNode />
+              <ATMNode gateway={gateway} locationId={location.id} />
             ) : (
               <GatewayNodes location={location} gateway={gateway} refetchGateway={refetchGateway} />
             )}
@@ -518,8 +519,15 @@ const GatewayNodes = ({
   );
 };
 
-const ATMNode = () => {
-  const imageUrls = [] as string[];
+const ATMNode = ({ locationId, gateway }: { locationId: string; gateway: ControlLocationGatewayType }) => {
+  const {
+    auth: { currentUser },
+  } = useAuth();
+
+  const { data: imagesData } = useGetControlLocationEventImageQuery({
+    locationId,
+    agencyId: currentUser?.sub_id || '',
+  });
   const { data: nodeTypes } = useGetNodeTypesQuery<{ data: INodeType[] }>(null);
   const nodesCode = [
     { code: 'NB-SMOKE', name: 'Cảm biến khói' },
@@ -549,6 +557,14 @@ const ATMNode = () => {
     });
   }, [nodeTypes]);
 
+  const imageUrls = imagesData || [];
+
+  const sensors = gateway.state?.sensors;
+
+  const tempSensor = sensors?.find((item) => item.type === 'SR-A100');
+
+  const temps = tempSensor?.temp;
+
   return (
     <Box>
       <Box maxHeight={'300px'}>
@@ -559,7 +575,7 @@ const ATMNode = () => {
           {nodes.map((item) => {
             return (
               <Grid key={item.id} item md={4} lg={3}>
-                <NodeCard data={item} nodeTypes={nodeTypes || []} onClickCard={() => {}} />
+                <NodeCard showPin={false} data={item} nodeTypes={nodeTypes || []} onClickCard={() => {}} />
               </Grid>
             );
           })}
@@ -571,23 +587,23 @@ const ATMNode = () => {
           <Grid item xs={12} sm={6}>
             <Box my={2} display="flex" justifyContent="space-between" alignItems="center">
               <Box style={{ color: '#8B8C9B' }}>Cảm biến 1</Box>
-              <Box style={{ color: '#E13153', fontWeight: 500 }}>22&#8451;</Box>
+              <Box style={{ color: '#E13153', fontWeight: 500 }}>{temps?.[0] || '--'}&#8451;</Box>
             </Box>
             <Box my={2} display="flex" justifyContent="space-between" alignItems="center">
               <Box style={{ color: '#8B8C9B' }}>Cảm biến 2</Box>
-              <Box style={{ color: '#E13153', fontWeight: 500 }}>25&#8451;</Box>
+              <Box style={{ color: '#E13153', fontWeight: 500 }}>{temps?.[1] || '--'}&#8451;</Box>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box my={2} display="flex" justifyContent="space-between" alignItems="center">
               <Box style={{ color: '#8B8C9B' }}>Cảm biến 3</Box>
-              <Box style={{ color: '#E13153', fontWeight: 500 }}>27&#8451;</Box>
+              <Box style={{ color: '#E13153', fontWeight: 500 }}>{temps?.[2] || '--'}&#8451;</Box>
             </Box>
             <Box my={2} display="flex" justifyContent="space-between" alignItems="center">
               <Box style={{ color: '#8B8C9B' }}>Cảnh báo nhiệt độ</Box>
               <Box display="flex">
                 <Typography style={{ color: '#E13153', fontWeight: 500, marginRight: '16px' }}>60&#8451;</Typography>
-                <Switch size="small" />
+                <Switch checked size="small" />
               </Box>
             </Box>
           </Grid>

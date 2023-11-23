@@ -7,7 +7,7 @@ export interface LocationType {
   active: boolean;
   address: string;
   agency_id: string;
-  business_id: string;
+  business: string;
   commune: string;
   contact_name: string;
   contact_number: string;

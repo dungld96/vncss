@@ -20,7 +20,7 @@ const LocationBaseInfo = ({ location }: { location?: LocationType }) => {
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Loại hình KD:</InfoTitle>
-        <InfoValue>Ngân hàng</InfoValue>
+        <InfoValue>{location?.business || 'Khác'}</InfoValue>
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Người liên hệ:</InfoTitle>

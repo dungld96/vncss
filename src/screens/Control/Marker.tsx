@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Typography, Box } from '@mui/material';
 import { MyLocation as MyLocationIcon } from '@mui/icons-material';
 import _ from 'lodash';
 import styled from '@emotion/styled';
-import HomeIcon from '../../assets/icons/home-icon.svg';
-import HomeMIcon from '../../assets/icons/home-m-icon.svg';
-import BuildingIcon from '../../assets/icons/building.svg';
-import CarIcon from '../../assets/icons/car.svg';
-import DollarsIcon from '../../assets/icons/dollars.svg';
-import MotoIcon from '../../assets/icons/moto.svg';
-import PvnIcon from '../../assets/icons/pvn-icon.svg';
-import AtmIcon from '../../assets/icons/atm.svg';
+import { keyframes } from '@emotion/react';
+
+import BankIcon from '../../assets/icons/b-bank.svg';
+import OtherIcon from '../../assets/icons/b-home.svg';
+import ElectronicIcon from '../../assets/icons/b-electronic.svg';
+import GoldIcon from '../../assets/icons/b-gold.svg';
+import StarIcon from '../../assets/icons/b-star.svg';
+import MedicalIcon from '../../assets/icons/b-medical.svg';
+import ATMIcon from '../../assets/icons/b-atm.svg';
+
 import { ControlLocationType } from '../../state/modules/control/controlReducer';
+import { BusinessIcon } from 'common/Icons/BusinessIcon';
 
 export const MarkerContainer = styled(Box)({
   width: '32px',
@@ -23,20 +26,30 @@ export const MarkerContainer = styled(Box)({
   left: '50%',
   top: '50%',
   margin: '-20px 0 0 -20px',
-  '&:after': {
-    content: '""',
-    width: '24px',
-    height: '24px',
-    margin: '4px 0 0 4px',
-    background: '#e6e6e6',
-    color: '#00cae9',
-    position: 'absolute',
-    borderRadius: '50%',
-  },
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   animationName: 'bounce',
   animationFillMode: 'both',
   animationDuration: '1s',
+  cursor: 'pointer',
 });
+
+const pulsate = keyframes`
+    0% {
+      transform: scale(0.1, 0.1);
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(1.2, 1.2);
+      opacity: 0;
+    }
+`;
 
 const MarkerPulse = styled(Box)({
   background: '#d6d4d4',
@@ -49,19 +62,32 @@ const MarkerPulse = styled(Box)({
   margin: '11px 0px 0px -12px',
   transform: 'rotateX(55deg)',
   zIndex: '-2',
-  //   .pulse-wave:after {
-  //     content: '';
-  //     border-radius: 50%;
-  //     height: 40px;
-  //     width: 40px;
-  //     position: absolute;
-  //     margin: -13px 0 0 -13px;
-  //     animation: pulsate 1s ease-out;
-  //     animation-iteration-count: infinite;
-  //     opacity: 0;
-  //     box-shadow: 0 0 1px 4px #dc3545;
-  //     animation-delay: 1.1s;
-  //   }
+});
+
+const MarkerPulseAlert = styled(Box)({
+  background: '#FF451B',
+  borderRadius: '50%',
+  height: '14px',
+  width: '14px',
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  margin: '11px 0px 0px -12px',
+  transform: 'rotateX(55deg)',
+  zIndex: '-2',
+  '&:after': {
+    content: '""',
+    borderRadius: '50%',
+    height: '40px',
+    width: '40px',
+    position: 'absolute',
+    margin: '-13px 0 0 -13px',
+    animation: `${pulsate} 1s ease-out`,
+    animationIterationCount: 'infinite',
+    opacity: 0,
+    boxShadow: '0 0 1px 4px #FF451B',
+    animationDelay: '1.1s',
+  },
 });
 
 const TypographyItem = styled(Typography)({
@@ -121,17 +147,17 @@ export const MyLocation = ({ message = '' }: { message: string; lat: number; lng
 
 export const ClusterMarker = ({ pointCount }: { pointCount: number; lat: number; lng: number }) => {
   return (
-    <MarkerContainer style={{ cursor: 'pointer' }}>
+    <MarkerContainer>
       <Box
         sx={{
-          position: 'absolute',
-          zIndex: 1,
-          transform: 'rotate(45deg)',
-          top: '9px',
-          right: '9px',
-          width: '16px',
+          width: '24px',
+          height: '24px',
           display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
+          borderRadius: '50%',
+          transform: 'rotate(45deg)',
+          backgroundColor: '#e6e6e6',
           fontSize: '14px',
           fontWeight: 600,
         }}
@@ -155,7 +181,7 @@ interface Props {
 
 export const Marker = (props: Props) => {
   const { color, onMarkerClick = _.noop, location } = props;
-  const { state, name } = location;
+  const { business } = location;
   const [hovering, setHovering] = React.useState(false);
   const hanleMouseEnter = () => {
     setHovering(true);
@@ -164,64 +190,33 @@ export const Marker = (props: Props) => {
     setHovering(false);
   };
 
-  // const getActiveMode = () => {
-  //   const mode = _.get(location_config, 'mode', 1);
-  //   const code = _.get(locationType, [0, 'code'], '');
-  //   const modeState = _.get(JSON.parse(state), 'mode', 0);
+  const icon = useMemo(() => {
+    if (business) {
+      switch (business) {
+        case 'Ngân hàng':
+          return BankIcon;
 
-  //   if (mode === 1) {
-  //     return 'Tắt cảnh báo';
-  //   } else {
-  //     if (code === 'SGW-AC6') {
-  //       if (modeState === 1) {
-  //         return 'Bật cảnh báo';
-  //       } else {
-  //         return 'Tắt cảnh báo';
-  //       }
-  //     } else {
-  //       if (mode === 2) {
-  //         return 'Đang ở nhà';
-  //       } else {
-  //         return 'Rời khỏi nhà';
-  //       }
-  //     }
-  //   }
-  // };
+        case 'Tiệm vàng':
+          return GoldIcon;
 
-  const getIcon = () => {
-    const code = '';
-    if (code) {
-      switch (code) {
-        case 'SGPS-MT1':
-          return MotoIcon;
+        case 'Văn phòng, cơ quan hành chính':
+          return StarIcon;
 
-        case 'SGPS-CT0':
-          return CarIcon;
+        case 'Trạm điện':
+          return ElectronicIcon;
 
-        case 'SGPS-RB2':
-          return DollarsIcon;
+        case 'Bệnh viện':
+          return MedicalIcon;
 
-        case 'SGW-A01':
-          return BuildingIcon;
-
-        case 'SGW-AC6':
-          return BuildingIcon;
-
-        case 'SGW-PM1':
-          return PvnIcon;
-
-        case 'SGW-GM2':
-          return HomeMIcon;
-
-        case 'SGW-A4E':
-          return AtmIcon;
+        case 'ATM':
+          return ATMIcon;
 
         default:
-          return HomeIcon;
+          return OtherIcon;
       }
     }
-    return HomeIcon;
-  };
+    return OtherIcon;
+  }, [business]);
 
   return (
     <>
@@ -247,7 +242,6 @@ export const Marker = (props: Props) => {
       <MarkerContainer
         style={{
           backgroundColor: color,
-          cursor: 'pointer',
         }}
         onClick={() => onMarkerClick(location)}
         onMouseEnter={hanleMouseEnter}
@@ -255,25 +249,20 @@ export const Marker = (props: Props) => {
       >
         <Box
           style={{
-            position: 'absolute',
-            zIndex: 1,
-            top: '7px',
-            right: '9px',
-            width: '16px',
-            minWidth: '16px',
+            width: '26px',
+            height: '26px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '50%',
             transform: 'rotate(45deg)',
+            backgroundColor: '#FFFFFF',
           }}
         >
-          <img
-            src={getIcon()}
-            alt=""
-            style={{
-              width: '100%',
-            }}
-          />
+          <BusinessIcon image={icon} color={color} />
         </Box>
       </MarkerContainer>
-      <MarkerPulse />
+      {location && location.state === 'alert' ? <MarkerPulseAlert /> : <MarkerPulse />}
     </>
   );
 };

@@ -20,9 +20,10 @@ type Props = {
   data: ControlLocationNodeType;
   nodeTypes: INodeType[];
   onClickCard: () => void;
+  showPin?: boolean;
 };
 
-export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
+export const NodeCard = ({ data, nodeTypes, onClickCard, showPin = true }: Props) => {
   const nodeType = nodeTypes.find((item) => item.id === data.node_type_id);
   const nodeCodeType = nodeType?.code.split('-')[1];
   return (
@@ -35,10 +36,14 @@ export const NodeCard = ({ data, nodeTypes, onClickCard }: Props) => {
             <img src={sensorMapped.power_off_dot} alt="" />
           )}
         </Box>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Box style={{ fontSize: '12px' }}>{data.state?.battery || 100}%</Box>
-          <img style={{ width: '20px', margin: '5px' }} src={sensorMapped.power_100} alt="" />
-        </Box>
+        {showPin ? (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Box style={{ fontSize: '12px' }}>{data.state?.battery || 100}%</Box>
+            <img style={{ width: '20px', margin: '5px' }} src={sensorMapped.power_100} alt="" />
+          </Box>
+        ) : (
+          <Box display="flex" justifyContent="center" alignItems="center"></Box>
+        )}
       </Box>
       <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
         <Box style={{ minHeight: 78 }}>

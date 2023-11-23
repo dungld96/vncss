@@ -194,17 +194,17 @@ export const ControlScreen = () => {
   const getColor = (state: string) => {
     switch (state) {
       case 'auto':
-        return '#00A550';
+        return '#27AE60';
       case 'connected':
-        return '#00A550';
+        return '#27AE60';
       case 'alert':
-        return '#DC3545';
+        return '#FF451B';
       case 'disconnected':
-        return '#989898';
+        return '#8B8C9B';
       case 'warning':
-        return 'orange';
+        return '#F2994A';
       default:
-        return '#989898';
+        return '#8B8C9B';
     }
   };
 

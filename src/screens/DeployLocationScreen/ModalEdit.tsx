@@ -65,15 +65,16 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handl
         address: values.address,
         tags: values.tags.map((item) => item.tagName),
         contract_date: dayjs(values.contract_date, 'DD/MM/YYYY').unix(),
+        business: values.business,
       };
-      await updateLocation({ location: body, parent_uuid: currentUser?.sub_id })
+      updateLocation({ location: body, parent_uuid: currentUser?.sub_id })
         .then((res) => {
-          setSnackbar({ open: true, message: 'Thêm vị trí thành công', severity: 'success' });
+          setSnackbar({ open: true, message: 'Cập nhật vị trí thành công', severity: 'success' });
           if (handleSuccess) {
             handleSuccess();
           }
         })
-        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi thêm ví trí', severity: 'error' }));
+        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật ví trí', severity: 'error' }));
       onClose();
     },
   });

@@ -159,7 +159,7 @@ export default function Filters({
   const columns = [
     { name: 'name', title: 'Tên vị trí' },
     { name: 'address', title: 'Địa chỉ' },
-    { name: 'business_id', title: 'Loại hình KD' },
+    { name: 'business', title: 'Loại hình KD' },
     { name: 'contact_name', title: 'Người liên hệ' },
     { name: 'contact_number', title: 'SĐT người liên hệ' },
     { name: 'maintaint_date', title: 'Ngày bảo trì' },

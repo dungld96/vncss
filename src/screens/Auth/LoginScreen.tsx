@@ -4,20 +4,20 @@ import KeyIcon from '@mui/icons-material/Key';
 import PersonIcon from '@mui/icons-material/Person';
 import { Box, Checkbox } from '@mui/material';
 import Field from '../../common/input/Field';
-import Button from '../../common/button/Button';
-import { Form, FormikProvider, useFormik } from 'formik';
+import FormButton from '../../common/button/Button';
+import { Form, Formik } from 'formik';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { useLocation, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
+import { object as YupObject, string as YupString } from 'yup';
 import background from '../../assets/img/BACKGROUND-2.svg';
 import imgLogo from '../../assets/img/logo-login.svg';
 import { useLoginMutation } from '../../services/auth.service';
 import { useSnackbar } from '../../hooks/useSnackbar';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
-const validationSchema = Yup.object().shape({
-  username: Yup.string().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
-  password: Yup.string().trim().min(6, 'Mật khẩu tối thiểu 6 kí tự').required('Mật khẩu không được để trống'),
+const validationSchema = YupObject().shape({
+  username: YupString().trim().min(4, 'Tên đăng nhập tối thiểu 6 kí tự').required('Tên đăng nhập không được để trống'),
+  password: YupString().trim().min(6, 'Mật khẩu tối thiểu 6 kí tự').required('Mật khẩu không được để trống'),
 });
 const AuthBox = styled(Box)({
   width: '100vw',
@@ -111,24 +111,6 @@ const LoginScreen = () => {
     }
   }, [token]);
 
-  const formik = useFormik({
-    initialValues: {
-      username: '',
-      password: '',
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      try {
-        await loginUser(values).unwrap();
-        navigate(from);
-      } catch (error) {
-        console.error('rejected', error);
-        setSnackbar({ open: true, message: 'Sai tài khoản hoặc mật khẩu', severity: 'error' });
-      }
-    },
-  });
-  const { handleSubmit, isValid, dirty } = formik;
-
   const handleForgotPass = () => {
     showModalConfirm({
       title: 'Quên mật khẩu',
@@ -170,48 +152,65 @@ const LoginScreen = () => {
               <Title>Đăng nhập</Title>
             </Box>
             <Box>
-              <FormikProvider value={formik}>
-                <Form onSubmit={handleSubmit}>
-                  <Field
-                    topLable="Tên đăng nhập"
-                    placeholder="Nhập mật khẩu"
-                    name="username"
-                    fullWidth
-                    iconStartAdorment={<IconPerson />}
-                  />
-                  <Field
-                    topLable="Mật khẩu"
-                    placeholder="Nhập mật khẩu"
-                    fullWidth
-                    iconStartAdorment={<IconKey />}
-                    type="password"
-                    name="password"
-                  />
-                  <Box
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}
-                  >
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
-                      <CheckBox />
-                      <LabelSaveLogin>Nhớ đăng nhập</LabelSaveLogin>
-                    </Box>
-                    <LabelFotgotPass type="button" onClick={handleForgotPass}>
-                      Quên mật khẩu?
-                    </LabelFotgotPass>
-                  </Box>
-                  <Box>
-                    <Button
-                      style={{ marginTop: 40 }}
+              <Formik
+                initialValues={{
+                  username: '',
+                  password: '',
+                }}
+                validationSchema={validationSchema}
+                onSubmit={async (values) => {
+                  try {
+                    await loginUser(values).unwrap();
+                    navigate(from);
+                  } catch (error) {
+                    setSnackbar({ open: true, message: 'Sai tài khoản hoặc mật khẩu', severity: 'error' });
+                  }
+                }}
+              >
+                {({ isValid, dirty, isSubmitting }) => (
+                  <Form>
+                    <Field
+                      topLable="Tên đăng nhập"
+                      placeholder="Nhập mật khẩu"
+                      name="username"
                       fullWidth
-                      color="primary"
-                      variant="contained"
-                      type="submit"
-                      disabled={!isValid || !dirty || isLoading}
+                      slow
+                      iconStartAdorment={<IconPerson />}
+                    />
+                    <Field
+                      topLable="Mật khẩu"
+                      placeholder="Nhập mật khẩu"
+                      fullWidth
+                      iconStartAdorment={<IconKey />}
+                      type="password"
+                      name="password"
+                    />
+                    <Box
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}
                     >
-                      Đăng nhập
-                    </Button>
-                  </Box>
-                </Form>
-              </FormikProvider>
+                      <Box style={{ display: 'flex', alignItems: 'center' }}>
+                        <CheckBox />
+                        <LabelSaveLogin>Nhớ đăng nhập</LabelSaveLogin>
+                      </Box>
+                      <LabelFotgotPass type="button" onClick={handleForgotPass}>
+                        Quên mật khẩu?
+                      </LabelFotgotPass>
+                    </Box>
+                    <Box>
+                      <FormButton
+                        variant="contained"
+                        fullWidth
+                        style={{ marginTop: 40 }}
+                        color="primary"
+                        type="submit"
+                        disabled={!isValid || !dirty || isLoading || isSubmitting}
+                      >
+                        Đăng nhập
+                      </FormButton>
+                    </Box>
+                  </Form>
+                )}
+              </Formik>
             </Box>
           </Box>
           <LabelCopyRight>

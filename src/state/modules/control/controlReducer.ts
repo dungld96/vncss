@@ -11,7 +11,7 @@ export interface ControlLocationType {
   district: string;
   commune: string;
   address: string;
-  business_id: string;
+  business: string;
   contact_name: string;
   contact_number: string;
   event_receivers: [];
