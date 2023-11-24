@@ -12,6 +12,7 @@ import PinIcon from '../../../assets/icons/pin-icon.svg';
 import DataEmpty from '../../../assets/img/data_empty.svg';
 import TakeCamera from '../../../assets/icons/take-camera.svg';
 import OnButton from '../../../assets/icons/on-button.svg';
+import OffButton from '../../../assets/icons/off-button.svg';
 import { LocationType } from '../../../state/modules/location/locationReducer';
 import {
   useLazyGetControlLocationGatewayNodesQuery,
@@ -21,6 +22,7 @@ import {
   ControlLocationLogType,
   useHandleAlertControlMutation,
   useGetControlLocationEventImageQuery,
+  useUpdateLocationControlMutation,
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { AddNodeDialog } from './dialogs/AddNodeDialog';
@@ -96,11 +98,29 @@ const GatewayInfo = ({
   const [gwSettingAnchorEl, setGwSettingAnchorEl] = useState<any>();
   const [openUpdateGatewayDialog, setOpenUpdateGatewayDialog] = useState(false);
 
+  const [updateLocationControl] = useUpdateLocationControlMutation();
+  const { setSnackbar } = useSnackbar();
+  const {
+    auth: { currentUser },
+  } = useAuth();
   const diffDay = dayjs(gateway.subscription_end_at).diff(dayjs(gateway.active_at), 'day');
-
   const onClickGwSetting = (event: React.MouseEvent<HTMLButtonElement>) => {
     setGwSettingAnchorEl(event.currentTarget);
   };
+
+  const handleClickOnOff = () => {
+    if (currentUser && location.id) {
+      updateLocationControl({
+        agencyId: currentUser.sub_id,
+        locationId: location.id,
+        data: { active_alert: !location.active_alert },
+      }).then((res) => {
+        setSnackbar({ open: true, message: 'Cập nhận cảnh báo thành công', severity: 'success' });
+        refetchGateway();
+      });
+    }
+  };
+
   return (
     <Box p={1}>
       <Box
@@ -155,7 +175,29 @@ const GatewayInfo = ({
           </Box>
         </Box>
       </Box>
-      <Box>
+      <Box mt={1} py={1} style={{ borderBottom: '1px solid #EEF2FA' }}>
+        <Box p={1} display="flex" justifyContent="space-around" alignItems="center">
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            style={{
+              color: location.active_alert ? '#08C727' : '#8B8C9B',
+              fontSize: '12px',
+              fontWeight: 500,
+              cursor: 'pointer',
+            }}
+            onClick={handleClickOnOff}
+          >
+            <img src={location.active_alert ? OnButton : OffButton} alt="" />
+            <Typography style={{ marginTop: '16px', fontWeight: 500 }}>
+              Cảnh báo {location.active_alert ? 'ON' : 'OFF'}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Box pt={1}>
         <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
           <InfoTitle>Loại:</InfoTitle>
           <InfoValue>{gatewayTypeName || '--'}</InfoValue>

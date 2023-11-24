@@ -18,21 +18,18 @@ import { BusinessIcon } from 'common/Icons/BusinessIcon';
 
 export const MarkerContainer = styled(Box)({
   width: '32px',
-  height: '32px',
-  borderRadius: '50% 50% 50% 0',
+  height: '45px',
   background: '#00cae9',
-  position: 'absolute',
-  transform: 'rotate(-45deg)',
-  left: '50%',
-  top: '50%',
-  margin: '-20px 0 0 -20px',
+  margin: '-26px 0 0 -21px',
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   justifyContent: 'center',
   animationName: 'bounce',
   animationFillMode: 'both',
   animationDuration: '1s',
   cursor: 'pointer',
+  clipPath:
+    'polygon( 50.427% 100%,9.763% 56.933%,9.763% 56.933%,8.15% 55.134%,6.681% 53.264%,5.364% 51.326%,4.203% 49.324%,3.204% 47.263%,2.374% 45.147%,1.718% 42.98%,1.242% 40.767%,0.953% 38.511%,0.855% 36.217%,0.855% 36.217%,1.504% 30.343%,3.382% 24.77%,6.388% 19.573%,10.419% 14.828%,15.374% 10.608%,21.15% 6.988%,27.646% 4.043%,34.759% 1.846%,42.386% 0.474%,50.427% 0%,50.427% 0%,58.468% 0.474%,66.096% 1.846%,73.209% 4.043%,79.704% 6.988%,85.48% 10.608%,90.435% 14.828%,94.467% 19.573%,97.473% 24.77%,99.351% 30.343%,100% 36.217%,100% 36.217%,99.902% 38.511%,99.612% 40.767%,99.137% 42.98%,98.481% 45.147%,97.651% 47.263%,96.652% 49.324%,95.491% 51.326%,94.173% 53.264%,92.705% 55.134%,91.091% 56.933%,50.427% 100%)',
 });
 
 const pulsate = keyframes`
@@ -156,10 +153,10 @@ export const ClusterMarker = ({ pointCount }: { pointCount: number; lat: number;
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: '50%',
-          transform: 'rotate(45deg)',
           backgroundColor: '#e6e6e6',
           fontSize: '14px',
           fontWeight: 600,
+          marginTop: '4px',
         }}
       >
         {pointCount}
@@ -255,8 +252,8 @@ export const Marker = (props: Props) => {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: '50%',
-            transform: 'rotate(45deg)',
             backgroundColor: '#FFFFFF',
+            marginTop: '3px',
           }}
         >
           <BusinessIcon image={icon} color={color} />

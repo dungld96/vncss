@@ -26,7 +26,7 @@ const SearchBox: React.FC<Props> = ({ map, maps, onPlacesChanged, placeholder, s
       });
       searchBox.current.addListener('places_changed', () => {
         const places = searchBox.current.getPlaces();
-        if (places.length === 0) {
+        if (!places || (places && places.length === 0)) {
           return;
         }
         markers.current.forEach((marker: any) => {
@@ -39,18 +39,10 @@ const SearchBox: React.FC<Props> = ({ map, maps, onPlacesChanged, placeholder, s
             console.log('Returned place contains no geometry');
             return;
           }
-          const icon = {
-            url: place.icon,
-            size: new maps.Size(71, 71),
-            origin: new maps.Point(0, 0),
-            anchor: new maps.Point(17, 34),
-            scaledSize: new maps.Size(25, 25),
-          };
           // Create a marker for each place.
           markers.current.push(
             new maps.Marker({
               map,
-              icon,
               title: place.name,
               position: place.geometry.location,
             })

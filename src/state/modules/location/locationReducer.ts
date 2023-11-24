@@ -24,6 +24,7 @@ export interface LocationType {
   tags: string[];
   state?: string;
   alert_at?: string;
+  active_alert: boolean;
 }
 
 export type EventReceiveType = {
