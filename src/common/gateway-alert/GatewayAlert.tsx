@@ -28,30 +28,6 @@ export const GatewayAlert = () => {
 
   const notificationsAlertQueue = useSelector(selectNotificationsAlertQueue);
 
-  const handleClose = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    if (currentNotify) {
-      dispatch(removeNotificationAlertFromQueue(currentNotify));
-    }
-    setCurrentNotify(undefined);
-    setOpen(false);
-  };
-
-  const handleProcessed = () => {
-    if (currentNotify && currentUser) {
-      handleNotification({ agencyId: currentUser.sub_id, locationId: currentNotify.locationId });
-    }
-    handleClose();
-  };
-
-  const handleRoute = () => {
-    const locationId = currentNotify?.locationId;
-    navigate(`${ROUTE_CONTROL}?locationId=${locationId}`);
-    handleClose();
-  };
-
   useEffect(() => {
     if (open) {
       audioRef.current = new Audio('http://pic.pikbest.com/00/25/35/888piC1N888piCh4S.mp3');
@@ -94,6 +70,32 @@ export const GatewayAlert = () => {
       setOpen(true);
     }
   }, [currentNotify]);
+
+  if (!currentUser) return null;
+
+  const handleClose = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    if (currentNotify) {
+      dispatch(removeNotificationAlertFromQueue(currentNotify));
+    }
+    setCurrentNotify(undefined);
+    setOpen(false);
+  };
+
+  const handleProcessed = () => {
+    if (currentNotify && currentUser) {
+      handleNotification({ agencyId: currentUser.sub_id, locationId: currentNotify.locationId });
+    }
+    handleClose();
+  };
+
+  const handleRoute = () => {
+    const locationId = currentNotify?.locationId;
+    navigate(`${ROUTE_CONTROL}?locationId=${locationId}`);
+    handleClose();
+  };
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose} aria-labelledby="max-width-dialog-title">

@@ -192,7 +192,11 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
                     fontWeight: 500,
                     borderBottom: '1px solid #ddd',
                   }}
-                  onClick={() => setOpenUpdateLatLngDialog(true)}
+                  onClick={() => {
+                    setOpenUpdateLatLngDialog(true);
+                    setOpenUpdateLocationDialog(false);
+                    setLocationSettingAnchorEl(undefined);
+                  }}
                 >
                   Chỉnh sửa toạ độ vị trí
                 </Box>

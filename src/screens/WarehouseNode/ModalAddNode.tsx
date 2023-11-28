@@ -106,11 +106,15 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
         description: values.description,
       };
       if (tab === 0) {
-        await addNode({
+        addNode({
           parent_uuid: currentUser?.sub_id,
           node: body,
         })
-          .then(() => {
+          .then((res: any) => {
+            if (res.error) {
+              setSnackbar({ open: true, message: 'Có lỗi khi thêm node', severity: 'error' });
+              return;
+            }
             setSnackbar({ open: true, message: 'Thêm node thành công', severity: 'success' });
           })
           .catch(() => {

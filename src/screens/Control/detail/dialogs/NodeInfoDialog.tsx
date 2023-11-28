@@ -79,8 +79,13 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
         gatewayId: gatewayId,
         nodeId: node.id,
       })
-        .then(() => {
+        .then((res: any) => {
+          if (res.error) {
+            setSnackbar({ open: true, message: 'Có lỗi khi gỡ node', severity: 'error' });
+            return;
+          }
           setSnackbar({ open: true, message: 'Gỡ node thành công', severity: 'success' });
+          onSuccess();
           onClose?.();
         })
         .catch(() => {

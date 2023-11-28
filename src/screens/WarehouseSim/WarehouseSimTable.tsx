@@ -110,6 +110,7 @@ const WarehouseSimTable = () => {
     { name: 'imei', title: 'Imei sim' },
     { name: 'activatedAt', title: 'Ngày kích hoạt' },
     { name: 'status', title: 'Trạng thái' },
+    { name: 'gateway_serial', title: 'Serial gateway' },
     { name: 'createdAt', title: 'Ngày tạo' },
     { name: 'action', title: 'Hành động' },
   ];
