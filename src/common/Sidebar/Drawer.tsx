@@ -286,11 +286,11 @@ export default function DrawerSidebar({ open }: Props) {
           }}
         >
           <Box display="table">
-            {open || hovering ? (
+            {/* {open || hovering ? (
               <img src={Logo} alt="VNCSS" style={{ width: '100%' }} />
             ) : (
               <img src={LogoSmall} alt="VNCSS" style={{ width: '100%' }} />
-            )}
+            )} */}
           </Box>
         </Box>
         <Box sx={{ height: '100%', backgroundColor: '#ffffff', paddingTop: '10px' }}>

@@ -148,7 +148,7 @@ const LoginScreen = () => {
                 background: '#FFFFFF',
               }}
             >
-              <ImgLogo src={imgLogo} alt="" />
+              {/* <ImgLogo src={imgLogo} alt="" /> */}
               <Title>Đăng nhập</Title>
             </Box>
             <Box>
@@ -214,7 +214,7 @@ const LoginScreen = () => {
             </Box>
           </Box>
           <LabelCopyRight>
-            Hệ thống thuộc bản quyền của Vntech24h.,Jsc. Hotline 0934.88.83.86 hoặc 0706.90.3333
+            {/* Hệ thống thuộc bản quyền của Vntech24h.,Jsc. Hotline 0934.88.83.86 hoặc 0706.90.3333 */}
           </LabelCopyRight>
         </Box>
       </AuthBox>
