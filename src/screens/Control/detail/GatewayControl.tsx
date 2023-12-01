@@ -56,14 +56,17 @@ export const GatewayControl = ({
     <Box px={1}>
       <Box>
         <Grid container spacing={1}>
-          <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px' }}>
-            {gatewayTypeCode === 'GW-ATM4G' ? (
-              <ATMNode gateway={gateway} locationId={location.id} />
-            ) : (
-              <GatewayNodes location={location} gateway={gateway} refetchGateway={refetchGateway} />
-            )}
-          </Grid>
-          <Grid item xs={4}>
+          {gatewayTypeCode !== 'GW-CTL4G' && (
+            <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px' }}>
+              {gatewayTypeCode === 'GW-ATM4G' ? (
+                <ATMNode gateway={gateway} locationId={location.id} />
+              ) : (
+                <GatewayNodes location={location} gateway={gateway} refetchGateway={refetchGateway} />
+              )}
+            </Grid>
+          )}
+
+          <Grid item xs={gatewayTypeCode === 'GW-CTL4G' ? 12 : 4}>
             <GatewayInfo
               location={location}
               gateway={gateway}
@@ -175,28 +178,31 @@ const GatewayInfo = ({
           </Box>
         </Box>
       </Box>
-      <Box mt={1} py={1} style={{ borderBottom: '1px solid #EEF2FA' }}>
-        <Box p={1} display="flex" justifyContent="space-around" alignItems="center">
-          <Box
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            style={{
-              color: location.active_alert ? '#08C727' : '#8B8C9B',
-              fontSize: '12px',
-              fontWeight: 500,
-              cursor: 'pointer',
-            }}
-            onClick={handleClickOnOff}
-          >
-            <img src={location.active_alert ? OnButton : OffButton} alt="" />
-            <Typography style={{ marginTop: '16px', fontWeight: 500 }}>
-              Cảnh báo {location.active_alert ? 'ON' : 'OFF'}
-            </Typography>
+      {gatewayTypeCode !== 'GW-CTL4G' && (
+        <Box mt={1} py={1} style={{ borderBottom: '1px solid #EEF2FA' }}>
+          <Box p={1} display="flex" justifyContent="space-around" alignItems="center">
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              style={{
+                color: location.active_alert ? '#08C727' : '#8B8C9B',
+                fontSize: '12px',
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}
+              onClick={handleClickOnOff}
+            >
+              <img src={location.active_alert ? OnButton : OffButton} alt="" />
+              <Typography style={{ marginTop: '16px', fontWeight: 500 }}>
+                Cảnh báo {location.active_alert ? 'ON' : 'OFF'}
+              </Typography>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      )}
+
       <Box pt={1}>
         <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
           <InfoTitle>Loại:</InfoTitle>
@@ -609,8 +615,8 @@ const ATMNode = ({ locationId, gateway }: { locationId: string; gateway: Control
 
   return (
     <Box>
-      <Box maxHeight={'300px'}>
-        <LocationImages imageUrls={imageUrls} originalHeight={300} />
+      <Box maxHeight={'340px'}>
+        <LocationImages showFullscreenButton={false} imageUrls={imageUrls} originalHeight={300} />
       </Box>
       <Box mt={10} mb={2}>
         <Grid container spacing={2}>

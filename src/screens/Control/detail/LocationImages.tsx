@@ -5,9 +5,11 @@ import DefaultImage from '../../../assets/img/default-image.jpg';
 export const LocationImages = ({
   imageUrls,
   originalHeight = 520,
+  showFullscreenButton = true
 }: {
   imageUrls: string[];
   originalHeight?: number;
+  showFullscreenButton?: boolean;
 }) => {
   const imagesParsed =
     imageUrls.length > 0
@@ -20,7 +22,7 @@ export const LocationImages = ({
 
   return (
     <Box pl={1}>
-      <ImageGallery items={imagesParsed} />
+      <ImageGallery showFullscreenButton={showFullscreenButton} items={imagesParsed} />
     </Box>
   );
 };
