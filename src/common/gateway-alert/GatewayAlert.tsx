@@ -71,7 +71,7 @@ export const GatewayAlert = () => {
     }
   }, [currentNotify]);
 
-  if (!currentUser) return null;
+  // if (!currentUser) return null;
 
   const handleClose = () => {
     if (audioRef.current) {
