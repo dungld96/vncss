@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Button, DialogActions, Typography, Grid } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { Form, FormikProvider, useFormik } from 'formik';
@@ -16,6 +16,7 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { useSnackbar } from '../../../../hooks/useSnackbar';
 import EditIcon from '../../../../assets/icons/edit-icon.svg';
 import { INodeType, useGetNodeTypesQuery } from '../../../../services/node.service';
+import { getMinutesDiffNow } from '../../../../utils/UtilsFunctions';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -93,6 +94,14 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
         });
     }
   };
+
+  const timestemp = node.state?.timestamp;
+  const status = node.state?.status;
+
+  const activeMode = useMemo(() => {
+    return timestemp && getMinutesDiffNow(timestemp) < 130 && status === 1 ? 'Online' : 'Mất kết nối';
+  }, [timestemp, status]);
+
   const { handleSubmit, getFieldProps, isValid, dirty } = formik;
 
   return (
@@ -153,7 +162,7 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Trạng thái kết nối</InfoTitle>
-                  <InfoValue>{node.status === 'activated' ? 'Online' : 'Offline'}</InfoValue>
+                  <InfoValue>{activeMode}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Lần cập nhật cuối:</InfoTitle>

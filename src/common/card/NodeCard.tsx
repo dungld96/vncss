@@ -6,6 +6,7 @@ import { sensorMapped } from '../../utils/sensorMapping';
 import DefaultNode from '../../assets/sensor/default-node.svg';
 import { ControlLocationNodeType } from '../../services/control.service';
 import { INodeType } from '../../services/node.service';
+import { getMinutesDiffNow } from '../../utils/UtilsFunctions';
 
 const DLNodeCard = styled(Card)({
   cursor: 'pointer',
@@ -26,15 +27,13 @@ type Props = {
 export const NodeCard = ({ data, nodeTypes, onClickCard, showPin = true }: Props) => {
   const nodeType = nodeTypes.find((item) => item.id === data.node_type_id);
   const nodeCodeType = nodeType?.code.split('-')[1];
+
+  const status = data.state && getMinutesDiffNow(data.state?.timestamp) < 130 && data.state?.status === 1;
   return (
     <DLNodeCard onClick={onClickCard}>
       <Box display="flex" justifyContent="space-between" alignItems="center" pb={2}>
         <Box>
-          {data.status === 'activated' ? (
-            <img src={sensorMapped.power_on_dot} alt="" />
-          ) : (
-            <img src={sensorMapped.power_off_dot} alt="" />
-          )}
+          {status ? <img src={sensorMapped.power_on_dot} alt="" /> : <img src={sensorMapped.power_off_dot} alt="" />}
         </Box>
         {showPin ? (
           <Box display="flex" justifyContent="center" alignItems="center">

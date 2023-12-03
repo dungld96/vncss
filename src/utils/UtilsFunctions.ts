@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const downloadCSV = (csv: any, filename: string) => {
   const link = document.createElement('a');
   link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURI(csv));
@@ -18,3 +20,9 @@ export const escapeDangerousCSVCharacters = (data: any) => {
 
 export const replaceDoubleQuoteInString = (columnData: any) =>
   typeof columnData === 'string' ? columnData.replace(/"/g, '""') : columnData;
+
+export function getMinutesDiffNow(timestamp: number) {
+  const now = dayjs();
+  const nodeStateTime = dayjs(timestamp * 1000);
+  return now.diff(nodeStateTime, 'minute', true);
+}

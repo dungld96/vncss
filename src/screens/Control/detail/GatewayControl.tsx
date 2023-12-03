@@ -203,7 +203,7 @@ const GatewayInfo = ({
         </Box>
       )}
 
-      <Box pt={1}>
+      <Box pt={1} width={gatewayTypeCode === 'GW-CTL4G' ? '50%' : '100%'}>
         <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
           <InfoTitle>Loại:</InfoTitle>
           <InfoValue>{gatewayTypeName || '--'}</InfoValue>
@@ -236,6 +236,12 @@ const GatewayInfo = ({
           <InfoTitle>Cập nhật lần cuối:</InfoTitle>
           <InfoValue>
             {gateway.state ? dayjs(gateway.state.timestamp * 1000).format('DD/MM/YYYY HH:mm') : '--'}
+          </InfoValue>
+        </Box>
+        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+          <InfoTitle>{'Chế độ test & kiểm thử'}:</InfoTitle>
+          <InfoValue>
+            <Switch size="small" checked={gateway.testing} readOnly />
           </InfoValue>
         </Box>
       </Box>
