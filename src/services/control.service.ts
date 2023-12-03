@@ -385,7 +385,6 @@ export const controlApi = createApi({
           } catch (error) {}
         },
       }),
-
       getControlLocationEventImage: build.query<any, { agencyId: string; locationId: string }>({
         query: (body) => ({
           url:
@@ -397,6 +396,32 @@ export const controlApi = createApi({
           return [{ type: 'Control' }];
         },
         transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
+      getControlLocationManagers: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/managers`
+              : `monitoring/locations/${body.locationId}/managers`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
+      updateLocationManager: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/managers`,
+              method: 'POST',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
       }),
     };
   },
@@ -427,4 +452,6 @@ export const {
   useGetControlLocationEventImageQuery,
   useLazyGetControlLocationEventImageQuery,
   useRemoveNodeMutation,
+  useGetControlLocationManagersQuery,
+  useUpdateLocationManagerMutation,
 } = controlApi;

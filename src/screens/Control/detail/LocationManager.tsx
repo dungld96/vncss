@@ -3,11 +3,15 @@ import styled from '@emotion/styled';
 import { Tabs, Tab, Box, Typography, Grid, Switch } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import { EventReceiveType } from '../../../state/modules/location/locationReducer';
-import { UpdatePhoneNotiDialog } from './dialogs/UpdatePhoneNotiDialog';
 import useModalConfirm from '../../../hooks/useModalConfirm';
-import { useUpdateLocationControlMutation } from '../../../services/control.service';
+import {
+  useGetControlLocationManagersQuery,
+  useUpdateLocationControlMutation,
+} from '../../../services/control.service';
 import { useSnackbar } from '../../../hooks/useSnackbar';
 import { useAuth } from '../../../hooks/useAuth';
+import { UpdatePhoneNotiDialog } from './dialogs/UpdatePhoneNotiDialog';
+import { UpdateManagerDialog } from './dialogs/UpdateManagerDialog';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,14 +42,16 @@ export const LocationManager = ({
   refetch: () => void;
   enableEventNumber: (newEventReceivers: EventReceiveType[]) => void;
 }) => {
-  const [value, setValue] = React.useState(0);
-  const [openAddPhoneDialog, setOpenAddPhoneDialog] = React.useState(false);
-  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const [updateLocationControl] = useUpdateLocationControlMutation();
-  const { setSnackbar } = useSnackbar();
   const {
     auth: { currentUser },
   } = useAuth();
+  const [value, setValue] = React.useState(0);
+  const [openAddPhoneDialog, setOpenAddPhoneDialog] = React.useState(false);
+  const [openAddManagerDialog, setOpenAddManagerDialog] = React.useState(false);
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
+  const [updateLocationControl] = useUpdateLocationControlMutation();
+  const { data: managers, refetch: refetchManager } = useGetControlLocationManagersQuery({ agencyId: currentUser?.sub_id ?? '', locationId });
+  const { setSnackbar } = useSnackbar();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -89,6 +95,15 @@ export const LocationManager = ({
           eventReceivers={eventReceivers}
           onClose={() => setOpenAddPhoneDialog(false)}
           onSuccess={refetch}
+          locationId={locationId}
+        />
+      )}
+      {openAddManagerDialog && (
+        <UpdateManagerDialog
+          open={openAddManagerDialog}
+          eventReceivers={eventReceivers}
+          onClose={() => setOpenAddManagerDialog(false)}
+          onSuccess={refetchManager}
           locationId={locationId}
         />
       )}
@@ -292,6 +307,7 @@ export const LocationManager = ({
           </Grid>
         </Box>
       </TabPanel>
+
       <TabPanel value={value} index={1}>
         <Box style={{ borderRadius: '6px' }}>
           <Grid
@@ -305,7 +321,7 @@ export const LocationManager = ({
               fontSize: '14px',
             }}
           >
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Box
                 style={{
                   display: 'flex',
@@ -318,7 +334,7 @@ export const LocationManager = ({
                 Tên Tài khoản
               </Box>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Box
                 style={{
                   display: 'flex',
@@ -344,53 +360,86 @@ export const LocationManager = ({
           </Grid>
 
           <Grid container style={{ fontSize: '14px' }}>
-            <Grid
-              item
-              xs={6}
-              height="48px"
-              style={{
-                borderLeft: '1px solid #C5C6D2',
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
+            {managers?.map((item: any) => (
+              <>
+                <Grid
+                  item
+                  xs={5}
+                  height="48px"
+                  style={{
+                    borderLeft: '1px solid #C5C6D2',
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                  }}
+                >
+                  <Box
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '100%',
+                      fontWeight: 500,
+                      color: '#8F0A0C',
+                    }}
+                  >
+                    {item.username}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  xs={5}
+                  height="48px"
+                  style={{
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                  }}
+                >
+                  <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    {item.phone}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  xs={2}
+                  height="48px"
+                  style={{
+                    borderRight: '1px solid #C5C6D2',
+                    borderBottom: '1px solid #C5C6D2',
+                  }}
+                >
+                  <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    <DeleteOutline style={{ color: '#8B8C9B', cursor: 'pointer' }} />
+                  </Box>
+                </Grid>
+              </>
+            ))}
+          </Grid>
+          <Grid
+            container
+            style={{
+              backgroundColor: '#EEF2FA',
+              borderLeft: '1px solid #C5C6D2',
+              borderRight: '1px solid #C5C6D2',
+              borderBottom: '1px solid #C5C6D2',
+              height: '48px',
+              borderRadius: '0 0 6px 6px',
+              fontWeight: 500,
+              fontSize: '14px',
+            }}
+          >
+            <Grid item xs={12}>
               <Box
+                onClick={() => setOpenAddManagerDialog(true)}
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                   height: '100%',
-                  fontWeight: 500,
-                  color: '#8F0A0C',
+                  color: '#0075FF',
+                  cursor: 'pointer',
                 }}
               >
-                Hoàng Ngọc Anh
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              height="48px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                0999888999
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              height="48px"
-              style={{
-                borderRight: '1px solid #C5C6D2',
-                borderBottom: '1px solid #C5C6D2',
-              }}
-            >
-              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <DeleteOutline style={{ color: '#8B8C9B', cursor: 'pointer' }} />
+                Thêm quản lý
               </Box>
             </Grid>
           </Grid>
