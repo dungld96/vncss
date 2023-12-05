@@ -34,7 +34,7 @@ import RCB4 from '../assets/sensor/remote-sos.svg';
 import RSBE from '../assets/sensor/remote-sos.svg';
 import RSBR from '../assets/sensor/remote-sos.svg';
 import SRB from '../assets/sensor/remote-sos.svg';
-import REMOTE from '../assets/sensor/remote-sos.svg';
+import REMOTE from '../assets/sensor/remote.svg';
 import SRB1 from '../assets/sensor/remote-sos.svg';
 import SOS from '../assets/sensor/remote-sos.svg';
 import SDB from '../assets/sensor/door.svg';

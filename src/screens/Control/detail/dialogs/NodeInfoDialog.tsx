@@ -104,6 +104,8 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
 
   const { handleSubmit, getFieldProps, isValid, dirty } = formik;
 
+  const nodeType = nodeTypes?.find((item) => item.id === node.node_type_id);
+
   return (
     <Modal
       size="sm"
@@ -140,7 +142,7 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Loại cảm biên:</InfoTitle>
-                  <InfoValue>{nodeTypes?.find((item) => item.id === node.node_type_id)?.name || '--'}</InfoValue>
+                  <InfoValue>{nodeType?.name || '--'}</InfoValue>
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Serial:</InfoTitle>
@@ -148,7 +150,7 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Mã thiết bị:</InfoTitle>
-                  <InfoValue>{node.state?.nType || '--'}</InfoValue>
+                  <InfoValue>{nodeType?.code || '--'}</InfoValue>
                 </Box>
               </Grid>
               <Grid item xs={6}>
@@ -166,7 +168,9 @@ export const NodeInfoDialog: React.FC<Props> = ({ locationId, gatewayId, node, o
                 </Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
                   <InfoTitle>Lần cập nhật cuối:</InfoTitle>
-                  <InfoValue>{dayjs(node.updated_at).format('HH:mm:ss DD/MM/YYYY') || '--'}</InfoValue>
+                  <InfoValue>
+                    {node.state ? dayjs(node.state.timestamp * 1000).format('HH:mm:ss DD/MM/YYYY') : '--'}
+                  </InfoValue>
                 </Box>
               </Grid>
             </Grid>
