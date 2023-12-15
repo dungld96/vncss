@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon / math_plus" clip-path="url(#clip0_3933_11715)">
+<path id="Union" fill-rule="evenodd" clip-rule="evenodd" d="M9 0.96875C9 0.416465 8.55229 -0.03125 8 -0.03125C7.44772 -0.03125 7 0.416465 7 0.96875V7H0.96875C0.416465 7 -0.03125 7.44772 -0.03125 8C-0.03125 8.55229 0.416465 9 0.96875 9H7V15.0312C7 15.5835 7.44772 16.0312 8 16.0312C8.55229 16.0312 9 15.5835 9 15.0312V9H15.0312C15.5835 9 16.0312 8.55229 16.0312 8C16.0312 7.44772 15.5835 7 15.0312 7H9V0.96875Z" fill="#8B8C9B"/>
+</g>
+<defs>
+<clipPath id="clip0_3933_11715">
+<rect width="15" height="15" fill="white" transform="translate(0.5 0.5)"/>
+</clipPath>
+</defs>
+</svg>

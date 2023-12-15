@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Tabs, Tab, Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { LocationType } from '../../../state/modules/location/locationReducer';
+import { LocationCharacteristic } from './LocationCharacteristic';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -83,17 +84,17 @@ export const LocationInfo = ({ location }: { location?: LocationType }) => {
       >
         <Tab label={<TabLabel>Thông tin cơ sở</TabLabel>} value={0} />
         <Tab label={<TabLabel>Đặc điểm cơ sở</TabLabel>} value={1} />
-        <Tab label={<TabLabel>Tag</TabLabel>} value={2} />
+        {/* <Tab label={<TabLabel>Tag</TabLabel>} value={2} /> */}
       </Tabs>
       <TabPanel value={value} index={0}>
         <LocationBaseInfo location={location} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        <LocationCharacteristic location={location} />
       </TabPanel>
-      <TabPanel value={value} index={2}>
+      {/* <TabPanel value={value} index={2}>
         Item Three
-      </TabPanel>
+      </TabPanel> */}
     </Box>
   );
 };

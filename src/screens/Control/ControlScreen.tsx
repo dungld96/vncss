@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Card, IconButton, styled, Tooltip } from '@mui/material';
+import { Box, Card, IconButton, Paper, styled, Tooltip } from '@mui/material';
 import { Cancel as CancelIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import GoogleMapReact from 'google-map-react';
 import { PointFeature } from 'supercluster';
@@ -16,6 +16,12 @@ import { ControlDetail } from './detail/ControlDetail';
 import { FilterBar } from './filter/FilterBar';
 import { FilterMore } from './filter/FilterMore';
 import ControlSearch from './search/ControlSearch';
+import LocationRargetIcon from '../../assets/icons/location-target.svg';
+import ZoomOutIcon from '../../assets/icons/zoom-out.svg';
+import ZoomInIcon from '../../assets/icons/zoom-in.svg';
+import Satellite from '../../assets/icons/satellite.png';
+import Roadmap from '../../assets/icons/roadmap.png';
+import FullscreenIcon from '../../assets/icons/fullscreen.svg';
 
 export const IconButtonMap = styled(IconButton)({
   position: 'absolute',
@@ -25,7 +31,26 @@ export const IconButtonMap = styled(IconButton)({
   backgroundColor: '#ffffff',
   '& img': {
     padding: '2px',
-    width: '32px',
+    width: '24px',
+  },
+  boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
+});
+
+const PaperButtonMap = styled(Paper)({
+  position: 'absolute',
+  padding: '3px',
+  zIndex: 1,
+  backgroundColor: '#ffffff',
+  bottom: '32px',
+  left: '10px',
+  color: '#666666',
+  width: '50px',
+  height: '47px',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  '& img': {
+    width: '100%',
+    borderRadius: '5px',
   },
   boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
 });
@@ -49,6 +74,7 @@ export const ControlScreen = () => {
   const [selectedLocation, setSelectedLocation] = useState<ControlLocationType>();
   const [loadedGeoService, setLoadedGeoService] = React.useState(false);
   const [filterExpand, setFilterExpand] = React.useState(false);
+  const [imageBtnMapType, setImageBtnMapType] = React.useState(Satellite);
 
   const defaultFiltersFormValue = {
     status: query.status || 'all',
@@ -235,6 +261,40 @@ export const ControlScreen = () => {
     onZoomOut();
   };
 
+  const onZoomIn = () => {
+    googleMapRef.current.map_.setZoom(googleMapRef.current.map_.getZoom() + 1);
+  };
+
+  const onChangeMapType = () => {
+    if (googleMapRef.current.map_.getMapTypeId() === 'roadmap') {
+      setImageBtnMapType(Roadmap);
+      googleMapRef.current.map_.setMapTypeId('satellite');
+    } else {
+      setImageBtnMapType(Satellite);
+      googleMapRef.current.map_.setMapTypeId('roadmap');
+    }
+  };
+
+  const onGetLocationClick = () => {
+    if (!loadedGeoService) {
+      return;
+    }
+    setCenter({
+      lat: currentPosition.lat,
+      lng: currentPosition.lng,
+    });
+  };
+
+  const onFullScreenClick = () => {
+    if (document.fullscreenEnabled) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    }
+  };
+
   const isFitering = Boolean(queryAgencyId || queryStatus);
 
   return (
@@ -256,7 +316,7 @@ export const ControlScreen = () => {
       <Card
         style={{
           position: 'absolute',
-          bottom: filterExpand ? 0 : '50px',
+          bottom: filterExpand ? 0 : '32px',
           zIndex: filterExpand ? 10 : 1,
           width: filterExpand ? '100%' : 'calc(100% - 64px)',
           boxShadow: filterExpand ? '0px 1px 4px rgba(0, 0, 0, 0.1)' : 'none',
@@ -329,6 +389,34 @@ export const ControlScreen = () => {
           </Box>
         )}
       </Card>
+      <IconButtonMap
+        style={{ top: '24px', right: '16px', zIndex: 1 }}
+        aria-label="fullscreen"
+        onClick={onFullScreenClick}
+      >
+        <img src={FullscreenIcon} alt="" />
+      </IconButtonMap>
+      <IconButtonMap
+        style={{ bottom: '86px', right: '16px', zIndex: 1 }}
+        aria-label="zoom in"
+        onClick={onGetLocationClick}
+      >
+        <img src={LocationRargetIcon} alt="" />
+      </IconButtonMap>
+      <IconButtonMap style={{ bottom: '32px', right: '70px', zIndex: 1 }} aria-label="zoom in" onClick={onZoomIn}>
+        <img src={ZoomInIcon} alt="" />
+      </IconButtonMap>
+      <PaperButtonMap onClick={onChangeMapType}>
+        <img src={imageBtnMapType} alt="" />
+      </PaperButtonMap>
+
+      <IconButtonMap
+        style={{ bottom: '32px', right: '16px', color: '#666666' }}
+        aria-label="zoom out"
+        onClick={onZoomOut}
+      >
+        <img src={ZoomOutIcon} alt="" />
+      </IconButtonMap>
       {/* <div
         style={{
           position: 'absolute',
@@ -362,23 +450,6 @@ export const ControlScreen = () => {
         // onGoogleApiLoaded={onGoogleApiLoaded}
         // onChange={onBoundsChange}
       >
-        {/* {locations.map((item) => {
-          return (
-            <Marker
-              key={item.id}
-              lat={item.lng}
-              lng={item.lat}
-              text={item.name}
-              color={'#DC3545'}
-              name={item.name}
-              id={item.id}
-              location={item}
-              productTypes={[]}
-              onMarkerClick={() => {}}
-              // showTooltip
-            />
-          );
-        })} */}
         {loadedGeoService && (
           <MyLocation lat={currentPosition.lat} lng={currentPosition.lng} message="Vị trí của bạn" />
         )}
@@ -412,70 +483,6 @@ export const ControlScreen = () => {
             />
           );
         })}
-        {/* 
-        {clusters.map((cluster, index) => {
-          if (cluster.numPoints === 1) {
-            const item = cluster.points[0];
-            let color = getColor(item.gatewayStatusId);
-            // const gatewayType = productTypes.filter(type => {
-            //   return type.id === item.product_type_id;
-            // });
-            // const gatewayTypeCode = _.upperFirst(
-            //   _.get(gatewayType, [0, 'code'], 'GW')
-            // );
-            // const signal = gatewayTypeCode.match(/\b(\w)/g).join('');
-            if (filterStatus === 0 || filterStatus === 5 || filterStatus === item.gatewayStatusId) {
-              return (
-                <Marker
-                  key={item.id}
-                  item={item}
-                  lat={_.get(item, 'gateway_config.lat')}
-                  lng={_.get(item, 'gateway_config.lng')}
-                  text={item.name}
-                  color={color}
-                  name={item.name}
-                  id={item.id}
-                  gateway={item}
-                  productTypes={productTypes}
-                  onMarkerClick={onClickMarker}
-                  showTooltip
-                />
-              );
-            }
-            return null;
-          } else {
-            return (
-              <ClusterMarker
-                key={index}
-                lat={_.get(cluster, 'y')}
-                lng={_.get(cluster, 'x')}
-                color="005dff"
-                pointCount={cluster.numPoints}
-              />
-            );
-          }
-        })} */}
-        {/* {(role.name === 'admin' ||
-          role.name === 'regulatory_agency_admin' ||
-          (role.name === 'agency_admin' && agencyCode === 'CP6GU')) &&
-          isShowRa &&
-          regulatoryAgencies &&
-          regulatoryAgencies.map((item) => {
-            const config = JSON.parse(_.get(item, 'configs', '{}'));
-            return (
-              <RaMaker
-                key={item.id}
-                lat={config.lat}
-                lng={config.lng}
-                text={item.name}
-                color="#DC3545"
-                name={item.name}
-                id={item.id}
-                ra={item}
-                onMarkerClick={onClickRa}
-              />
-            );
-          })} */}
       </GoogleMapReact>
     </Box>
   );

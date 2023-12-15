@@ -423,6 +423,32 @@ export const controlApi = createApi({
         },
         invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
       }),
+      getControlLocationCharacteristic: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/characteristic`
+              : `monitoring/locations/${body.locationId}/characteristic`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+      }),
+      updateLocationCharacteristic: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/characteristic`,
+              method: 'POST',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
+      }),
     };
   },
 });
@@ -454,4 +480,6 @@ export const {
   useRemoveNodeMutation,
   useGetControlLocationManagersQuery,
   useUpdateLocationManagerMutation,
+  useLazyGetControlLocationCharacteristicQuery,
+  useUpdateLocationCharacteristicMutation,
 } = controlApi;
