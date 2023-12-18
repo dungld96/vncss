@@ -47,9 +47,8 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const [openUpdateLocationDialog, setOpenUpdateLocationDialog] = React.useState(false);
   const [openUpdateLatLngDialog, setOpenUpdateLatLngDialog] = React.useState(false);
   const [getControlLocation, result] = useLazyGetControlLocationQuery();
-  const [updateLocationControl] = useUpdateLocationControlMutation();
   const [getControlLocations] = useLazyGetControlLocationsQuery();
-  const { setSnackbar } = useSnackbar();
+
 
   const {
     auth: { currentUser },
@@ -74,18 +73,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
     }
   };
 
-  const handleSaveEnableEventNumber = (eventReceivers: EventReceiveType[]) => {
-    if (currentUser && selectedLocationId) {
-      updateLocationControl({
-        agencyId: currentUser.sub_id,
-        locationId: selectedLocationId,
-        data: { event_receivers: [...eventReceivers] },
-      }).then((res) => {
-        onRefresh();
-        setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
-      });
-    }
-  };
+
 
   const onClickLocationSetting = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLocationSettingAnchorEl(event.currentTarget);
@@ -215,15 +203,8 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
             <Grid container spacing={1} sx={{ marginTop: '-4px', marginLeft: '-4px', height: 'calc(100% - 20px)' }}>
               <Grid item xs={12} sm={3}>
                 <ContentBox>
-                  <LocationInfo location={location} />
-                  {location && (
-                    <LocationManager
-                      eventReceivers={location.event_receivers || []}
-                      locationId={location.id}
-                      refetch={onRefresh}
-                      enableEventNumber={handleSaveEnableEventNumber}
-                    />
-                  )}
+                  <LocationInfo location={location} refetch={onRefresh}/>
+                  
                 </ContentBox>
               </Grid>
               <Grid item xs={12} sm={9}>

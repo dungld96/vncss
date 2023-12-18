@@ -4,13 +4,14 @@ import { Tabs, Tab, Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { LocationType } from '../../../state/modules/location/locationReducer';
 import { LocationCharacteristic } from './LocationCharacteristic';
+import { LocationManager } from './LocationManager';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
 
 const LocationBaseInfo = ({ location }: { location?: LocationType }) => {
   return (
-    <Box>
+    <Box pb={2} sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Tên:</InfoTitle>
         <InfoValue>{location?.name || '--'}</InfoValue>
@@ -67,14 +68,15 @@ const TabPanel = (props: TabPanelProps) => {
 
 const TabLabel = styled(Typography)({ fontWeight: 700, fontSize: '14px', textTransform: 'none' });
 
-export const LocationInfo = ({ location }: { location?: LocationType }) => {
+export const LocationInfo = ({ location, refetch }: { location?: LocationType; refetch: () => void }) => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
   return (
-    <Box pb={1} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box pb={1}>
       <Tabs
         value={value}
         onChange={handleChange}
@@ -88,6 +90,9 @@ export const LocationInfo = ({ location }: { location?: LocationType }) => {
       </Tabs>
       <TabPanel value={value} index={0}>
         <LocationBaseInfo location={location} />
+        {location && (
+          <LocationManager eventReceivers={location.event_receivers || []} locationId={location.id} refetch={refetch} />
+        )}
       </TabPanel>
       <TabPanel value={value} index={1}>
         <LocationCharacteristic location={location} />

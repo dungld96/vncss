@@ -35,12 +35,10 @@ export const LocationManager = ({
   eventReceivers,
   refetch,
   locationId,
-  enableEventNumber,
 }: {
   eventReceivers: EventReceiveType[];
   locationId: string;
   refetch: () => void;
-  enableEventNumber: (newEventReceivers: EventReceiveType[]) => void;
 }) => {
   const {
     auth: { currentUser },
@@ -50,9 +48,11 @@ export const LocationManager = ({
   const [openAddManagerDialog, setOpenAddManagerDialog] = React.useState(false);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [updateLocationControl] = useUpdateLocationControlMutation();
-  const { data: managers, refetch: refetchManager } = useGetControlLocationManagersQuery({ agencyId: currentUser?.sub_id ?? '', locationId });
+  const { data: managers, refetch: refetchManager } = useGetControlLocationManagersQuery({
+    agencyId: currentUser?.sub_id ?? '',
+    locationId,
+  });
   const { setSnackbar } = useSnackbar();
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -85,6 +85,19 @@ export const LocationManager = ({
         action: hideModalConfirm,
       },
     });
+  };
+
+  const handleSaveEnableEventNumber = (eventReceivers: EventReceiveType[]) => {
+    if (currentUser && locationId) {
+      updateLocationControl({
+        agencyId: currentUser.sub_id,
+        locationId: locationId,
+        data: { event_receivers: [...eventReceivers] },
+      }).then((res) => {
+        refetch();
+        setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
+      });
+    }
   };
 
   return (
@@ -147,7 +160,7 @@ export const LocationManager = ({
                     const newEventReceivers = checked
                       ? eventReceivers.map((item) => ({ ...item, enabled_sms: true }))
                       : eventReceivers.map((item) => ({ ...item, enabled_sms: false }));
-                    enableEventNumber([...newEventReceivers]);
+                    handleSaveEnableEventNumber([...newEventReceivers]);
                   }}
                 />
                 <Box>{`Call`}</Box>
@@ -159,7 +172,7 @@ export const LocationManager = ({
                     const newEventReceivers = checked
                       ? eventReceivers.map((item) => ({ ...item, enabled_call: true }))
                       : eventReceivers.map((item) => ({ ...item, enabled_call: false }));
-                    enableEventNumber([...newEventReceivers]);
+                    handleSaveEnableEventNumber([...newEventReceivers]);
                   }}
                 />
               </Box>
@@ -213,7 +226,7 @@ export const LocationManager = ({
                           const newItem = { ...item, enabled_sms: !item.enabled_sms };
                           const newEventReceivers = [...eventReceivers];
                           newEventReceivers[index] = newItem;
-                          enableEventNumber([...newEventReceivers]);
+                          handleSaveEnableEventNumber([...newEventReceivers]);
                         }}
                       />
                     </Box>
@@ -227,7 +240,7 @@ export const LocationManager = ({
                           const newItem = { ...item, enabled_call: !item.enabled_call };
                           const newEventReceivers = [...eventReceivers];
                           newEventReceivers[index] = newItem;
-                          enableEventNumber([...newEventReceivers]);
+                          handleSaveEnableEventNumber([...newEventReceivers]);
                         }}
                       />
                     </Box>

@@ -295,6 +295,26 @@ export const ControlScreen = () => {
     }
   };
 
+  const resetLocation = () => {
+    onGetLocationClick();
+    googleMapRef.current.map_.setZoom(13);
+  };
+
+  const onSearch = (id: string) => {
+    const location = locations.find((item) => item.id === id);
+    if (!loadedGeoService || !location) {
+      return;
+    }
+
+    const geoLoc = {
+      lat: location.lat,
+      lng: location.lng,
+    };
+    googleMapRef.current.map_.setCenter(geoLoc);
+    googleMapRef.current.map_.panTo(geoLoc);
+    googleMapRef.current.map_.setZoom(19);
+  };
+
   const isFitering = Boolean(queryAgencyId || queryStatus);
 
   return (
@@ -417,17 +437,17 @@ export const ControlScreen = () => {
       >
         <img src={ZoomOutIcon} alt="" />
       </IconButtonMap>
-      {/* <div
+      <Box
         style={{
           position: 'absolute',
-          top: '16px',
-          right: '16px',
+          top: '24px',
+          right: '70px',
           zIndex: 1,
           boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1) !important',
         }}
       >
-        <ControlSearch data={locations} />
-      </div> */}
+        <ControlSearch data={locations} onSearch={onSearch} resetLocation={resetLocation} />
+      </Box>
       <GoogleMapReact
         bootstrapURLKeys={{
           key: 'AIzaSyAjDwo_TVHsOX1nC5u9ySilk6IShSHF5tM',

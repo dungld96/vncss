@@ -25,7 +25,19 @@ interface Props {
 }
 
 const DatePickers: React.FC<Props> = (props) => {
-  const { date, maxDate, minDate, format = 'DD/MM/YYYY', error, onChange, showError, topLable, style, ...rest } = props;
+  const {
+    date,
+    maxDate,
+    minDate,
+    format = 'DD/MM/YYYY',
+    error,
+    onChange,
+    showError,
+    topLable,
+    fullWidth,
+    style,
+    ...rest
+  } = props;
 
   const [isTouched, setIsTouched] = React.useState(false);
   const touched = React.useRef(false);
@@ -37,7 +49,7 @@ const DatePickers: React.FC<Props> = (props) => {
   const helperText = (touched.current || isTouched) && !!error ? error : undefined;
 
   return (
-    <Box>
+    <Box width={fullWidth ? '100%' : 'auto'}>
       {topLable && (
         <Typography
           sx={{
@@ -73,6 +85,7 @@ const DatePickers: React.FC<Props> = (props) => {
           }}
           sx={{
             ...style,
+            width: fullWidth ? '100%' : 'auto',
             '& .MuiOutlinedInput-notchedOutline': {
               border: '1px solid #d9d9d9',
               '&.Mui-error': {

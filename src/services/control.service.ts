@@ -433,15 +433,77 @@ export const controlApi = createApi({
         providesTags() {
           return [{ type: 'Control' }];
         },
-        transformResponse: (response: { data: ControlLocationCameraType }, meta, arg) => response.data,
+        transformResponse: (response: { data: any }, meta, arg) => response.data,
       }),
       updateLocationCharacteristic: build.mutation<ResponsiveInterface, any>({
         query: ({ data, agencyId, locationId }) => {
+          // const bodyFormData = new FormData();
+          // for (const key in data) {
+          //   if (Object.prototype.hasOwnProperty.call(data, key)) {
+          //     const element = data[key];
+          //     bodyFormData.append(key, element);
+          //   }
+          // }
+
           try {
             return {
               url: `agencies/${agencyId}/monitoring/locations/${locationId}/characteristic`,
               method: 'POST',
               body: data,
+              formData: true,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
+      }),
+      getControlLocationEquipments: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/equipments`
+              : `monitoring/locations/${body.locationId}/equipments`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: any }, meta, arg) => response.data,
+      }),
+      createLocationEquipments: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/equipments`,
+              method: 'POST',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
+      }),
+      updateLocationEquipments: build.mutation<ResponsiveInterface, any>({
+        query: ({ data, agencyId, locationId, equipmentId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/equipments/${equipmentId}`,
+              method: 'PUT',
+              body: data,
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
+      }),
+      deleteLocationEquipment: build.mutation<ResponsiveInterface, any>({
+        query: ({ agencyId, locationId, equipmentId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/equipments/${equipmentId}`,
+              method: 'DELETE',
             };
           } catch (error: any) {
             throw new error.message();
@@ -476,10 +538,13 @@ export const {
   useHandleAlertControlMutation,
   useLazyGetControlLocationsFilterQuery,
   useGetControlLocationEventImageQuery,
-  useLazyGetControlLocationEventImageQuery,
   useRemoveNodeMutation,
   useGetControlLocationManagersQuery,
   useUpdateLocationManagerMutation,
   useLazyGetControlLocationCharacteristicQuery,
   useUpdateLocationCharacteristicMutation,
+  useLazyGetControlLocationEquipmentsQuery,
+  useCreateLocationEquipmentsMutation,
+  useUpdateLocationEquipmentsMutation,
+  useDeleteLocationEquipmentMutation,
 } = controlApi;
