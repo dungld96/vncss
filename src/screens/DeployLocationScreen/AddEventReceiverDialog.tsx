@@ -1,20 +1,14 @@
 import React from 'react';
 import { Box, Button, DialogActions, Typography, Grid, Switch } from '@mui/material';
-import FormikWrappedField from '../../../../common/input/Field';
+import FormikWrappedField from '../../common/input/Field';
 import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
-import Modal from '../../../../common/modal/Modal';
-import { useUpdateLocationControlMutation } from '../../../../services/control.service';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useSnackbar } from '../../../../hooks/useSnackbar';
-import { EventReceiveType } from '../../../../state/modules/location/locationReducer';
+import Modal from '../../common/modal/Modal';
 
 interface Props {
-  locationId: string;
   open: boolean;
-  eventReceivers: EventReceiveType[];
   onClose: () => void;
-  onSuccess: () => void;
+  addEventReceiver: (value: any) => void;
 }
 
 const validationSchema = {
@@ -22,14 +16,7 @@ const validationSchema = {
   name: Yup.string().required('Tên không được để trống'),
 };
 
-export const UpdatePhoneNotiDialog: React.FC<Props> = ({ eventReceivers, locationId, open, onClose, onSuccess }) => {
-  const [updateLocationControl] = useUpdateLocationControlMutation();
-  const {
-    auth: { currentUser },
-  } = useAuth();
-
-  const { setSnackbar } = useSnackbar();
-
+export const AddEventReceiverDialog: React.FC<Props> = ({ open, onClose, addEventReceiver }) => {
   const formik = useFormik({
     initialValues: {
       phone: '',
@@ -43,25 +30,8 @@ export const UpdatePhoneNotiDialog: React.FC<Props> = ({ eventReceivers, locatio
       ...validationSchema,
     }),
     onSubmit: (values) => {
-      if (currentUser && locationId) {
-        updateLocationControl({
-          agencyId: currentUser.sub_id,
-          locationId: locationId,
-          data: { event_receivers: [...eventReceivers, values] },
-        }).then((res: any) => {
-          if (res.error) {
-            setSnackbar({
-              open: true,
-              message: 'Cập nhận dánh sách nhận cảnh báo không thành công',
-              severity: 'error',
-            });
-            return;
-          }
-          setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
-          onSuccess();
-        });
-        onClose?.();
-      }
+      addEventReceiver(values);
+      onClose();
     },
   });
   const { handleSubmit, getFieldProps, isValid, dirty, values, setFieldValue } = formik;

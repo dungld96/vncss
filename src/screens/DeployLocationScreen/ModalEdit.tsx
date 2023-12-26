@@ -1,13 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Form, FormikProvider, useFormik } from 'formik';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import 'simplebar-react/dist/simplebar.min.css';
 import * as Yup from 'yup';
 import useApp from '../../hooks/useApp';
 import { useAuth } from '../../hooks/useAuth';
 import { useUpdateLocationMutation, useGetLocationQuery } from '../../services/location.service';
-import { EventReceiveType, LocationType } from '../../state/modules/location/locationReducer';
+import { LocationType } from '../../state/modules/location/locationReducer';
 import dayjs from 'dayjs';
 import { Close } from '@mui/icons-material';
 import LocationInfo, { tagsList } from './LocationInfo';

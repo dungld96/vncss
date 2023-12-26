@@ -64,13 +64,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           name: values.name,
           contact_name: values.contact_name,
           contact_number: values.contact_number,
-          event_receivers:
-            values.event_receivers?.map((item) => ({
-              name: item.name,
-              position: item.position,
-              phone: item.phone,
-              enabled: true,
-            })) || [],
+          event_receivers: values.event_receivers || [],
           province: values.province,
           district: values.district,
           commune: values.commune,

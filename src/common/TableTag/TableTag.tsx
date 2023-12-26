@@ -107,7 +107,7 @@ const TableTag: React.FC<Props> = ({ tags, hideButtonAdd, data, error, onSelecte
               Thẻ tag
             </TableCell>
             <TableCell align="center" width={'45%'} sx={{ borderRightColor: 'rgba(224, 224, 224, 1)' }}>
-              Tên cơ quan, đơn vị
+            Tên đơn vị giám sát
             </TableCell>
             <TableCell align="center"></TableCell>
           </TableRow>
@@ -151,7 +151,7 @@ const TableTag: React.FC<Props> = ({ tags, hideButtonAdd, data, error, onSelecte
                       fontWeight: '400',
                     }}
                   >
-                    Thêm tag cơ quan, đơn vị quản lý
+                    Thêm tag đơn vị giám sát
                   </Typography>
                   <Menu
                     id={id}

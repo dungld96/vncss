@@ -49,7 +49,6 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const [getControlLocation, result] = useLazyGetControlLocationQuery();
   const [getControlLocations] = useLazyGetControlLocationsQuery();
 
-
   const {
     auth: { currentUser },
   } = useAuth();
@@ -72,8 +71,6 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
       getControlLocations({ agency_id: currentUser.sub_id }, false).unwrap();
     }
   };
-
-
 
   const onClickLocationSetting = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLocationSettingAnchorEl(event.currentTarget);
@@ -203,8 +200,7 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
             <Grid container spacing={1} sx={{ marginTop: '-4px', marginLeft: '-4px', height: 'calc(100% - 20px)' }}>
               <Grid item xs={12} sm={3}>
                 <ContentBox>
-                  <LocationInfo location={location} refetch={onRefresh}/>
-                  
+                  <LocationInfo location={location} refetch={onRefresh} />
                 </ContentBox>
               </Grid>
               <Grid item xs={12} sm={9}>

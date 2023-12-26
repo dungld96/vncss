@@ -11,5 +11,5 @@ export const defaultInitialValues = {
   commune: '',
   district: '',
   province: '',
-  event_receivers: [{ name: '', position: '', phone: '', enabled: true }],
+  event_receivers: [],
 };

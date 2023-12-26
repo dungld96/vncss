@@ -20,8 +20,9 @@ import ModalAdd from './ModalAdd';
 import ModalEdit from './ModalEdit';
 import { useDeleteLocationMutation } from '../../services/location.service';
 import { useAuth } from '../../hooks/useAuth';
-import { defaultInitialValues } from './constant';
 import dayjs from 'dayjs';
+import ModalEditLatLng from './ModalEditLatLng';
+import { useSnackbar } from '../../hooks/useSnackbar';
 
 const ActionCellContent = ({
   cellProps,
@@ -40,6 +41,11 @@ const ActionCellContent = ({
   };
 
   const row = useMemo(() => cellProps.row, [cellProps]);
+
+  const handleClickAction = (type: string, row: any) => {
+    handleClose();
+    onActionClick(type, row);
+  };
 
   return (
     <div>
@@ -67,14 +73,20 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => onActionClick('edit', row)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => handleClickAction('edit', row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={EditIcon} />
           </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa</ListItemText>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa vị trí</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => handleClickAction('editLatLng', row)} sx={{ padding: '16px' }}>
+          <ListItemIcon>
+            <ImageIcon image={EditIcon} />
+          </ListItemIcon>
+          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Chỉnh sửa toạ độ vị trí</ListItemText>
         </MenuItem>
         <Divider sx={{ margin: '0 16px !important' }} />
-        <MenuItem onClick={() => onActionClick('delete', row)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => handleClickAction('delete', row)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={DeleteIcon} />
           </ListItemIcon>
@@ -91,11 +103,13 @@ export const DeployLocationTable: React.FC = () => {
   const [deleteLocation] = useDeleteLocationMutation();
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showModalEditLatLng, setShowModalEditLatLng] = useState(false);
   const [showModalEditTag, setShowModalEditTag] = useState(false);
   const [selectedLocationId, setSelectedLocatuonId] = useState<string>();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
 
   const locations = useSelector(selectLocation);
+  const { setSnackbar } = useSnackbar();
 
   const {
     auth: { currentUser },
@@ -158,14 +172,26 @@ export const DeployLocationTable: React.FC = () => {
     if (type === 'edit') {
       setSelectedLocatuonId(row.id);
       setShowModalEdit(true);
-    } else if (type === 'delete') {
+    }
+    if (type === 'editLatLng') {
+      setSelectedLocatuonId(row.id);
+      setShowModalEditLatLng(true);
+      return;
+    }
+
+    if (type === 'delete') {
       showModalConfirm({
         type: 'warning',
         title: 'Xoá vị trí triển khai',
         content: 'Bạn có chắc chắn muốn xoá vị trí này không?',
         confirm: {
-          action: async () => {
-            await deleteLocation({ id: row?.id, parent_uuid: currentUser?.sub_id }).unwrap();
+          action: () => {
+            deleteLocation({ id: row?.id, parent_uuid: currentUser?.sub_id })
+              .then((res) => {
+                setSnackbar({ open: true, message: 'Xoá vị trí thành công', severity: 'success' });
+              })
+              .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xoá ví trí', severity: 'error' }));
+
             hideModalConfirm();
           },
           text: 'Xoá vị trí',
@@ -185,6 +211,14 @@ export const DeployLocationTable: React.FC = () => {
         <ModalEdit
           show={showModalEdit}
           onClose={() => setShowModalEdit(false)}
+          locationId={selectedLocationId}
+          agencyId={currentUser.sub_id}
+        />
+      )}
+      {selectedLocationId && currentUser && showModalEditLatLng && (
+        <ModalEditLatLng
+          show={showModalEditLatLng}
+          onClose={() => setShowModalEditLatLng(false)}
           locationId={selectedLocationId}
           agencyId={currentUser.sub_id}
         />
