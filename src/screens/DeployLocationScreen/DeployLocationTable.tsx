@@ -4,7 +4,7 @@ import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, P
 import React, { useMemo, useState } from 'react';
 import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
-
+import Select from '../../common/Select/Select';
 import { useSelector } from 'react-redux';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
@@ -23,6 +23,14 @@ import { useAuth } from '../../hooks/useAuth';
 import dayjs from 'dayjs';
 import ModalEditLatLng from './ModalEditLatLng';
 import { useSnackbar } from '../../hooks/useSnackbar';
+import { useQueryParams, StringParam } from 'use-query-params';
+import { useGetAllAgenciesQuery } from 'services/agencies.service';
+import { BusinessTypes } from 'configs/constant';
+
+interface FiltersFormValue {
+  agencyId: string;
+  business: string;
+}
 
 const ActionCellContent = ({
   cellProps,
@@ -100,6 +108,11 @@ const ActionCellContent = ({
 };
 
 export const DeployLocationTable: React.FC = () => {
+  const [query, setQuery] = useQueryParams({
+    agencyId: StringParam,
+    search: StringParam,
+    business: StringParam,
+  });
   const [deleteLocation] = useDeleteLocationMutation();
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
@@ -107,13 +120,25 @@ export const DeployLocationTable: React.FC = () => {
   const [showModalEditTag, setShowModalEditTag] = useState(false);
   const [selectedLocationId, setSelectedLocatuonId] = useState<string>();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
+  const defaultFiltersFormValue = {
+    agencyId: query.agencyId || 'all',
+    business: query.business || 'all',
+  };
 
+  const [filtersFormValue, setFiltersFormValue] = React.useState(defaultFiltersFormValue);
+  const [searchValue, setSearchValue] = React.useState(query.search || '');
   const locations = useSelector(selectLocation);
   const { setSnackbar } = useSnackbar();
-
   const {
-    auth: { currentUser },
+    auth: { currentUser, currentAgency },
   } = useAuth();
+
+  const { data: allAgenciesData } = useGetAllAgenciesQuery({ id: currentUser?.sub_id || '' });
+  const agencies = (allAgenciesData?.data || [])
+    .concat(currentAgency ? [currentAgency] : [])
+    .map((item) => ({ value: item.id, label: item.name }));
+
+  const businessTypes = BusinessTypes.map((item) => ({ label: item.value, value: item.value }));
 
   const [columns] = useState([
     { name: 'name', title: 'Tên vị trí' },
@@ -203,6 +228,36 @@ export const DeployLocationTable: React.FC = () => {
     }
   };
 
+  const handleFilter = () => {
+    setQuery({
+      agencyId: filtersFormValue.agencyId,
+      search: searchValue ? searchValue : undefined,
+      business: filtersFormValue.business,
+    });
+  };
+
+  const handleClearFilter = () => {
+    setFiltersFormValue({ agencyId: 'all', business: 'all' });
+    setSearchValue('');
+    setQuery({
+      agencyId: undefined,
+      search: undefined,
+      business: undefined,
+    });
+  };
+
+  const handleChange = (filterName: 'agencyId' | 'business', value: any) => {
+    setFiltersFormValue({
+      ...filtersFormValue,
+      [filterName]: value,
+    } as FiltersFormValue);
+  };
+
+  const onSearchChange = (e: any) => {
+    const value = e.target.value;
+    setSearchValue(value);
+  };
+
   return (
     <>
       <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
@@ -225,11 +280,66 @@ export const DeployLocationTable: React.FC = () => {
       )}
 
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <Input
-          style={{ width: 311, background: '#FFFFFF' }}
-          placeholder="Tìm kiếm tên"
-          iconStartAdorment={<ImageIcon image={SearchIcon} />}
-        />
+        <Box display="flex" alignItems="center">
+          <Input
+            noMarginTop
+            topLable="Tìm kiếm"
+            style={{ width: 311, background: '#FFFFFF' }}
+            placeholder="Tìm kiếm tên"
+            iconStartAdorment={<ImageIcon image={SearchIcon} />}
+            onChange={onSearchChange}
+            value={searchValue}
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter') {
+                handleFilter();
+                ev.preventDefault();
+              }
+            }}
+          />
+          <Box ml={2} display="flex" alignItems="flex-end">
+            <Select
+              noMarginTop
+              fullWidth
+              data={agencies}
+              selected={filtersFormValue.agencyId}
+              setSelected={(data) => handleChange('agencyId', data)}
+              style={{ width: '300px', marginRight: '16px' }}
+              topLable="Đại lý"
+              placeholder="Tất cả đại lý"
+            />
+            <Select
+              fullWidth
+              noMarginTop
+              data={businessTypes}
+              selected={filtersFormValue.business}
+              setSelected={(data) => handleChange('business', data)}
+              style={{ width: '300px', marginRight: '16px' }}
+              topLable="Loại hình kinh doanh"
+              placeholder="Tất cả loại hình kinh doanh"
+            />
+            <Button
+              onClick={handleFilter}
+              color="primary"
+              variant="contained"
+              style={{
+                height: '40px',
+                padding: '0 16px',
+                marginRight: '16px',
+              }}
+            >
+              Lọc
+            </Button>
+            <Button
+              onClick={handleClearFilter}
+              color="primary"
+              variant="outlined"
+              style={{ height: '40px', padding: '0 16px' }}
+            >
+              Xoá bộ lọc
+            </Button>
+          </Box>
+        </Box>
+
         <Button variant="contained" onClick={() => setShowModalAdd(true)}>
           <ImageIcon image={AddIcon} />
           <Box sx={{ marginLeft: '8px' }}>Thêm vị trí triển khai</Box>
