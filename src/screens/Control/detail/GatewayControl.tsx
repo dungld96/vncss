@@ -255,19 +255,21 @@ const GatewayInfo = ({
             <Switch size="small" checked={gateway.testing} readOnly />
           </InfoValue>
         </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>{'Xử lý cảnh báo'}:</InfoTitle>
-          <InfoValue>
-            <Button
-              variant="contained"
-              style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
-              onClick={handleProcessed}
-              disabled={location.state !== 'alert'}
-            >
-              Đã xử lý
-            </Button>
-          </InfoValue>
-        </Box>
+        {gatewayTypeCode === 'GW-CTL4G' && (
+          <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+            <InfoTitle>{'Xử lý cảnh báo'}:</InfoTitle>
+            <InfoValue>
+              <Button
+                variant="contained"
+                style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
+                onClick={handleProcessed}
+                disabled={location.state !== 'alert'}
+              >
+                Đã xử lý
+              </Button>
+            </InfoValue>
+          </Box>
+        )}
       </Box>
       {gatewayTypeCode === 'GW-ATM4G' && (
         <Box mt={1} py={2} style={{ borderTop: '1px solid #EEF2FA' }}>
