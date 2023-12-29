@@ -59,7 +59,7 @@ export const GatewayControl = ({
           {gatewayTypeCode !== 'GW-CTL4G' && (
             <Grid item xs={8} style={{ borderRight: '2px solid #EEF2FA', paddingRight: '16px' }}>
               {gatewayTypeCode === 'GW-ATM4G' ? (
-                <ATMNode gateway={gateway} locationId={location.id} />
+                <ATMNode gateway={gateway} location={location} refetchGateway={refetchGateway} />
               ) : (
                 <GatewayNodes location={location} gateway={gateway} refetchGateway={refetchGateway} />
               )}
@@ -100,7 +100,7 @@ const GatewayInfo = ({
 }) => {
   const [gwSettingAnchorEl, setGwSettingAnchorEl] = useState<any>();
   const [openUpdateGatewayDialog, setOpenUpdateGatewayDialog] = useState(false);
-
+  const [handleAlert] = useHandleAlertControlMutation();
   const [updateLocationControl] = useUpdateLocationControlMutation();
   const { setSnackbar } = useSnackbar();
   const {
@@ -121,6 +121,17 @@ const GatewayInfo = ({
         setSnackbar({ open: true, message: 'Cập nhận cảnh báo thành công', severity: 'success' });
         refetchGateway();
       });
+    }
+  };
+
+  const handleProcessed = () => {
+    if (currentUser && location) {
+      handleAlert({ agencyId: currentUser.sub_id, locationId: location.id })
+        .then((res) => {
+          refetchGateway();
+          setSnackbar({ open: true, message: 'Xử lý cảnh báo thành công', severity: 'success' });
+        })
+        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xử lý cảnh báo', severity: 'error' }));
     }
   };
 
@@ -190,9 +201,9 @@ const GatewayInfo = ({
                 color: location.active_alert ? '#08C727' : '#8B8C9B',
                 fontSize: '12px',
                 fontWeight: 500,
-                cursor: 'pointer',
+                // cursor: 'pointer',
               }}
-              onClick={handleClickOnOff}
+              // onClick={handleClickOnOff}
             >
               <img src={location.active_alert ? OnButton : OffButton} alt="" />
               <Typography style={{ marginTop: '16px', fontWeight: 500 }}>
@@ -242,6 +253,19 @@ const GatewayInfo = ({
           <InfoTitle>{'Chế độ test & kiểm thử'}:</InfoTitle>
           <InfoValue>
             <Switch size="small" checked={gateway.testing} readOnly />
+          </InfoValue>
+        </Box>
+        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+          <InfoTitle>{'Xử lý cảnh báo'}:</InfoTitle>
+          <InfoValue>
+            <Button
+              variant="contained"
+              style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
+              onClick={handleProcessed}
+              disabled={location.state !== 'alert'}
+            >
+              Đã xử lý
+            </Button>
           </InfoValue>
         </Box>
       </Box>
@@ -573,16 +597,27 @@ const GatewayNodes = ({
   );
 };
 
-const ATMNode = ({ locationId, gateway }: { locationId: string; gateway: ControlLocationGatewayType }) => {
+const ATMNode = ({
+  location,
+  gateway,
+  refetchGateway,
+}: {
+  location: LocationType;
+  gateway: ControlLocationGatewayType;
+  refetchGateway: () => void;
+}) => {
+  const { setSnackbar } = useSnackbar();
   const {
     auth: { currentUser },
   } = useAuth();
 
   const { data: imagesData } = useGetControlLocationEventImageQuery({
-    locationId,
+    locationId: location.id,
     agencyId: currentUser?.sub_id || '',
   });
   const { data: nodeTypes } = useGetNodeTypesQuery<{ data: INodeType[] }>(null);
+  const [handleAlert] = useHandleAlertControlMutation();
+
   const nodesCode = [
     { code: 'NB-SMOKE', name: 'Cảm biến khói' },
     { code: 'NB-DOOR', name: 'Cảm biến cửa' },
@@ -618,13 +653,37 @@ const ATMNode = ({ locationId, gateway }: { locationId: string; gateway: Control
   const tempSensor = sensors?.find((item) => item.type === 'SR-A100');
 
   const temps = tempSensor?.temp;
-
+  const handleProcessed = () => {
+    if (currentUser && location) {
+      handleAlert({ agencyId: currentUser.sub_id, locationId: location.id })
+        .then((res) => {
+          refetchGateway();
+          setSnackbar({ open: true, message: 'Xử lý cảnh báo thành công', severity: 'success' });
+        })
+        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xử lý cảnh báo', severity: 'error' }));
+    }
+  };
   return (
     <Box>
       <Box maxHeight={'340px'}>
         <LocationImages showFullscreenButton={false} imageUrls={imageUrls} originalHeight={300} />
       </Box>
       <Box mt={10} mb={2}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box flex={1}>
+            <Typography style={{ fontSize: '18px', fontWeight: 700 }}>Danh sách Node</Typography>
+          </Box>
+          <Box mt={1} mr={2}>
+            <Button
+              variant="contained"
+              style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
+              onClick={handleProcessed}
+              disabled={location.state !== 'alert'}
+            >
+              Đã xử lý
+            </Button>
+          </Box>
+        </Box>
         <Grid container spacing={2}>
           {nodes.map((item) => {
             return (
