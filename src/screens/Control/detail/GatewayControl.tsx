@@ -648,7 +648,7 @@ const ATMNode = ({
     });
   }, [nodeTypes]);
 
-  const imageUrls = imagesData || [];
+  const imageUrls = (imagesData || []).map((item: any) => item.url);
 
   const sensors = gateway.state?.sensors;
 
