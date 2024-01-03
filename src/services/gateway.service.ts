@@ -115,6 +115,20 @@ export const gatewaysApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
     }),
+    extendGateway: build.mutation<DeltailGatewayResponsiveInterface, { data: any; agencyId: string }>({
+      query: ({ data, agencyId }) => {
+        try {
+          return {
+            url: `agencies/${agencyId}/gateways/subscription/extend`,
+            method: 'PUT',
+            body: data,
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Gateway' }]),
+    }),
     achieveGateway: build.mutation<any, { parent_uuid?: string; gateway_ids: (string | number)[] }>({
       query: (body) => {
         try {
@@ -195,4 +209,5 @@ export const {
   useUpdateGatewayMutation,
   useDeleteGatewayMutation,
   useGetGatewayTypesQuery,
+  useExtendGatewayMutation,
 } = gatewaysApi;

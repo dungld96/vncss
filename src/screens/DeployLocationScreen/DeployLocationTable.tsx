@@ -146,7 +146,7 @@ export const DeployLocationTable: React.FC = () => {
     { name: 'business', title: 'Loại hình KD' },
     { name: 'contact_name', title: 'Người liên hệ' },
     { name: 'contact_number', title: 'SĐT người liên hệ' },
-    { name: 'event_receiver_count', title: 'Người nhận thông báo' },
+    // { name: 'event_receiver_count', title: 'Người nhận thông báo' },
     { name: 'maintaint_date', title: 'Ngày bảo trì' },
     { name: 'tags', title: 'Thẻ tag' },
     { name: 'action', title: 'Hành động' },

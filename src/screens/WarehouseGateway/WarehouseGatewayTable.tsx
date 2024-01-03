@@ -94,7 +94,7 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={() => onActionClick('extend', cellProps.row)} sx={{ padding: '16px' }}>
+        <MenuItem onClick={() => onActionClick('extend', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={CalendarIcon} />
           </ListItemIcon>
@@ -142,7 +142,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     show: false,
     ids: [''],
   });
-  const [ModalExtend, setModalExtend] = useState(false);
+  const [gwExtendIds, setGwExtendIds] = useState<Array<number | string>>([]);
 
   const gateways = useSelector(selectGateway);
   const agencies = useSelector(selectAgencies);
@@ -169,7 +169,9 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'action', width: 200, align: 'center' },
+    { columnName: 'action', width: 120, align: 'center' },
+    { columnName: 'serial', width: 150, align: 'center' },
+    { columnName: 'mfg', width: 140, align: 'center' },
   ]);
 
   const customField = useMemo<CustomFieldType>(
@@ -246,7 +248,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
 
   const mappingGatewayType = (typeId: string) => {
     const type = gatewayTypes.find((item) => item.id === typeId);
-    return type ? `${type.code} - ${type.name}` : typeId;
+    return type ? `${type.code}` : typeId;
   };
 
   const handleRecall = (ids: (string | number)[], more?: boolean) => {
@@ -275,7 +277,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
 
   const handleClick = (type: string, id: string | any) => {
     if (type === 'extend') {
-      setModalExtend(true);
+      setGwExtendIds([id]);
     } else if (type === 'change-agency') {
       handelMove([id]);
     } else if (type === 'recall') {
@@ -326,7 +328,9 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
 
   return (
     <>
-      <ModalExtendGateway show={ModalExtend} onClose={() => setModalExtend(false)} />
+      {gwExtendIds.length > 0 && (
+        <ModalExtendGateway show gatewayIds={gwExtendIds} onClose={() => setGwExtendIds([])} />
+      )}
       <ModalChangeAgency
         onSuccess={() => setSelection([])}
         type="gateway"
@@ -419,7 +423,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
                 <ButtonBase
                   sx={{ color: '#52535C', marginRight: '32px' }}
                   startIcon={<ImageIcon image={CalendarIcon} />}
-                  onClick={() => setModalExtend(true)}
+                  onClick={() => setGwExtendIds(selection)}
                 >
                   Gia hạn
                 </ButtonBase>
