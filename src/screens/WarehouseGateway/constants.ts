@@ -16,6 +16,13 @@ export const mappingStatusGateway = {
   [FREE]: 'Tự do',
 };
 
+export const statusGatewayList = [
+  { label: 'Kích hoạt', value: ACTIVE },
+  { label: 'Bảo hành', value: WARRANTY },
+  { label: 'Lưu kho', value: SAVE },
+  { label: 'Tự do', value: FREE },
+];
+
 export const mappingStatusGatewayColor = {
   [ACTIVE]: '#27AE60',
   [WARRANTY]: '#F2994A',

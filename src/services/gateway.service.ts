@@ -6,6 +6,7 @@ import { queryRootConfig, ResponsiveInterface } from './http.service';
 export interface IGateway {
   id?: string;
   agency_id?: string;
+  location_id?: string;
   gateway_type_id: string;
   name?: string;
   sim?: string;

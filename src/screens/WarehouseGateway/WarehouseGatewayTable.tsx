@@ -32,6 +32,7 @@ import CalendarIcon from '../../assets/icons/calendar-icon.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import ShopIcon from '../../assets/icons/shop-icon.svg';
+import LocationIcon from '../../assets/icons/location-icon.svg';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
@@ -40,7 +41,7 @@ import useModalConfirm from '../../hooks/useModalConfirm';
 import ModalChangeAgency from '../WarehouseNode/ModalChangeAgency';
 import { IUser } from '../../services/auth.service';
 import { selectGateway } from '../../state/modules/gateway/gatewayReducer';
-import { listStatusGateway, mappingStatusGateway, mappingStatusGatewayColor } from './constants';
+import { mappingStatusGateway, mappingStatusGatewayColor, statusGatewayList } from './constants';
 import ModalAdd from './ModalAdd';
 import ModalExtendGateway from './ModalExtendGateway';
 
@@ -49,6 +50,16 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
 import { IGatewayType, useAchieveGatewayMutation, useDeleteGatewayMutation } from '../../services/gateway.service';
 import { selectAgencies } from '../../state/modules/agency/agencyReducer';
+import { StringParam, useQueryParams } from 'use-query-params';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_CONTROL } from 'utils/routesMap';
+
+interface FiltersFormValue {
+  search: string;
+  agencyId: string;
+  gatewayTypeId: string;
+  status: string;
+}
 
 const ActionCellContent = ({
   cellProps,
@@ -67,6 +78,7 @@ const ActionCellContent = ({
   };
 
   const rowId = useMemo(() => cellProps.row?.id, [cellProps]);
+  const locationId = useMemo(() => cellProps.row?.location_id, [cellProps]);
 
   return (
     <div>
@@ -94,6 +106,18 @@ const ActionCellContent = ({
           horizontal: 'right',
         }}
       >
+        {locationId && (
+          <>
+            <MenuItem onClick={() => onActionClick('view', rowId)} sx={{ padding: '16px' }}>
+              <ListItemIcon>
+                <ImageIcon image={LocationIcon} />
+              </ListItemIcon>
+              <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Tới vị trí trên bản đồ</ListItemText>
+            </MenuItem>
+            <Divider sx={{ margin: '0 16px !important' }} />
+          </>
+        )}
+
         <MenuItem onClick={() => onActionClick('extend', rowId)} sx={{ padding: '16px' }}>
           <ListItemIcon>
             <ImageIcon image={CalendarIcon} />
@@ -131,6 +155,16 @@ const ActionCellContent = ({
 };
 
 export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGatewayType[] }) => {
+  const [query, setQuery] = useQueryParams({
+    agencyId: StringParam,
+    search: StringParam,
+    gatewayTypeId: StringParam,
+    status: StringParam,
+  });
+  const {
+    auth: { currentUser, currentAgency },
+  } = useAuth();
+
   const [achieveGateway] = useAchieveGatewayMutation();
   const [deleteGateway] = useDeleteGatewayMutation();
   const [trigger] = useLazyGetAllAgenciesQuery();
@@ -143,18 +177,29 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     ids: [''],
   });
   const [gwExtendIds, setGwExtendIds] = useState<Array<number | string>>([]);
+  const [searchValue, setSearchValue] = React.useState(query.search || '');
+  const navigate = useNavigate();
+
+  const defaultFiltersFormValue = {
+    agencyId: query.agencyId || 'all',
+    gatewayTypeId: query.gatewayTypeId || 'all',
+    status: query.status || 'all',
+  };
+
+  const [filtersFormValue, setFiltersFormValue] = React.useState(defaultFiltersFormValue);
 
   const gateways = useSelector(selectGateway);
   const agencies = useSelector(selectAgencies);
-  const {
-    auth: { currentUser },
-  } = useAuth();
+  const agenciesList = (agencies || [])
+    .concat(currentAgency ? [currentAgency] : [])
+    .map((item) => ({ value: item.id, label: item.name }));
+  const gatewayTypesList = (gatewayTypes || []).map((item) => ({ value: item.id, label: item.name }));
 
   const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
 
   const [columns] = useState([
     { name: 'gatewayType', title: 'Loại' },
-    { name: 'description', title: 'Mô tả' },
+    // { name: 'description', title: 'Mô tả' },
     { name: 'serial', title: 'Serial' },
     { name: 'hardware_version', title: 'Phiên bản' },
     { name: 'mfg', title: 'Ngày xuất xưởng' },
@@ -173,6 +218,12 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     { columnName: 'serial', width: 150, align: 'center' },
     { columnName: 'mfg', width: 140, align: 'center' },
   ]);
+
+  const handleClickCopy = (e: any, row: any) => {
+    e.stopPropagation();
+    console.log('copied');
+    navigator.clipboard.writeText(row.serial);
+  };
 
   const customField = useMemo<CustomFieldType>(
     () => ({
@@ -198,7 +249,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
               </Typography>
               <FileCopyOutlined
                 style={{ marginLeft: '4px', cursor: 'pointer', fontSize: '12px' }}
-                onClick={() => navigator.clipboard.writeText(row.serial)}
+                onClick={(e) => handleClickCopy(e, row)}
               />
             </Box>
           );
@@ -230,8 +281,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
         },
       },
       enable_callcenter: {
-        renderContent: ({ row }) =>
-          row.enable_callcenter === null ? '--' : <Switch checked={row.enable_callcenter} />,
+        renderContent: ({ row }) => <Switch readOnly checked={!!row.enable_callcenter} />,
       },
       agency_id: {
         renderContent: ({ row }) => {
@@ -276,15 +326,34 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
   };
 
   const handleClick = (type: string, id: string | any) => {
+    if (type === 'view') {
+      goToMap(id);
+      return;
+    }
     if (type === 'extend') {
       setGwExtendIds([id]);
-    } else if (type === 'change-agency') {
-      handelMove([id]);
-    } else if (type === 'recall') {
-      handleRecall([id]);
-    } else if (type === 'delete') {
-      handleDeleteGatways([id]);
+      return;
     }
+
+    if (type === 'change-agency') {
+      handelMove([id]);
+      return;
+    }
+
+    if (type === 'recall') {
+      handleRecall([id]);
+      return;
+    }
+
+    if (type === 'delete') {
+      handleDeleteGatways([id]);
+      return;
+    }
+  };
+  const goToMap = (id: string) => {
+    const gw = gateways.find((item) => item.id === id);
+    if (!gw || !gw.location_id) return;
+    navigate(`${ROUTE_CONTROL}?locationId=${gw.location_id}`);
   };
 
   const onCancelSelection = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -326,6 +395,38 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
     }
   }, [trigger, currentUser]);
 
+  const handleFilter = () => {
+    setQuery({
+      agencyId: filtersFormValue.agencyId,
+      search: searchValue ? searchValue : undefined,
+      gatewayTypeId: filtersFormValue.gatewayTypeId,
+      status: filtersFormValue.status,
+    });
+  };
+
+  const handleClearFilter = () => {
+    setFiltersFormValue({ agencyId: 'all', gatewayTypeId: 'all', status: 'all' });
+    setSearchValue('');
+    setQuery({
+      agencyId: undefined,
+      search: undefined,
+      gatewayTypeId: undefined,
+      status: undefined,
+    });
+  };
+
+  const handleChange = (filterName: 'agencyId' | 'gatewayTypeId' | 'status', value: any) => {
+    setFiltersFormValue({
+      ...filtersFormValue,
+      [filterName]: value,
+    } as FiltersFormValue);
+  };
+
+  const onSearchChange = (e: any) => {
+    const value = e.target.value;
+    setSearchValue(value);
+  };
+
   return (
     <>
       {gwExtendIds.length > 0 && (
@@ -359,15 +460,68 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
           <Input
             noMarginTop
             topLable="Tìm kiếm"
-            style={{ width: 212, background: '#FFFFFF' }}
-            placeholder="Tìm kiếm"
+            style={{ width: 240, background: '#FFFFFF' }}
+            placeholder="Tìm kiếm serial"
             iconStartAdorment={<ImageIcon image={SearchIcon} />}
+            onChange={onSearchChange}
+            value={searchValue}
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter') {
+                handleFilter();
+                ev.preventDefault();
+              }
+            }}
           />
-          <Select noMarginTop topLable="Đại lý" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
-          <Select noMarginTop topLable="Loại thiết bị" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
-          <Select noMarginTop topLable="Trạng thái" data={listStatusGateway} selected="0" />
-          <Button style={{ width: 90 }} variant="contained">
+          <Select
+            noMarginTop
+            fullWidth
+            data={agenciesList}
+            selected={filtersFormValue.agencyId}
+            setSelected={(data) => handleChange('agencyId', data)}
+            style={{ width: '200px', marginRight: '16px' }}
+            topLable="Đại lý"
+            placeholder="Tất cả đại lý"
+          />
+
+          <Select
+            fullWidth
+            noMarginTop
+            data={gatewayTypesList}
+            selected={filtersFormValue.gatewayTypeId}
+            setSelected={(data) => handleChange('gatewayTypeId', data)}
+            style={{ width: '200px', marginRight: '16px' }}
+            topLable="Loại thiết bị"
+            placeholder="Tất cả"
+          />
+          <Select
+            fullWidth
+            noMarginTop
+            data={statusGatewayList}
+            selected={filtersFormValue.status}
+            setSelected={(data) => handleChange('status', data)}
+            style={{ width: '200px', marginRight: '16px' }}
+            topLable="Trạng thái"
+            placeholder="Tất cả"
+          />
+          <Button
+            onClick={handleFilter}
+            color="primary"
+            variant="contained"
+            style={{
+              height: '40px',
+              padding: '0 16px',
+              marginRight: '16px',
+            }}
+          >
             Lọc
+          </Button>
+          <Button
+            onClick={handleClearFilter}
+            color="primary"
+            variant="outlined"
+            style={{ height: '40px', padding: '0 16px' }}
+          >
+            Xoá bộ lọc
           </Button>
         </Box>
         <Button variant="contained" onClick={() => setShowModalAdd(true)}>
