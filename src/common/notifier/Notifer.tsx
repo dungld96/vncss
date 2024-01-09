@@ -116,7 +116,7 @@ export const Notifier = () => {
               >
                 {'Thông báo'}
               </div>
-              <div
+              {/* <div
                 style={{
                   height: '16px',
                   fontSize: '10px',
@@ -130,7 +130,7 @@ export const Notifier = () => {
                 }}
               >
                 {numUnreadNotifications}
-              </div>
+              </div> */}
             </div>
             <div
               onClick={readAll}
@@ -147,12 +147,14 @@ export const Notifier = () => {
             </div>
           </div>
           <div style={{ height: 'auto', maxHeight: '352px' }}>
-            <NotificationList
-              notifications={notifications}
-              onClickNotification={onClickNotification}
-              handleLoadMoreNotification={handleLoadMoreNotification}
-              notificationsLoading={isLoading}
-            />
+            {Boolean(anchorEl) && (
+              <NotificationList
+                notifications={notifications}
+                onClickNotification={onClickNotification}
+                handleLoadMoreNotification={handleLoadMoreNotification}
+                notificationsLoading={isLoading}
+              />
+            )}
           </div>
         </div>
       </Popover>

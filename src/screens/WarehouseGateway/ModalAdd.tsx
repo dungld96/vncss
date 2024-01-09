@@ -14,6 +14,7 @@ import { MAX_FILE_SIZE } from '../../configs/constant';
 import { useAuth } from '../../hooks/useAuth';
 import dayjs from 'dayjs';
 import { useSnackbar } from '../../hooks/useSnackbar';
+import { BASE_URL } from 'services/http.service';
 
 interface Props {
   show: boolean;
@@ -135,9 +136,35 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
     setFile(file);
   }, []);
 
-  const handleImport = async () => {
-    if (tab === 0) return;
-    await importGateway({ file, parent_uuid: currentUser?.sub_id }).unwrap();
+  const handleImport = () => {
+    const token = localStorage.getItem('access_token');
+    if (tab === 0 || !currentUser || !token) return;
+    const formData = new FormData();
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', `Bearer ${JSON.parse(token)}`);
+
+    formData.append('file', file);
+    fetch(`${BASE_URL}/agencies/${currentUser.sub_id}/gateways/upload`, {
+      method: 'POST',
+      headers: myHeaders,
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res: any) => {
+        if (res.error) {
+          setSnackbar({
+            open: true,
+            message: 'Import gateway không thành công',
+            severity: 'error',
+          });
+          return;
+        }
+        setSnackbar({ open: true, message: 'Import gateway thành công', severity: 'success' });
+        onClose?.();
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: 'Import gateway không thành công', severity: 'error' });
+      });
   };
 
   let disable = false;

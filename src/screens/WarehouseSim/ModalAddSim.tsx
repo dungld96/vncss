@@ -10,6 +10,8 @@ import Button from '../../common/button/Button';
 import DragDropFile from '../../common/DragDropFile/DragDropFile';
 import { useCreateSimMutation } from '../../services/sims.service';
 import { useAuth } from '../../hooks/useAuth';
+import DatePickers from 'common/datePicker/DatePicker';
+import dayjs from 'dayjs';
 
 const MAX_FILE_SIZE = 5242880;
 
@@ -75,16 +77,21 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
     initialValues: {
       phone: '',
       imei: '',
+      activated_at: '',
     },
     enableReinitialize: true,
     validationSchema: Yup.object().shape({
       phone: Yup.string().required('Số điện thoại không được để trống'),
       imei: Yup.string().required('Imei không được để trống'),
+      activated_at: Yup.string().required('Ngày kích hoạt không được để trống'),
     }),
     onSubmit: async (values) => {
       if (currentUser) {
         try {
-          await createSim({ data: values, agencyId: currentUser.sub_id }).unwrap();
+          await createSim({
+            data: { ...values, activated_at: dayjs(values.activated_at, 'DD/MM/YYYY').unix() },
+            agencyId: currentUser.sub_id,
+          }).unwrap();
           setSnackbar({ open: true, message: 'Thêm sim thành công', severity: 'success' });
           onClose();
         } catch (error) {
@@ -93,7 +100,8 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
       }
     },
   });
-  const { handleSubmit, getFieldProps, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, isValid, dirty, resetForm, setFieldValue, values, touched, isSubmitting } =
+    formik;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -142,7 +150,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
                 label="Thêm thủ công"
                 {...a11yProps(0)}
               />
-              {/* <Tab
+              <Tab
                 sx={{
                   textTransform: 'initial',
                   fontSize: '16px',
@@ -150,7 +158,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
                 }}
                 label="Thêm từ file"
                 {...a11yProps(1)}
-              /> */}
+              />
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
@@ -171,6 +179,17 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
                 {...getFieldProps('phone')}
               />
               <Input style={{ width: 286 }} topLable="Imei sim" placeholder="Nhập imei" {...getFieldProps('imei')} />
+              <Box style={{ width: 286 }}>
+                <DatePickers
+                  {...getFieldProps('startDate')}
+                  date={values.activated_at}
+                  fullWidth
+                  topLable="Ngày kích hoạt"
+                  onChange={(date) => setFieldValue('activated_at', date)}
+                  showError={touched.activated_at || isSubmitting}
+                  error={values.activated_at ? '' : 'Ngày kích hoạt không được để trống'}
+                />
+              </Box>
             </DialogContent>
           </TabPanel>
           <TabPanel value={value} index={1}>

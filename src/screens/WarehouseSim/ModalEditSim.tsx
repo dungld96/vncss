@@ -1,4 +1,4 @@
-import { DialogActions, DialogContent } from '@mui/material';
+import { Box, DialogActions, DialogContent } from '@mui/material';
 import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import Modal from '../../common/modal/Modal';
@@ -10,10 +10,12 @@ import { listStatus } from './constants';
 import { useUpdateSimMutation } from '../../services/sims.service';
 import { useAuth } from '../../hooks/useAuth';
 import { useSnackbar } from '../../hooks/useSnackbar';
+import dayjs from 'dayjs';
+import DatePickers from 'common/datePicker/DatePicker';
 interface Props {
   show: boolean;
   onClose: () => void;
-  initialValues: { id: string; phone: string; imei: string; status: number };
+  initialValues: { id: string; phone: string; imei: string; status: number; activated_at: string };
 }
 
 const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
@@ -29,11 +31,15 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
     validationSchema: Yup.object().shape({
       phone: Yup.string().required('Số điện thoại không được để trống'),
       imei: Yup.string().required('Imei không được để trống'),
+      activated_at: Yup.string().required('Ngày kích hoạt không được để trống'),
     }),
     onSubmit: async (values) => {
       if (currentUser) {
         try {
-          await updateSim({ data: values, agencyId: currentUser.sub_id }).unwrap();
+          await updateSim({
+            data: { ...values, activated_at: dayjs(values.activated_at, 'DD/MM/YYYY').unix() },
+            agencyId: currentUser.sub_id,
+          }).unwrap();
           setSnackbar({ open: true, message: 'Cập nhật sim thành công', severity: 'success' });
           onClose();
         } catch (error) {
@@ -42,7 +48,8 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
       }
     },
   });
-  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue } = formik;
+  const { handleSubmit, getFieldProps, values, isValid, dirty, resetForm, setFieldValue, isSubmitting, touched } =
+    formik;
 
   useEffect(() => {
     if (!show) return;
@@ -65,6 +72,17 @@ const ModalEditSim: React.FC<Props> = ({ show, onClose, initialValues }) => {
           >
             <Input style={{ width: 286 }} topLable="Số điện thoại" {...getFieldProps('phone')} />
             <Input style={{ width: 286 }} topLable="Imei sim" {...getFieldProps('imei')} />
+            <Box style={{ width: 286 }}>
+              <DatePickers
+                {...getFieldProps('startDate')}
+                date={values.activated_at}
+                fullWidth
+                topLable="Ngày kích hoạt"
+                onChange={(date) => setFieldValue('activated_at', date)}
+                showError={touched.activated_at || isSubmitting}
+                error={values.activated_at ? '' : 'Ngày kích hoạt không được để trống'}
+              />
+            </Box>
             <Select
               style={{ width: 286 }}
               fullWidth

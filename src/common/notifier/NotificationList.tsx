@@ -1,7 +1,8 @@
-import { CircularProgress, Box } from '@mui/material';
+import { CircularProgress, Box, Button } from '@mui/material';
 import { sensorMapped } from '../../utils/sensorMapping';
 import { NotificationType } from '../../state/modules/notification/notificationReducer';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 
 const getComponentType = (typeId = '') => {
   return typeId.split('-').length > 1 ? typeId.split('-')[1] : '-';
@@ -18,66 +19,95 @@ export const NotificationList = ({
   handleLoadMoreNotification: () => void;
   notificationsLoading: boolean;
 }) => {
+  const [viewAll, setViewAll] = useState(true);
   const image = sensorMapped as any;
+  const numUnreadNotifications = notifications.filter((item) => !item.readed).length;
+  const filteredNotifications = viewAll ? notifications : notifications.filter((item) => !item.readed);
   return (
     <Box style={{ overflow: 'auto', maxHeight: 'inherit', backgroundColor: '#ffffff' }}>
-      {notifications.map((entry) => {
-        const productType = entry.data.nType;
-        const code = getComponentType(productType);
-        return (
-          <Box
-            key={entry.timestamp}
-            onClick={() => onClickNotification(entry)}
-            style={{
-              padding: ' 10px 30px 0 4px',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyItems: 'center',
-              backgroundColor: entry.readed ? 'rgb(255, 255, 255)' : 'rgba(255, 145, 145, 0.25)',
-              cursor: 'pointer',
-            }}
-          >
+      <Box display={'flex'} alignItems="center" p={1}>
+        <Button
+          size="small"
+          style={{ fontWeight: 500, color: viewAll ? '#E13153' : '#8B8C9B' }}
+          onClick={() => setViewAll(true)}
+        >
+          Tất cả
+        </Button>
+        <Button
+          size="small"
+          style={{ fontWeight: 500, color: !viewAll ? '#E13153' : '#8B8C9B' }}
+          onClick={() => setViewAll(false)}
+        >{`Chưa đọc (${numUnreadNotifications})`}</Button>
+      </Box>
+      {filteredNotifications && filteredNotifications.length > 0 ? (
+        filteredNotifications.map((entry) => {
+          const productType = entry.data.nType;
+          const code = getComponentType(productType);
+          return (
             <Box
+              key={entry.timestamp}
+              onClick={() => onClickNotification(entry)}
               style={{
-                width: '30px',
-                padding: '0 25px',
+                padding: ' 10px 30px 0 4px',
                 display: 'flex',
-                position: 'relative',
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: 'row',
+                justifyItems: 'center',
+                backgroundColor: entry.readed ? 'rgb(255, 255, 255)' : 'rgba(255, 145, 145, 0.25)',
+                cursor: 'pointer',
               }}
             >
-              <img alt="" style={{ width: 56 }} src={image[code !== '-' ? code : 'icon_error']} />
-            </Box>
-            <Box style={{ flex: 1, minWidth: 0, color: '#03294a' }}>
               <Box
                 style={{
-                  fontStyle: 'normal',
-                  fontWeight: entry.readed ? 500 : 'bold',
-                  fontSize: '14px',
-                  lineHeight: '20px',
+                  width: '30px',
+                  padding: '0 25px',
+                  display: 'flex',
+                  position: 'relative',
                   alignItems: 'center',
-                  textAlign: 'justify',
+                  justifyContent: 'center',
                 }}
               >
-                {entry.message}
+                <img alt="" style={{ width: 56 }} src={image[code !== '-' ? code : 'icon_error']} />
               </Box>
-              <Box
-                style={{
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '12px',
-                  lineHeight: '14px',
-                  color: '#828282',
-                  padding: '10px 0',
-                }}
-              >
-                {dayjs(entry.timestamp).format('HH:mm:ss DD-MM-YYYY')}
+              <Box style={{ flex: 1, minWidth: 0, color: '#03294a' }}>
+                <Box
+                  style={{
+                    fontStyle: 'normal',
+                    fontWeight: entry.readed ? 500 : 'bold',
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    alignItems: 'center',
+                    textAlign: 'justify',
+                  }}
+                >
+                  {entry.message}
+                </Box>
+                <Box
+                  style={{
+                    fontStyle: 'normal',
+                    fontWeight: 'normal',
+                    fontSize: '12px',
+                    lineHeight: '14px',
+                    color: '#828282',
+                    padding: '10px 0',
+                  }}
+                >
+                  {dayjs(entry.timestamp).format('HH:mm:ss DD-MM-YYYY')}
+                </Box>
               </Box>
             </Box>
-          </Box>
-        );
-      })}
+          );
+        })
+      ) : (
+        <Box
+          style={{
+            padding: ' 10px 30px 0 4px',
+            cursor: 'pointer',
+            color: '#03294a',
+          }}
+        >
+          <Box style={{ textAlign: 'center', padding: '10px 0 24px' }}>Danh sách thông báo trống</Box>
+        </Box>
+      )}
 
       {notificationsLoading ? (
         <Box style={{ textAlign: 'center', padding: '10px 0' }}>

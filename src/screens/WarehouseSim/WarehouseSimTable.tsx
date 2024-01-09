@@ -94,6 +94,7 @@ const WarehouseSimTable = () => {
       id: '',
       phone: '',
       imei: '',
+      activated_at: '',
       status: 0,
     },
   });
@@ -196,6 +197,7 @@ const WarehouseSimTable = () => {
           id: row.id,
           phone: row.phone,
           imei: row.imei,
+          activated_at: dayjs(row.activated_at).format('DD/MM/YYYY'),
           status: row.status ? 1 : 0,
         },
       });
