@@ -215,7 +215,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
     { columnName: 'action', width: 120, align: 'center' },
-    { columnName: 'serial', width: 150, align: 'center' },
+    { columnName: 'serial', width: 170, align: 'center' },
     { columnName: 'mfg', width: 140, align: 'center' },
   ]);
 
