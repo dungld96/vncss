@@ -14,6 +14,7 @@ export interface IGateway {
   hardware_version: string;
   firmware_version?: string;
   mfg: Date | string;
+  subscription_end_at?: Date | string;
   alert?: number;
   blocking?: boolean;
   testing?: boolean;

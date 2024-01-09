@@ -4,9 +4,10 @@ export const LIST_STATUS_GATEWAY = {
   WARRANTY: 'repared',
   SAVE: 'stock',
   FREE: 'free',
+  NEAR_SUB_END: 'near_subscription_end',
 };
 
-const { ALL, ACTIVE, FREE, WARRANTY, SAVE } = LIST_STATUS_GATEWAY;
+const { ALL, ACTIVE, FREE, WARRANTY, SAVE, NEAR_SUB_END } = LIST_STATUS_GATEWAY;
 
 export const mappingStatusGateway = {
   [ALL]: 'Tất cả trạng thái',
@@ -14,13 +15,14 @@ export const mappingStatusGateway = {
   [WARRANTY]: 'Bảo hành',
   [SAVE]: 'Lưu kho',
   [FREE]: 'Tự do',
+  [NEAR_SUB_END]: 'Sắp hết hạn',
 };
 
 export const statusGatewayList = [
   { label: 'Kích hoạt', value: ACTIVE },
   { label: 'Bảo hành', value: WARRANTY },
   { label: 'Lưu kho', value: SAVE },
-  { label: 'Tự do', value: FREE },
+  { label: 'Sắp hết hạn', value: NEAR_SUB_END },
 ];
 
 export const mappingStatusGatewayColor = {

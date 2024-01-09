@@ -189,10 +189,18 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
   const [filtersFormValue, setFiltersFormValue] = React.useState(defaultFiltersFormValue);
 
   const gateways = useSelector(selectGateway);
+  const parsedGateways = gateways.map((gw) => {
+    const diffExpDays = dayjs(gw.subscription_end_at).diff(dayjs(), 'day');
+    return {
+      ...gw,
+      status: gw.subscription_end_at && diffExpDays <= 10 ? 'near_subscription_end' : gw.status,
+    };
+  });
   const agencies = useSelector(selectAgencies);
   const agenciesList = (agencies || [])
     .concat(currentAgency ? [currentAgency] : [])
     .map((item) => ({ value: item.id, label: item.name }));
+
   const gatewayTypesList = (gatewayTypes || []).map((item) => ({ value: item.id, label: item.name }));
 
   const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
@@ -530,7 +538,7 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
-        <Grid rows={gateways} columns={columns}>
+        <Grid rows={parsedGateways} columns={columns}>
           <SelectionState
             selection={selection.map((id) => gateways.findIndex((r: any) => r.id === id))}
             onSelectionChange={handleSelectionChange}
