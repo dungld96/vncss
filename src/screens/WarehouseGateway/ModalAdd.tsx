@@ -19,6 +19,7 @@ import { BASE_URL } from 'services/http.service';
 interface Props {
   show: boolean;
   onClose?: () => void;
+  onSuccess: () => void;
   gatewayTypes: IGatewayType[];
 }
 
@@ -73,7 +74,7 @@ const validationSchema = Yup.object().shape({
   startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
 });
 
-const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
+const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes, onSuccess }) => {
   const [addGateway] = useCreateGatewayMutation();
   const [importGateway] = useImportGatewayMutation();
   const [tab, setTab] = useState(0);
@@ -160,6 +161,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
           return;
         }
         setSnackbar({ open: true, message: 'Import gateway thành công', severity: 'success' });
+        onSuccess();
         onClose?.();
       })
       .catch(() => {
@@ -167,14 +169,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
       });
   };
 
-  let disable = false;
-  switch (tab) {
-    case 0:
-      disable = !isValid || !dirty || values.type === 'none';
-      break;
-    case 1:
-      disable = !file;
-  }
+  const disableSubmit = tab === 0 ? !isValid || !dirty || values.type === 'none' : !file;
 
   useEffect(() => {
     if (!show) return;
@@ -302,7 +297,7 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, gatewayTypes }) => {
             <Button
               type="submit"
               style={{ width: 131 }}
-              disabled={disable}
+              disabled={disableSubmit}
               variant="contained"
               onClick={() => handleImport()}
             >

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
+import { Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tab, Tabs } from '@mui/material';
 import { Form, FormikProvider, useFormik } from 'formik';
 import { useSnackbar } from '../../hooks/useSnackbar';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -12,12 +12,14 @@ import { useCreateSimMutation } from '../../services/sims.service';
 import { useAuth } from '../../hooks/useAuth';
 import DatePickers from 'common/datePicker/DatePicker';
 import dayjs from 'dayjs';
+import { BASE_URL } from 'services/http.service';
 
 const MAX_FILE_SIZE = 5242880;
 
 interface Props {
   show: boolean;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
 interface TabPanelProps {
@@ -65,10 +67,11 @@ const Title = styled(DialogTitle)({
   },
 });
 
-const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
+const ModalAddSim: React.FC<Props> = ({ show, onClose, onSuccess }) => {
   const [value, setValue] = useState(0);
   const [createSim, { isLoading }] = useCreateSimMutation();
   const { setSnackbar } = useSnackbar();
+  const [file, setFile] = useState<any>(null);
   const {
     auth: { currentUser },
   } = useAuth();
@@ -112,8 +115,7 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
     if (!file || file.size > MAX_FILE_SIZE) {
       return;
     }
-
-    console.log(file);
+    setFile(file);
   }, []);
 
   useEffect(() => {
@@ -121,6 +123,39 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
     resetForm();
   }, [show]);
 
+  const handleImport = () => {
+    const token = localStorage.getItem('access_token');
+    if (value === 0 || !currentUser || !token) return;
+    const formData = new FormData();
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', `Bearer ${JSON.parse(token)}`);
+
+    formData.append('file', file);
+    fetch(`${BASE_URL}/agencies/${currentUser.sub_id}/sims/upload`, {
+      method: 'POST',
+      headers: myHeaders,
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res: any) => {
+        if (res.error) {
+          setSnackbar({
+            open: true,
+            message: 'Import sim không thành công',
+            severity: 'error',
+          });
+          return;
+        }
+        setSnackbar({ open: true, message: 'Import sim thành công', severity: 'success' });
+        onSuccess();
+        onClose?.();
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: 'Import sim không thành công', severity: 'error' });
+      });
+  };
+
+  const disableSubmit = value === 0 ? !isValid || !dirty || isLoading : !file;
   return (
     <Dialog
       open={show}
@@ -194,12 +229,21 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
           </TabPanel>
           <TabPanel value={value} index={1}>
             <Box sx={{ marginBottom: '32px' }}>
-              <DragDropFile
-                multiple={true}
-                fileTypes={['xls', 'xlsx', 'csv']}
-                onChange={handleUploadFile}
-                title="Chọn file chứa danh sách của bạn"
-              />
+              <Box sx={{ marginBottom: '32px' }}>
+                {!file ? (
+                  <DragDropFile
+                    multiple={true}
+                    fileTypes={['xls', 'xlsx', 'csv']}
+                    onChange={handleUploadFile}
+                    title="Chọn file chứa danh sách của bạn"
+                    dropzoneHeigth={274}
+                  />
+                ) : (
+                  <Box height={'276px'}>
+                    <Chip label={file?.name} onDelete={() => setFile(null)} />
+                  </Box>
+                )}
+              </Box>
             </Box>
           </TabPanel>
 
@@ -207,7 +251,13 @@ const ModalAddSim: React.FC<Props> = ({ show, onClose }) => {
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={!isValid || !dirty || isLoading}>
+            <Button
+              type="submit"
+              style={{ width: 131 }}
+              variant="contained"
+              disabled={disableSubmit}
+              onClick={() => handleImport()}
+            >
               Thêm mới
             </Button>
           </DialogActions>

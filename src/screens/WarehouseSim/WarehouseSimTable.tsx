@@ -86,7 +86,7 @@ const ActionCellContent = ({
   );
 };
 
-const WarehouseSimTable = () => {
+const WarehouseSimTable = ({ refetch }: { refetch: () => void }) => {
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalEditSim, setModalEditSim] = useState({
     show: false,
@@ -206,7 +206,7 @@ const WarehouseSimTable = () => {
 
   return (
     <>
-      <ModalAddSim show={showModalAdd} onClose={() => setShowModalAdd(false)} />
+      {showModalAdd && <ModalAddSim onSuccess={refetch} show={showModalAdd} onClose={() => setShowModalAdd(false)} />}
       <ModalEditSim {...modalEditSim} onClose={() => setModalEditSim({ ...modalEditSim, show: false })} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input

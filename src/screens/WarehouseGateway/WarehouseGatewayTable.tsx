@@ -154,7 +154,13 @@ const ActionCellContent = ({
   );
 };
 
-export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGatewayType[] }) => {
+export const WarehouseGatewayTable = ({
+  gatewayTypes,
+  refetch,
+}: {
+  gatewayTypes: IGatewayType[];
+  refetch: () => void;
+}) => {
   const [query, setQuery] = useQueryParams({
     agencyId: StringParam,
     search: StringParam,
@@ -446,7 +452,12 @@ export const WarehouseGatewayTable = ({ gatewayTypes }: { gatewayTypes: IGateway
         {...modalChangeAgency}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
-      <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} gatewayTypes={gatewayTypes} />
+      <ModalAdd
+        show={showModalAdd}
+        onClose={() => setShowModalAdd(false)}
+        gatewayTypes={gatewayTypes}
+        onSuccess={refetch}
+      />
       <Box
         sx={{
           display: 'flex',

@@ -30,9 +30,15 @@ const WarehouseSimScreen = () => {
     dispatch(setLimit({ limit }));
   };
 
+  const refetch = () => {
+    if (currentUser) {
+      trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
+    }
+  };
+
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <WarehouseSimTable />
+      <WarehouseSimTable refetch={refetch}/>
       <Pagination paginate={cursor} total={total} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );

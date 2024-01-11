@@ -44,13 +44,29 @@ const WarehouseGatewayScreen = () => {
     }
   }, [trigger, paginate, currentUser, limit, query]);
 
+  const refetch = () => {
+    if (currentUser) {
+      trigger({
+        agency_id: currentUser?.sub_id,
+        params: {
+          ...paginate,
+          limit,
+          agency_id: query.agencyId !== 'all' ? query.agencyId : undefined,
+          status: query.status !== 'all' ? query.status : undefined,
+          gateway_type_id: query.gatewayTypeId !== 'all' ? query.gatewayTypeId : undefined,
+          serial: query.search ? query.search : undefined,
+        },
+      });
+    }
+  };
+
   const handleSetLimit = (limit: number) => {
     dispatch(setLimit({ limit }));
   };
 
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <WarehouseGatewayTable gatewayTypes={gatewayTypes || []} />
+      <WarehouseGatewayTable gatewayTypes={gatewayTypes || []} refetch={refetch}/>
       <Pagination paginate={cursor} total={total} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );
