@@ -18,6 +18,7 @@ export interface NotificationType {
   location_id: string;
   gateway_serial: string;
   readed: boolean;
+  type: string;
   data: {
     nType: string;
     nId: string;

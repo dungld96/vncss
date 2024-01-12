@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, IconButton, Popover, Tooltip } from '@mui/material';
+import { Box, Badge, Button, IconButton, Popover, Tooltip } from '@mui/material';
 import { NotificationsNone as NotificationIcon } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 
 export const Notifier = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isAlertView, setIsAlertView] = React.useState(true);
   const [getListNotificationsQuery, { isLoading }] = useLazyGetListNotificationsQuery();
   const [readNotificationMutation] = useReadNotificationMutation();
   const {
@@ -57,6 +58,9 @@ export const Notifier = () => {
   };
 
   const numUnreadNotifications = notifications.filter((item) => !item.readed).length;
+  const filteredNotifications = isAlertView
+    ? notifications.filter((item) => item.type === 'alert')
+    : notifications.filter((item) => item.type !== 'alert');
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -104,52 +108,51 @@ export const Notifier = () => {
               border: '1px solid #e6e9ed',
             }}
           >
-            <div style={{ display: 'flex' }}>
-              <div
+            <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <Box display={'flex'} alignItems="center" py={1}>
+                <Box
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 600,
+                    color: isAlertView ? '#1E2323' : '#C5C6D2',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setIsAlertView(true)}
+                  mr={2}
+                >
+                  Cảnh báo
+                </Box>
+                <Box
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 600,
+                    color: !isAlertView ? '#1E2323' : '#C5C6D2',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setIsAlertView(false)}
+                >
+                  Lưu ý
+                </Box>
+              </Box>
+              <Box
+                onClick={readAll}
                 style={{
                   minWidth: 0,
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  fontSize: '18px',
+                  margin: '0 10px',
+                  cursor: 'pointer',
                 }}
               >
-                {'Thông báo'}
-              </div>
-              {/* <div
-                style={{
-                  height: '16px',
-                  fontSize: '10px',
-                  lineHeight: '15px',
-                  padding: '1px 10px 0',
-                  borderRadius: '8px',
-                  marginTop: '16px',
-                  marginLeft: '20px',
-                  backgroundColor: '#8f0a0c',
-                  color: '#ffffff',
-                }}
-              >
-                {numUnreadNotifications}
-              </div> */}
-            </div>
-            <div
-              onClick={readAll}
-              style={{
-                minWidth: 0,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                margin: '0 10px',
-                cursor: 'pointer',
-              }}
-            >
-              Đánh dấu tất cả là đã đọc
-            </div>
+                Đánh dấu tất cả là đã đọc
+              </Box>
+            </Box>
           </div>
           <div style={{ height: 'auto', maxHeight: '352px' }}>
             {Boolean(anchorEl) && (
               <NotificationList
-                notifications={notifications}
+                notifications={filteredNotifications}
                 onClickNotification={onClickNotification}
                 handleLoadMoreNotification={handleLoadMoreNotification}
                 notificationsLoading={isLoading}
