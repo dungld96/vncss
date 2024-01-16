@@ -177,6 +177,18 @@ export const controlApi = createApi({
         },
         transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
       }),
+      getControlLocationStatus: build.query<any, { agencyId: string; locationId: string }>({
+        query: (body) => ({
+          url:
+            currentUser.type === 'agency'
+              ? `agencies/${body.agencyId}/monitoring/locations/${body.locationId}/status`
+              : `monitoring/locations/${body.locationId}`,
+        }),
+        providesTags() {
+          return [{ type: 'Control' }];
+        },
+        transformResponse: (response: { data: LocationType }, meta, arg) => response.data,
+      }),
       getControlLocationGateways: build.query<any, { agencyId: string; locationId: string }>({
         query: (body) => ({
           url:
@@ -547,4 +559,5 @@ export const {
   useCreateLocationEquipmentsMutation,
   useUpdateLocationEquipmentsMutation,
   useDeleteLocationEquipmentMutation,
+  useGetControlLocationStatusQuery,
 } = controlApi;

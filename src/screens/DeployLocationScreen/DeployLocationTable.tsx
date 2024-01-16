@@ -15,7 +15,7 @@ import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import ModalEditTags from '../vehicle-wrapper/ModalEditTags';
-import { selectLocation } from '../../state/modules/location/locationReducer';
+import { LocationType, selectLocation } from '../../state/modules/location/locationReducer';
 import ModalAdd from './ModalAdd';
 import ModalEdit from './ModalEdit';
 import { useDeleteLocationMutation } from '../../services/location.service';
@@ -107,7 +107,7 @@ const ActionCellContent = ({
   );
 };
 
-export const DeployLocationTable: React.FC = () => {
+export const DeployLocationTable = ({ refetch }: { refetch: () => void }) => {
   const [query, setQuery] = useQueryParams({
     agencyId: StringParam,
     search: StringParam,
@@ -117,7 +117,7 @@ export const DeployLocationTable: React.FC = () => {
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalEditLatLng, setShowModalEditLatLng] = useState(false);
-  const [showModalEditTag, setShowModalEditTag] = useState(false);
+  const [editTag, setEditTag] = useState<LocationType>();
   const [selectedLocationId, setSelectedLocatuonId] = useState<string>();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const defaultFiltersFormValue = {
@@ -175,7 +175,7 @@ export const DeployLocationTable: React.FC = () => {
             >
               {row?.tags.join(', ')}
             </Typography>
-            <IconButton onClick={() => setShowModalEditTag(true)}>
+            <IconButton onClick={() => setEditTag(row)}>
               <ImageIcon image={EditIcon2} />
             </IconButton>
           </Box>
@@ -260,7 +260,9 @@ export const DeployLocationTable: React.FC = () => {
 
   return (
     <>
-      <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
+      {editTag && (
+        <ModalEditTags show location={editTag} onClose={() => setEditTag(undefined)} handleSuccess={refetch} />
+      )}
       <ModalAdd show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       {selectedLocationId && currentUser && showModalEdit && (
         <ModalEdit

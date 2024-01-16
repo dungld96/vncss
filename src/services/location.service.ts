@@ -15,7 +15,7 @@ export const loactionsApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursor },
+            data: { data, cursor, total },
           } = await queryFulfilled;
           const dataParse = data.map((item: any) => ({
             ...item,
@@ -27,6 +27,7 @@ export const loactionsApi = createApi({
             setLocations({
               locations: dataParse,
               cursor,
+              total,
             })
           );
         } catch (error) {}

@@ -39,9 +39,10 @@ type LocationState = {
   locations: LocationType[];
   cursor: CursorType;
   limit: number;
+  total: number;
 };
 
-const initialState: LocationState = { locations: [], cursor: {}, limit: 10 };
+const initialState: LocationState = { locations: [], cursor: {}, limit: 10, total: 0 };
 
 const slice = createSlice({
   name: 'locationState',
@@ -49,10 +50,11 @@ const slice = createSlice({
   reducers: {
     setLocations: (
       state,
-      { payload: { locations, cursor } }: PayloadAction<{ locations: any[]; cursor: CursorType }>
+      { payload: { locations, cursor, total } }: PayloadAction<{ locations: any[]; cursor: CursorType; total: number }>
     ) => {
       state.locations = locations;
       state.cursor = cursor;
+      state.total = state.total || (total && state.total === total) ? state.total : total;
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;

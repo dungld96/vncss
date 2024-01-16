@@ -156,7 +156,7 @@ export const VehicleWrapper: React.FC<Props> = ({ type }) => {
 
   return (
     <>
-      <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} />
+      {/* <ModalEditTags show={showModalEditTag} onClose={() => setShowModalEditTag(false)} /> */}
       <VehicleAdd isProtect={isProtect} show={showModalAdd} onClose={() => setShowModalAdd(false)} />
       <VehicleEdit isProtect={isProtect} show={showModalEdit} onClose={() => setShowModalEdit(false)} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>

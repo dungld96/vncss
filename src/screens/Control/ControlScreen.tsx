@@ -22,6 +22,7 @@ import ZoomInIcon from '../../assets/icons/zoom-in.svg';
 import Satellite from '../../assets/icons/satellite.png';
 import Roadmap from '../../assets/icons/roadmap.png';
 import FullscreenIcon from '../../assets/icons/fullscreen.svg';
+import { IGatewayType, useGetGatewayTypesQuery } from 'services/gateway.service';
 
 export const IconButtonMap = styled(IconButton)({
   position: 'absolute',
@@ -82,8 +83,10 @@ export const ControlScreen = () => {
   };
 
   const [filtersFormValue, setFiltersFormValue] = React.useState(defaultFiltersFormValue);
-  const [getControlLocationsQuery] = useLazyGetControlLocationsQuery();
+  const [getControlLocationsQuery] = useLazyGetControlLocationsQuery({ pollingInterval: 30000 });
   const [getControlFilterLocationsQuery] = useLazyGetControlLocationsFilterQuery();
+  const { data: gatewayTypes } = useGetGatewayTypesQuery<{ data: IGatewayType[] }>(null);
+
   const {
     auth: { currentUser },
   } = useAuth();
@@ -110,29 +113,6 @@ export const ControlScreen = () => {
   const queryLocationId = query.locationId;
   const queryAgencyId = query.agencyId;
   const queryStatus = query.status;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentUser) {
-        getControlLocationsQuery(
-          {
-            agency_id: currentUser.sub_id,
-            // params: {
-            //   center_lat: center.lat,
-            //   center_lng: center.lng,
-            //   visible_radius: 70,
-            //   // visible_radius: (containerMapRef.current?.offsetWidth || 100) / 2,
-            // },
-          },
-          false
-        );
-      }
-    }, 30000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [currentUser]);
 
   useEffect(() => {
     if (queryLocationId && locations.length > 0) {
@@ -499,6 +479,8 @@ export const ControlScreen = () => {
               name={location.name}
               id={location.id}
               location={location}
+              gatewayTypes={gatewayTypes || []}
+              agencyId={currentUser?.sub_id}
               onMarkerClick={(localtion: ControlLocationType) => handleOpenDetail(localtion)}
             />
           );

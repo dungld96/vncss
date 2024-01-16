@@ -26,6 +26,29 @@ export interface ControlLocationType {
   alert_at: string;
 }
 
+export interface ControlLocationDetailStatusType {
+  business: string;
+  gateway: {
+    id: string;
+    type_id: string;
+    serial: string;
+    state: {
+      battery: number;
+      charge: number;
+      gsmLevel: number;
+      hum: number;
+      mode: number;
+      temp: number;
+      timestamp: number;
+    };
+  };
+  id: string;
+  lat: number;
+  lng: number;
+  name: string;
+  state: string;
+}
+
 export type ControlState = {
   locations: ControlLocationType[];
   filterLocations: ControlLocationType[];

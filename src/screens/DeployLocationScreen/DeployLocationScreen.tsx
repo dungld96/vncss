@@ -19,7 +19,7 @@ const DeployLocationScreen = () => {
   const [trigger] = useLazyGetListLocationsQuery();
   const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { cursor, limit } = useSelector(selectLocationState);
+  const { cursor, limit, total } = useSelector(selectLocationState);
   const dispatch = useAppDispatch();
 
   const {
@@ -45,10 +45,25 @@ const DeployLocationScreen = () => {
     dispatch(setLimit({ limit }));
   };
 
+  const refetch = () => {
+    if (currentUser) {
+      trigger({
+        agency_id: currentUser?.sub_id,
+        params: {
+          limit,
+          ...paginate,
+          agency_id: query.agencyId !== 'all' ? query.agencyId : undefined,
+          business: query.business !== 'all' ? query.business : undefined,
+          name: query.search ? query.search : undefined,
+        },
+      });
+    }
+  };
+
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <DeployLocationTable />
-      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
+      <DeployLocationTable refetch={refetch} />
+      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} total={total} />
     </Box>
   );
 };

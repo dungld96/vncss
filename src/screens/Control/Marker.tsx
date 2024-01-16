@@ -15,6 +15,8 @@ import ATMIcon from '../../assets/icons/b-atm.svg';
 
 import { ControlLocationType } from '../../state/modules/control/controlReducer';
 import { BusinessIcon } from 'common/Icons/BusinessIcon';
+import { MakerHover } from './MakerHover';
+import { IGatewayType } from 'services/gateway.service';
 
 export const MarkerContainer = styled(Box)({
   width: '32px',
@@ -169,15 +171,17 @@ interface Props {
   color: string;
   onMarkerClick: (location: ControlLocationType) => void;
   location: ControlLocationType;
+  gatewayTypes: IGatewayType[];
   lat: number;
   lng: number;
   text: string;
   name: string;
   id: string;
+  agencyId?: string;
 }
 
 export const Marker = (props: Props) => {
-  const { color, onMarkerClick = _.noop, location } = props;
+  const { color, onMarkerClick = _.noop, location, agencyId, gatewayTypes } = props;
   const { business } = location;
   const [hovering, setHovering] = React.useState(false);
   const hanleMouseEnter = () => {
@@ -217,25 +221,7 @@ export const Marker = (props: Props) => {
 
   return (
     <>
-      {hovering && (
-        <div
-          style={{
-            width: '120px',
-            height: 'auto',
-            border: '1px solid #dadde9',
-            left: '20px',
-            top: '-20px',
-            backgroundColor: '#fff',
-            textAlign: 'left',
-            borderRadius: '6px',
-            padding: '6px 8px',
-            position: 'absolute',
-            zIndex: 1,
-          }}
-        >
-          <Typography style={{ fontSize: '12px', fontWeight: 600 }}>{location.name}</Typography>
-        </div>
-      )}
+      {hovering && agencyId && <MakerHover gatewayTypes={gatewayTypes} location={location} agencyId={agencyId} />}
       <MarkerContainer
         style={{
           backgroundColor: color,
