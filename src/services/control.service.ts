@@ -69,7 +69,7 @@ export type NoteStateType = {
   battery: number;
   hum: number;
   nType: string;
-  status: number;
+  status: number | string;
   temp: number;
   timestamp: number;
 };

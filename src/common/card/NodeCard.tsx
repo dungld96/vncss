@@ -28,7 +28,8 @@ export const NodeCard = ({ data, nodeTypes, onClickCard, showPin = true }: Props
   const nodeType = nodeTypes.find((item) => item.id === data.node_type_id);
   const nodeCodeType = nodeType?.code.split('-')[1];
 
-  const status = data.state && getMinutesDiffNow(data.state?.timestamp) < 130 && data.state?.status === 1;
+  const status = data.state && getMinutesDiffNow(data.state?.timestamp) < 130 && data.state?.status === 'online';
+
   return (
     <DLNodeCard onClick={onClickCard}>
       <Box display="flex" justifyContent="space-between" alignItems="center" pb={2}>
