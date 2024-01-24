@@ -1,4 +1,4 @@
-import { CircularProgress, Box, Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { sensorMapped } from '../../utils/sensorMapping';
 import { NotificationType } from '../../state/modules/notification/notificationReducer';
 import dayjs from 'dayjs';
@@ -109,7 +109,7 @@ export const NotificationList = ({
         </Box>
       )}
 
-      {notifications.length < 300 && (
+      {filteredNotifications.length > 0 && filteredNotifications.length < 300 && (
         <Box
           onClick={handleLoadMoreNotification}
           style={{
