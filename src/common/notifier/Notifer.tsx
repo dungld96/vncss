@@ -1,11 +1,19 @@
 import React from 'react';
-import { Box, Badge, Button, IconButton, Popover, Tooltip } from '@mui/material';
+import { Box, Badge, Button, IconButton, Popover, Tooltip, CircularProgress } from '@mui/material';
 import { NotificationsNone as NotificationIcon } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { NotificationList } from './NotificationList';
-import { NotificationType, selectNotifications } from '../../state/modules/notification/notificationReducer';
-import { useLazyGetListNotificationsQuery, useReadNotificationMutation } from '../../services/notifications.service';
+import {
+  NotificationType,
+  selectNotifications,
+  selectNotificationsCursor,
+} from '../../state/modules/notification/notificationReducer';
+import {
+  useLazyGetListNotificationsQuery,
+  useReadNotificationMutation,
+  useLazyGetMoreListNotificationsQuery,
+} from '../../services/notifications.service';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTE_CONTROL } from '../../utils/routesMap';
 import dayjs from 'dayjs';
@@ -14,12 +22,14 @@ export const Notifier = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isAlertView, setIsAlertView] = React.useState(true);
   const [getListNotificationsQuery, { isLoading }] = useLazyGetListNotificationsQuery();
+  const [getMoreListNotificationsQuery, { isLoading: isLoadingMore }] = useLazyGetMoreListNotificationsQuery();
   const [readNotificationMutation] = useReadNotificationMutation();
   const {
     auth: { currentUser },
   } = useAuth();
 
   const notifications = useSelector(selectNotifications);
+  const cursor = useSelector(selectNotificationsCursor);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -35,6 +45,13 @@ export const Notifier = () => {
   const hideNotification = () => {
     setAnchorEl(null);
   };
+  const handleLoadMoreNotification = () => {
+    getMoreListNotificationsQuery({
+      params: {
+        ...cursor,
+      },
+    });
+  };
 
   const onClickNotification = (notification: NotificationType) => {
     const agencyId = currentUser?.sub_id;
@@ -47,9 +64,6 @@ export const Notifier = () => {
     navigate(`${ROUTE_CONTROL}?locationId=${locationId}`);
   };
 
-  const handleLoadMoreNotification = () => {
-    setAnchorEl(null);
-  };
   const readAll = () => {
     const agencyId = currentUser?.sub_id;
     if (agencyId) {
@@ -149,13 +163,13 @@ export const Notifier = () => {
               </Box>
             </Box>
           </div>
-          <div style={{ height: 'auto', maxHeight: '352px' }}>
+          <div style={{ height: 'auto', maxHeight: '736px' }}>
             {Boolean(anchorEl) && (
               <NotificationList
                 notifications={filteredNotifications}
                 onClickNotification={onClickNotification}
                 handleLoadMoreNotification={handleLoadMoreNotification}
-                notificationsLoading={isLoading}
+                notificationsLoading={isLoadingMore}
               />
             )}
           </div>

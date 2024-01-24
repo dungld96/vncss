@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setNotifications } from 'state/modules/notification/notificationReducer';
+import { addNotifications, setNotifications } from 'state/modules/notification/notificationReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
 export const notificationsApi = createApi({
@@ -15,11 +15,31 @@ export const notificationsApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data },
+            data: { data, cursor },
           } = await queryFulfilled;
           dispatch(
             setNotifications({
               notifications: data,
+              cursor,
+            })
+          );
+        } catch (error) {}
+      },
+    }),
+    getMoreListNotifications: build.query<any, { params?: any }>({
+      query: (body) => ({ url: `notifications`, params: body.params }),
+      providesTags() {
+        return [{ type: 'Notification' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data, cursor },
+          } = await queryFulfilled;
+          dispatch(
+            addNotifications({
+              notifications: data,
+              cursor,
             })
           );
         } catch (error) {}
@@ -84,6 +104,7 @@ export const notificationsApi = createApi({
 
 export const {
   useLazyGetListNotificationsQuery,
+  useLazyGetMoreListNotificationsQuery,
   useSubNotificationMutation,
   useReadNotificationMutation,
   useUnSubNotificationMutation,

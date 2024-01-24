@@ -109,24 +109,19 @@ export const NotificationList = ({
         </Box>
       )}
 
-      {notificationsLoading ? (
-        <Box style={{ textAlign: 'center', padding: '10px 0' }}>
-          <CircularProgress />
+      {notifications.length < 300 && (
+        <Box
+          onClick={handleLoadMoreNotification}
+          style={{
+            textAlign: 'center',
+            cursor: 'pointer',
+            color: '#1262a5',
+            padding: '24px',
+            textDecoration: 'underline',
+          }}
+        >
+          Xem thêm
         </Box>
-      ) : (
-        // <Box
-        //   onClick={onClickLoadmore}
-        //   style={{
-        //     textAlign: 'center',
-        //     cursor: 'pointer',
-        //     color: '#1262a5',
-        //     padding: '10px',
-        //     textDecoration: 'underline',
-        //   }}
-        // >
-        //   Xem thêm
-        // </Box>
-        <></>
       )}
     </Box>
   );
