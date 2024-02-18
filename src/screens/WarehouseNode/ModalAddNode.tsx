@@ -217,22 +217,16 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
               <Select
                 style={{ width: 286 }}
                 fullWidth
-                topLable="Loại sản phẩm"
+                topLable="Loại thiết bị"
                 data={nodeTypesList}
                 selected={values.type}
                 setSelected={(type) => setFieldValue('type', type)}
-                placeholder="Chọn loại sản phẩm"
-                error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
+                placeholder="Chọn loại thiết bị"
+                error={values.type === 'none' ? 'Vui lòng chọn loại thiết bị' : ''}
               />
               <FormikWrappedField
                 style={{ width: 286 }}
-                topLable="Mô tả"
-                placeholder="Nhập mô tả"
-                {...getFieldProps('description')}
-              />
-              <FormikWrappedField
-                style={{ width: 286 }}
-                topLable="Serial"
+                topLable="Serial Node"
                 placeholder="Nhập serial"
                 {...getFieldProps('serial')}
               />
@@ -242,15 +236,18 @@ const ModalAddNode: React.FC<Props> = ({ show, onClose, nodeTypes }) => {
                 placeholder="Nhập phiên bản"
                 {...getFieldProps('version')}
               />
-              <DatePickers
-                {...getFieldProps('startDate')}
-                date={values.startDate}
-                style={{ width: 286 }}
-                topLable="Ngày xuất xưởng"
-                onChange={(date) => setFieldValue('startDate', date)}
-                showError={touched.startDate || isSubmitting}
-                error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
-              />
+              <Box style={{ width: 286 }}>
+                <DatePickers
+                  {...getFieldProps('startDate')}
+                  date={values.startDate}
+                  fullWidth
+                  topLable="Ngày xuất xưởng"
+                  onChange={(date) => setFieldValue('startDate', date)}
+                  showError={touched.startDate || isSubmitting}
+                  error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
+                />
+              </Box>
+
               {/* <Select
                 style={{ width: 286 }}
                 fullWidth

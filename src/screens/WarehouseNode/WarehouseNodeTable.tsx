@@ -155,8 +155,8 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
 
   const [columns] = useState([
     { name: 'nodeType', title: 'Loại' },
-    { name: 'description', title: 'Mô tả' },
-    { name: 'serial', title: 'Serial' },
+    // { name: 'description', title: 'Mô tả' },
+    { name: 'serial', title: 'Serial Node' },
     { name: 'version', title: 'Phiên bản' },
     { name: 'mfg', title: 'Ngày xuất xưởng' },
     { name: 'status', title: 'Trạng thái' },
@@ -284,7 +284,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
 
   const mappingNodeType = (typeId: string) => {
     const type = nodeTypes.find((item) => item.id === typeId);
-    return type ? `${type.code} - ${type.name}` : typeId;
+    return type ? `${type.code}` : typeId;
   };
 
   useEffect(() => {
@@ -301,7 +301,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
         onSuccess={() => setSelection([])}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
-      <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} />
+      <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} nodeTypes={nodeTypes}/>
       <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} nodeTypes={nodeTypes} />
       <Box
         sx={{

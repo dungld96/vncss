@@ -191,7 +191,19 @@ const GatewayInfo = ({
       </Box>
       {gatewayTypeCode !== 'GW-CTL4G' && (
         <Box mt={1} py={1} style={{ borderBottom: '1px solid #EEF2FA' }}>
-          <Box p={1} display="flex" justifyContent="space-around" alignItems="center">
+          <Box mt={2} p={2} display="flex" justifyContent="space-around" alignItems="center">
+            {gatewayTypeCode === 'GW-ATM4G' && (
+              <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                style={{ color: '#8B8C9B', fontSize: '12px', fontWeight: 500 }}
+              >
+                <img src={TakeCamera} alt="" />
+                <Typography style={{ marginTop: '16px' }}>Chụp ảnh nhanh</Typography>
+              </Box>
+            )}
             <Box
               display="flex"
               flexDirection="column"
@@ -271,7 +283,7 @@ const GatewayInfo = ({
           </Box>
         )}
       </Box>
-      {gatewayTypeCode === 'GW-ATM4G' && (
+      {/* {gatewayTypeCode === 'GW-ATM4G' && (
         <Box mt={1} py={2} style={{ borderTop: '1px solid #EEF2FA' }}>
           <Typography style={{ fontWeight: 600, fontSize: 18 }}>Thiết bị chống cướp</Typography>
           <Box mt={2} p={2} display="flex" justifyContent="space-around" alignItems="center">
@@ -297,7 +309,7 @@ const GatewayInfo = ({
             </Box>
           </Box>
         </Box>
-      )}
+      )} */}
 
       {location && gateway && openUpdateGatewayDialog && (
         <UpdateGatewayInfoDialog
@@ -624,7 +636,7 @@ const ATMNode = ({
     { code: 'NB-SMOKE', name: 'Cảm biến khói' },
     { code: 'NB-DOOR', name: 'Cảm biến cửa' },
     { code: 'NB-VIBRATE', name: 'Cảm biến rung' },
-    { code: 'SNH-ARB', name: 'Phát hiện mất điện' },
+    { code: 'NB-ARB', name: 'Phát hiện mất điện' },
   ];
   const nodes = useMemo(() => {
     if (!nodeTypes) return [];
@@ -690,7 +702,13 @@ const ATMNode = ({
           {nodes.map((item) => {
             return (
               <Grid key={item.id} item md={4} lg={3}>
-                <NodeCard showPin={false} data={item} nodeTypes={nodeTypes || []} onClickCard={() => {}} />
+                <NodeCard
+                  showStatus={false}
+                  showPin={false}
+                  data={item}
+                  nodeTypes={nodeTypes || []}
+                  onClickCard={() => {}}
+                />
               </Grid>
             );
           })}

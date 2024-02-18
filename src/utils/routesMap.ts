@@ -23,6 +23,6 @@ export const routeTitle = {
   'warehouse-sim': 'Kho Sim',
   'warehouse-cameras': 'Kho Camera',
   'depoy-location': 'Vị trí triển khai',
-  'regulatory-agency': 'Cơ quan quản lý',
+  'regulatory-agency': 'Cơ quan chức năng',
   organizations: 'Đơn vị giám sát',
 };

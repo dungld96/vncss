@@ -1,14 +1,15 @@
-import { DialogActions, DialogContent } from '@mui/material';
+import { Box, DialogActions, DialogContent } from '@mui/material';
 import DatePickers from '../../common/datePicker/DatePicker';
 import FormikWrappedField from '../../common/input/Field';
 import { Form, FormikProvider, useFormik } from 'formik';
 import { useAuth } from '../../hooks/useAuth';
 import React, { useEffect } from 'react';
-import { useUpdateNodeMutation } from '../../services/node.service';
+import { INodeType, useUpdateNodeMutation } from '../../services/node.service';
 import * as Yup from 'yup';
 import Select from '../../common/Select/Select';
 import Button from '../../common/button/Button';
 import Modal from '../../common/modal/Modal';
+import dayjs from 'dayjs';
 
 interface ValuesType {
   id?: string;
@@ -22,6 +23,7 @@ interface Props {
   show: boolean;
   onClose?: () => void;
   initialValues: ValuesType;
+  nodeTypes: INodeType[];
 }
 
 const validationSchema = Yup.object().shape({
@@ -30,7 +32,7 @@ const validationSchema = Yup.object().shape({
   startDate: Yup.string().required('Ngày xuất xưởng không được để trống'),
 });
 
-const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues }) => {
+const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues, nodeTypes }) => {
   const [editNode] = useUpdateNodeMutation();
 
   const {
@@ -47,7 +49,7 @@ const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues }) => {
         node_type_id: values.type,
         serial: values.serial,
         version: values.version,
-        mfg: values.startDate,
+        mfg: dayjs(values.startDate, 'DD/MM/YYYY').unix(),
         description: values.description,
       };
       try {
@@ -65,6 +67,9 @@ const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues }) => {
     if (!show) return;
     resetForm();
   }, [show]);
+
+  const nodeTypesList = nodeTypes.map((item) => ({ value: item.id, label: item.name }));
+
   return (
     <Modal size="sm" show={show} close={onClose} title="Chỉnh sửa Node">
       <FormikProvider value={formik}>
@@ -82,24 +87,15 @@ const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues }) => {
             <Select
               style={{ width: 286 }}
               fullWidth
-              topLable="Loại sản phẩm"
-              data={[
-                { value: 'none', label: 'Chọn loại sản phẩm' },
-                { value: 'snh-srb', label: 'Node Sample' },
-              ]}
+              topLable="Loại thiết bị"
+              data={nodeTypesList}
               selected={values.type}
               setSelected={(type) => setFieldValue('type', type)}
-              error={values.type === 'none' ? 'Vui lòng chọn loại sản phẩm' : ''}
+              error={values.type === 'none' ? 'Vui lòng chọn loại thiết bị' : ''}
             />
             <FormikWrappedField
               style={{ width: 286 }}
-              topLable="Mô tả"
-              placeholder="Nhập mô tả"
-              {...getFieldProps('description')}
-            />
-            <FormikWrappedField
-              style={{ width: 286 }}
-              topLable="Serial"
+              topLable="Serial node"
               placeholder="Nhập serial"
               {...getFieldProps('serial')}
             />
@@ -109,15 +105,17 @@ const ModalEditNode: React.FC<Props> = ({ show, onClose, initialValues }) => {
               placeholder="Nhập phiên bản"
               {...getFieldProps('version')}
             />
-            <DatePickers
-              {...getFieldProps('startDate')}
-              date={values.startDate}
-              style={{ width: 286 }}
-              topLable="Ngày xuất xưởng"
-              onChange={(date) => setFieldValue('startDate', date)}
-              showError={touched.startDate || isSubmitting}
-              error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
-            />
+            <Box style={{ width: 286 }}>
+              <DatePickers
+                {...getFieldProps('startDate')}
+                date={values.startDate}
+                fullWidth
+                topLable="Ngày xuất xưởng"
+                onChange={(date) => setFieldValue('startDate', date)}
+                showError={touched.startDate || isSubmitting}
+                error={values.startDate ? '' : 'Ngày xuất xưởng không được để trống'}
+              />
+            </Box>
           </DialogContent>
           <DialogActions sx={{ padding: 0 }}>
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>

@@ -22,9 +22,10 @@ type Props = {
   nodeTypes: INodeType[];
   onClickCard: () => void;
   showPin?: boolean;
+  showStatus?: boolean;
 };
 
-export const NodeCard = ({ data, nodeTypes, onClickCard, showPin = true }: Props) => {
+export const NodeCard = ({ data, nodeTypes, onClickCard, showPin = true, showStatus = true }: Props) => {
   const nodeType = nodeTypes.find((item) => item.id === data.node_type_id);
   const nodeCodeType = nodeType?.code.split('-')[1];
 
@@ -33,9 +34,12 @@ export const NodeCard = ({ data, nodeTypes, onClickCard, showPin = true }: Props
   return (
     <DLNodeCard onClick={onClickCard}>
       <Box display="flex" justifyContent="space-between" alignItems="center" pb={2}>
-        <Box>
-          {status ? <img src={sensorMapped.power_on_dot} alt="" /> : <img src={sensorMapped.power_off_dot} alt="" />}
-        </Box>
+        {showStatus && (
+          <Box>
+            {status ? <img src={sensorMapped.power_on_dot} alt="" /> : <img src={sensorMapped.power_off_dot} alt="" />}
+          </Box>
+        )}
+
         {showPin ? (
           <Box display="flex" justifyContent="center" alignItems="center">
             <Box style={{ fontSize: '12px' }}>{data.state?.battery || 100}%</Box>

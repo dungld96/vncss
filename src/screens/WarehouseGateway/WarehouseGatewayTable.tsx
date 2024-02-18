@@ -218,7 +218,6 @@ export const WarehouseGatewayTable = ({
     { name: 'hardware_version', title: 'Phiên bản' },
     { name: 'mfg', title: 'Ngày xuất xưởng' },
     { name: 'status', title: 'Trạng thái' },
-    { name: 'node', title: 'Node' },
     { name: 'sim', title: 'Số điện thoại' },
     { name: 'active_at', title: 'Ngày kích hoạt' },
     { name: 'enable_callcenter', title: 'Tổng đài' },
@@ -229,7 +228,7 @@ export const WarehouseGatewayTable = ({
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
     { columnName: 'action', width: 120, align: 'center' },
-    { columnName: 'serial', width: 170, align: 'center' },
+    { columnName: 'serial', width: 180, align: 'center' },
     { columnName: 'mfg', width: 140, align: 'center' },
   ]);
 

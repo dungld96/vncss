@@ -81,7 +81,7 @@ const listFeature = [
   // },
   {
     id: '68d536e2-eff0-4388-84ad-739c31867c8b',
-    title: 'Cơ quan quản lý',
+    title: 'Cơ quan chức năng',
     icon: <ImageIcon image={RegulatoryAgencyIcon} />,
     activeIcon: <ImageIcon image={RegulatoryAgencyActiveIcon} />,
     permission: [0, 1],

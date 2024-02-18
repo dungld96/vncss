@@ -1,6 +1,17 @@
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
-import { Box, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+  Tooltip,
+} from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { CustomFieldType, getTableCell, TableHeaderCell, TableHeaderContent } from '../../common/DxTable/DxTableCommon';
 import { ImageIcon } from '../../utils/UtilsComponent';
@@ -188,6 +199,15 @@ export const DeployLocationTable = ({ refetch }: { refetch: () => void }) => {
           <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>
             {row.maintaint_date ? dayjs(row.maintaint_date)?.format('DD/MM/YYYY') : '--'}
           </Typography>
+        );
+      },
+    },
+    addressString: {
+      renderContent: ({ row }) => {
+        return (
+          <Tooltip title={row.addressString}>
+            <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{row.addressString || '--'}</Typography>
+          </Tooltip>
         );
       },
     },
