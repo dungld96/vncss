@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { setRegulatories } from 'state/modules/regulatory/regulatoryReducer';
+import { setRegulatories, setRegulatoriesChilds } from 'state/modules/regulatory/regulatoryReducer';
 import { queryRootConfig } from './http.service';
 
 export interface IRegulatory {
@@ -41,6 +41,51 @@ export const regulatoryApi = createApi({
         } catch (error) {}
       },
     }),
+    getListRegulatoriesChilds: build.query<any, any>({
+      query: ({ id, params }) => ({ url: `regulatories/${id}/children`, params }),
+      providesTags() {
+        return [{ type: 'Regulatory' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data },
+          } = await queryFulfilled;
+          const dataParse = data.map((item: any) => ({
+            ...item,
+            parentId: item.parent_id || null,
+          }));
+          dispatch(
+            setRegulatoriesChilds({
+              regulatories: dataParse,
+            })
+          );
+        } catch (error) {}
+      },
+    }),
+    getListRegulatoriesSearch: build.query<any, any>({
+      query: (params) => ({ url: 'regulatories/search', params }),
+      providesTags() {
+        return [{ type: 'Regulatory' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data, cursor },
+          } = await queryFulfilled;
+          const dataParse = data.map((item: any) => ({
+            ...item,
+            parentId: item.parent_id || null,
+          }));
+          dispatch(
+            setRegulatories({
+              cursor: cursor,
+              regulatories: dataParse,
+            })
+          );
+        } catch (error) {}
+      },
+    }),
     changePasswordRegulatory: build.mutation<any, { password: string; id: string }>({
       query: ({ id, password }) => {
         try {
@@ -58,5 +103,10 @@ export const regulatoryApi = createApi({
   }),
 });
 
-export const { useGetListRegulatoriesQuery, useLazyGetListRegulatoriesQuery, useChangePasswordRegulatoryMutation } =
-  regulatoryApi;
+export const {
+  useGetListRegulatoriesQuery,
+  useLazyGetListRegulatoriesQuery,
+  useChangePasswordRegulatoryMutation,
+  useLazyGetListRegulatoriesSearchQuery,
+  useLazyGetListRegulatoriesChildsQuery,
+} = regulatoryApi;

@@ -11,9 +11,10 @@ import { ImageIcon } from '../../utils/UtilsComponent';
 
 interface Props {
   show: boolean;
+  isLoading?: boolean;
   id: string;
   onClose: () => void;
-  onSuccess?: (password: string, id: string) => void;
+  onSubmit?: (password: string, id: string) => void;
 }
 
 const ContentWrapper = styled(DialogContent)({
@@ -30,7 +31,7 @@ const validationSchema = Yup.object().shape({
     .oneOf([Yup.ref('new_password'), ''], 'Xác nhận mật khẩu phải khớp với mật khẩu mới.'),
 });
 
-const ModalChangePassword: React.FC<Props> = ({ show, id, onClose, onSuccess }) => {
+const ModalChangePassword: React.FC<Props> = ({ show, id, onClose, onSubmit, isLoading = false }) => {
   const formik = useFormik({
     initialValues: {
       new_password: '',
@@ -39,7 +40,7 @@ const ModalChangePassword: React.FC<Props> = ({ show, id, onClose, onSuccess }) 
     enableReinitialize: true,
     validationSchema,
     onSubmit: ({ new_password }) => {
-      onSuccess?.(new_password, id);
+      onSubmit?.(new_password, id);
     },
   });
 
@@ -70,7 +71,7 @@ const ModalChangePassword: React.FC<Props> = ({ show, id, onClose, onSuccess }) 
             <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
               Quay lại
             </Button>
-            <Button type="submit" style={{ width: 131 }} variant="contained">
+            <Button type="submit" style={{ width: 131 }} variant="contained" disabled={isLoading}>
               Lưu lại
             </Button>
           </DialogActions>

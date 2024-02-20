@@ -159,8 +159,6 @@ const ConfirmInfo: React.FC<Props> = ({ values, setFieldValue, isSubmitting }) =
             tags={tags as any}
             hideButtonAdd
             onSelected={(tags) => setFieldValue('tags', tags)}
-            error="Vui lòng chọn cơ quan, Đơn vị giám sát vị trí"
-            errorEmpty={isSubmitting}
           />
         </Box>
       </Box>

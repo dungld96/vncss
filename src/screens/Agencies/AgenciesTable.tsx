@@ -137,19 +137,19 @@ export const AgenciesTable = () => {
     }));
   }, [currentUser, agencies]);
 
-  const [columns] = useState([
+  const columns = [
     { name: 'name', title: 'Tên' },
     { name: 'address', title: 'Địa chỉ' },
     { name: 'phone', title: 'Số điện thoại' },
     { name: 'username', title: 'Tài khoản' },
     { name: 'action', title: 'Hành động' },
-  ]);
+  ];
 
-  const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
+  const tableColumnExtensions = [
     { columnName: 'name', width: 300 },
     { columnName: 'phone', align: 'center' },
     { columnName: 'action', width: 200, align: 'center' },
-  ]);
+  ] as Table.ColumnExtension[];
 
   const handleClick = (type: string, row: AgencyType) => {
     if (type === 'edit') {

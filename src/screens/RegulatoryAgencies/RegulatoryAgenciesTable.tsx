@@ -2,7 +2,7 @@ import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
 import { MoreHoriz } from '@mui/icons-material';
 import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   CustomFieldType,
   ExpandButtonTableTree,
@@ -20,12 +20,18 @@ import KeyIcon from '../../assets/icons/key-icon.svg';
 import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
 import ModalChangePassword from '../Users/ModalChangePassword';
-import { IRegulatory, useChangePasswordRegulatoryMutation } from '../../services/regulatory.service';
+import {
+  IRegulatory,
+  useChangePasswordRegulatoryMutation,
+  useLazyGetListRegulatoriesChildsQuery,
+} from '../../services/regulatory.service';
 import { selectRegulatories } from '../../state/modules/regulatory/regulatoryReducer';
+import useApp from 'hooks/useApp';
+import { useSnackbar } from 'hooks/useSnackbar';
 
 const getChildRows = (row: IRegulatory, rootRows: IRegulatory[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
-  return childRows.length ? childRows : null;
+  return childRows.length ? childRows : [];
 };
 
 const ActionCellContent = ({
@@ -35,58 +41,45 @@ const ActionCellContent = ({
   cellProps: Table.DataCellProps;
   onActionClick: (type: string, id: string) => void;
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const rowId = useMemo(() => cellProps.row?.id, [cellProps]);
 
   return (
     <div>
-      <IconButton
-        id="demo-positioned-button"
-        aria-controls={open ? 'demo-positioned-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
+      <Typography
+        style={{ fontSize: '14px', color: '#E13153', cursor: 'pointer' }}
+        onClick={() => onActionClick('change-pass', rowId)}
       >
-        <MoreHoriz />
-      </IconButton>
-      <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <MenuItem onClick={() => onActionClick('change-pass', rowId)} sx={{ padding: '16px' }}>
-          <ListItemIcon>
-            <ImageIcon image={KeyIcon} />
-          </ListItemIcon>
-          <ListItemText primaryTypographyProps={{ sx: { fontSize: '14px' } }}>Đổi mật khẩu</ListItemText>
-        </MenuItem>
-      </Menu>
+        Đổi mật khẩu
+      </Typography>
     </div>
   );
 };
 
-export const RegulatoryAgenciesTable = () => {
-  const [changePassword] = useChangePasswordRegulatoryMutation();
+const getRowId = (row: any) => row.id;
+
+export const RegulatoryAgenciesTable = ({
+  fetchFilter,
+  refetch,
+}: {
+  fetchFilter: (p?: string, d?: string) => void;
+  refetch: () => void;
+}) => {
+  const [changePassword, { isLoading }] = useChangePasswordRegulatoryMutation();
+  const [getListRegulatoriesChilds] = useLazyGetListRegulatoriesChildsQuery();
   const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
   const regulatoryAgencies = useSelector(selectRegulatories);
+  const [province, setProvince] = useState<string>();
+  const [district, setDistrict] = useState<string>();
+  const [expandedRowIds, setExpandedRowIds] = useState<Array<string | number>>([]);
+  const { area, fetchArea } = useApp();
+  const { setSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    fetchArea();
+  }, []);
+
+  const dataCity = area.find((item: any) => item.name === province);
+  const districtList = dataCity?.level2s?.map((item: any) => ({ label: item.name, value: item.name }));
 
   const [columns] = useState([
     { name: 'name', title: 'Tên cơ quan' },
@@ -110,22 +103,29 @@ export const RegulatoryAgenciesTable = () => {
   };
 
   const customField: CustomFieldType = {
+    address: {
+      renderContent: ({ row }) => {
+        return (
+          <>
+            <Typography>
+              {`${row?.address}${row?.commune ? `, ${row?.commune}` : ''}${row?.district ? `, ${row?.district}` : ''}${
+                row?.province ? `, ${row?.province}` : ''
+              }`}
+            </Typography>
+          </>
+        );
+      },
+    },
     count_locations: {
       renderContent: ({ row }) => {
         return (
           <>
-            {row?.number_location ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-                <Typography sx={{ textAlign: 'right', width: '60px' }}>
-                  {row?.number_location?.toLocaleString('en-US')}
-                </Typography>
-                <IconButton>
-                  <ImageIcon image={GroupIcon} />
-                </IconButton>
-              </Box>
-            ) : (
-              '--'
-            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+              <Typography sx={{ textAlign: 'right', width: '60px' }}>{row?.count_locations}</Typography>
+              <IconButton>
+                <ImageIcon image={GroupIcon} />
+              </IconButton>
+            </Box>
           </>
         );
       },
@@ -134,18 +134,12 @@ export const RegulatoryAgenciesTable = () => {
       renderContent: ({ row }) => {
         return (
           <>
-            {row?.number_device ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-                <Typography sx={{ textAlign: 'right', width: '60px' }}>
-                  {row?.number_device?.toLocaleString('en-US')}
-                </Typography>
-                <IconButton>
-                  <ImageIcon image={GroupIcon} />
-                </IconButton>
-              </Box>
-            ) : (
-              '--'
-            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
+              <Typography sx={{ textAlign: 'right', width: '60px' }}>{row?.count_devices}</Typography>
+              <IconButton>
+                <ImageIcon image={GroupIcon} />
+              </IconButton>
+            </Box>
           </>
         );
       },
@@ -153,8 +147,37 @@ export const RegulatoryAgenciesTable = () => {
   };
 
   const handelChangePass = async (password: string, id: string) => {
-    await changePassword({ id, password }).unwrap();
-    setModalChangePass({ ...modalChangePass, show: false });
+    changePassword({ id, password })
+      .then((res: any) => {
+        if (res.error) {
+          setSnackbar({ open: true, message: 'Có lỗi khi đổi mật khẩu', severity: 'error' });
+          return;
+        }
+        setSnackbar({ open: true, message: 'Đổi mật khẩu thành công', severity: 'success' });
+        setModalChangePass({ ...modalChangePass, show: false });
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: 'Có lỗi khi đổi mật khẩu', severity: 'error' });
+      });
+  };
+
+  const handleFilter = () => {
+    fetchFilter(province, district);
+  };
+
+  const handleClearFilter = () => {
+    setProvince(undefined);
+    setDistrict(undefined);
+    refetch();
+  };
+  const handleExpanded = (ids: Array<string | number>) => {
+    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) =>
+      regulatoryAgencies.every((item) => item.parentId !== rowId)
+    );
+    if (rowIdsWithNotLoadedChilds.length) {
+      Promise.all(rowIdsWithNotLoadedChilds.map((rowId) => getListRegulatoriesChilds({ id: `${rowId}` })));
+    }
+    setExpandedRowIds(ids);
   };
 
   return (
@@ -162,7 +185,8 @@ export const RegulatoryAgenciesTable = () => {
       <ModalChangePassword
         {...modalChangePass}
         onClose={() => setModalChangePass({ ...modalChangePass, show: false })}
-        onSuccess={(pass, id) => handelChangePass(pass, id)}
+        onSubmit={(pass, id) => handelChangePass(pass, id)}
+        isLoading={isLoading}
       />
       <Box
         sx={{
@@ -174,20 +198,37 @@ export const RegulatoryAgenciesTable = () => {
           },
         }}
       >
-        <Select noMarginTop topLable="Tỉnh thành" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
-        <Select noMarginTop topLable="Quận, huyện" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
+        <Select
+          noMarginTop
+          topLable="Tỉnh thành"
+          data={area?.map((item: any) => ({ label: item.name, value: item.name }))}
+          selected={province}
+          setSelected={(p) => {
+            setProvince(p);
+            setDistrict(undefined);
+          }}
+          placeholder="Tất cả tỉnh thành"
+        />
+        <Select
+          noMarginTop
+          topLable="Quận, huyện"
+          data={districtList}
+          selected={district}
+          setSelected={(p) => setDistrict(p)}
+          placeholder="Tất cả quận huyện"
+        />
         <Box>
-          <Button variant="contained" style={{ width: '140px', marginRight: '8px' }}>
+          <Button variant="contained" style={{ width: '140px', marginRight: '8px' }} onClick={handleFilter}>
             Lọc
           </Button>
-          <Button variant="outlined" style={{ width: '140px' }}>
+          <Button variant="outlined" style={{ width: '140px' }} onClick={handleClearFilter}>
             Huỷ bộ lọc
           </Button>
         </Box>
       </Box>
       <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={regulatoryAgencies} columns={columns}>
-          <TreeDataState />
+        <Grid rows={regulatoryAgencies} columns={columns} getRowId={getRowId}>
+          <TreeDataState expandedRowIds={expandedRowIds} onExpandedRowIdsChange={handleExpanded} />
           <CustomTreeData getChildRows={getChildRows} />
           <Table
             columnExtensions={tableColumnExtensions}

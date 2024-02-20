@@ -132,7 +132,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
         break;
       case 1:
         submitForm();
-        if (dirty && isEmpty(errors) && values.tags.length > 0) {
+        if (dirty && isEmpty(errors)) {
           setTimeout(() => {
             handleNext(activeStep);
           }, 200);

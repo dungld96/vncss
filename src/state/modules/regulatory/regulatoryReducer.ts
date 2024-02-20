@@ -15,9 +15,15 @@ const slice = createSlice({
   name: 'regulatoryState',
   initialState: initialState,
   reducers: {
-    setRegulatories: (state, { payload: { regulatories, cursor } }: PayloadAction<{ regulatories: any[]; cursor: CursorType }>) => {
+    setRegulatories: (
+      state,
+      { payload: { regulatories, cursor } }: PayloadAction<{ regulatories: any[]; cursor: CursorType }>
+    ) => {
       state.regulatories = regulatories;
       state.cursor = cursor;
+    },
+    setRegulatoriesChilds: (state, { payload: { regulatories } }: PayloadAction<{ regulatories: any[] }>) => {
+      state.regulatories = regulatories.concat(...state.regulatories);
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;
@@ -25,7 +31,7 @@ const slice = createSlice({
   },
 });
 
-export const { setRegulatories, setLimit } = slice.actions;
+export const { setRegulatories, setLimit, setRegulatoriesChilds } = slice.actions;
 
 export default slice.reducer;
 

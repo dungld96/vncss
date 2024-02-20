@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider,
   Grid,
   IconButton,
@@ -16,19 +15,14 @@ import {
 import { Box } from '@mui/system';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useEffect } from 'react';
-import AddIcon from '../../assets/icons/add-circle-red.svg';
 import DatePickers from '../../common/datePicker/DatePicker';
 import FormikWrappedField from '../../common/input/Field';
 import Select from '../../common/Select/Select';
 import { Switch } from '../../common/Switch/Switch';
 import TableTag from '../../common/TableTag/TableTag';
 import useApp from '../../hooks/useApp';
-import { ImageIcon } from '../../utils/UtilsComponent';
-import { NormalInput } from 'common/input/NormalInput';
 import { BusinessTypes } from '../../configs/constant';
-import { Delete, MoreHoriz } from '@mui/icons-material';
-import dayjs from 'dayjs';
-import { data } from 'screens/vehicle-wrapper/mockData';
+import { Delete } from '@mui/icons-material';
 import { AddEventReceiverDialog } from './AddEventReceiverDialog';
 
 export type EventReceiveType = {
@@ -323,13 +317,7 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
           Đơn vị giám sát
         </Typography>
         <Box>
-          <TableTag
-            data={tagsList}
-            tags={tags}
-            onSelected={(tags) => setFieldValue('tags', tags)}
-            error="Vui lòng chọn cơ quan, Đơn vị giám sát vị trí"
-            errorEmpty={isSubmitting}
-          />
+          <TableTag data={tagsList} tags={tags} onSelected={(tags) => setFieldValue('tags', tags)} />
         </Box>
       </Box>
     </Box>

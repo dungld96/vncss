@@ -18,16 +18,18 @@ const LocationBaseInfo = ({ location }: { location?: LocationType }) => {
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Địa chỉ:</InfoTitle>
-        <InfoValue>{location?.address || '--'}</InfoValue>
+        <InfoValue>
+          {`${location?.address}, xã ${location?.commune}, huyện ${location?.district},  ${location?.province}` || '--'}
+        </InfoValue>
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Loại hình KD:</InfoTitle>
         <InfoValue>{location?.business || 'Khác'}</InfoValue>
       </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+      {/* <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Người liên hệ:</InfoTitle>
         <InfoValue>{location?.contact_name || '--'}</InfoValue>
-      </Box>
+      </Box> */}
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Chức vụ:</InfoTitle>
         <InfoValue>Giám đốc</InfoValue>
