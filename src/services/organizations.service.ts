@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { CursorType } from '../configs/constant';
-import { setOrganizations } from '../state/modules/organization/organizationReducer';
+import { setOrganizations, setOrganizationChilds } from '../state/modules/organization/organizationReducer';
 import { queryRootConfig, ResponsiveInterface } from './http.service';
 
 export interface IOrganization {
@@ -63,6 +63,31 @@ export const organizationsApi = createApi({
         } catch (error) {}
       },
     }),
+    getListOrganizationChilds: build.query<
+      OrganizationsResponsiveInterface,
+      { agency_id?: string; orgId: string; params?: any }
+    >({
+      query: (body) => ({ url: `agencies/${body.agency_id}/organizations/${body.orgId}/list`, params: body.params }),
+      providesTags() {
+        return [{ type: 'Organization' }];
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const {
+            data: { data },
+          } = await queryFulfilled;
+          const dataParse = data.map((item) => ({
+            ...item,
+            parentId: item.parent_id || null,
+          }));
+          dispatch(
+            setOrganizationChilds({
+              organizations: dataParse,
+            })
+          );
+        } catch (error) {}
+      },
+    }),
     createOrganization: build.mutation<OrganizationResponsiveInterface, OrganizationRequestInterface>({
       query: ({ organization, parent_uuid }) => {
         try {
@@ -91,11 +116,11 @@ export const organizationsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Organization' }]),
     }),
-    deleteOrganization: build.mutation<null, { id: string; parent_uuid?: string }>({
+    deleteOrganization: build.mutation<null, { id: string; agencyId: string }>({
       query: (body) => {
         try {
           return {
-            url: `agencies/${body.parent_uuid}/organizations/${body.id}`,
+            url: `agencies/${body.agencyId}/organizations/${body.id}`,
             method: 'DELETE',
           };
         } catch (error: any) {
@@ -113,4 +138,5 @@ export const {
   useGetListOrganizationsQuery,
   useLazyGetListOrganizationsQuery,
   useUpdateOrganizationMutation,
+  useLazyGetListOrganizationChildsQuery,
 } = organizationsApi;

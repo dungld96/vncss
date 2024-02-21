@@ -7,7 +7,6 @@ import {
   DEPLOY_LOCATION,
   MONITOR_DEPARTMENT,
   ROUTE_AGENCY,
-  ROUTE_HOME,
   ROUTE_REGULATORY_AGENCY,
   ROUTE_REPORTS,
   ROUTE_USER,
@@ -22,8 +21,6 @@ import {
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
-import dashboardIcon from '../../assets/icons/dashboard-icon.svg';
-import dashboardActiveIcon from '../../assets/icons/dashboard-active-icon.svg';
 import agencyIcon from '../../assets/icons/agency-icon.svg';
 import agencyActiveIcon from '../../assets/icons/agency-active-icon.svg';
 import usersIcon from '../../assets/icons/users-icon.svg';
@@ -84,7 +81,7 @@ const listFeature = [
     title: 'Cơ quan chức năng',
     icon: <ImageIcon image={RegulatoryAgencyIcon} />,
     activeIcon: <ImageIcon image={RegulatoryAgencyActiveIcon} />,
-    permission: [0, 1],
+    permission: [0, 1, 'regulatory'],
     route: ROUTE_REGULATORY_AGENCY,
   },
   {

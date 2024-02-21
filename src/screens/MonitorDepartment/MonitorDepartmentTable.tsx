@@ -26,7 +26,11 @@ import { Input } from '../../common';
 import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import ModalChangePassword from '../Users/ModalChangePassword';
-import { IOrganization, useDeleteOrganizationMutation } from '../../services/organizations.service';
+import {
+  IOrganization,
+  useDeleteOrganizationMutation,
+  useLazyGetListOrganizationChildsQuery,
+} from '../../services/organizations.service';
 import { selectOrganization } from '../../state/modules/organization/organizationReducer';
 import ModalAddEdit from './ModalAddEdit';
 import { defaultInitialValue } from './constants';
@@ -34,7 +38,7 @@ import { useAuth } from 'hooks/useAuth';
 
 const getChildRows = (row: IOrganization, rootRows: IOrganization[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
-  return childRows.length ? childRows : null;
+  return childRows.length ? childRows : [];
 };
 
 const ActionCellContent = ({
@@ -108,8 +112,11 @@ const ActionCellContent = ({
   );
 };
 
-export const MonitorDepartmentTable = () => {
+const getRowId = (row: any) => row.id;
+
+export const MonitorDepartmentTable = ({ refetch }: { refetch: () => void }) => {
   const [deleteOrganization] = useDeleteOrganizationMutation();
+  const [getListOrganizationChilds] = useLazyGetListOrganizationChildsQuery();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
   const [modalAddEdit, setModalAddEdit] = useState({
@@ -117,6 +124,8 @@ export const MonitorDepartmentTable = () => {
     type: 'create',
     initialValues: defaultInitialValue,
   });
+
+  const [expandedRowIds, setExpandedRowIds] = useState<Array<string | number>>([]);
 
   const organizations = useSelector(selectOrganization);
   const {
@@ -151,8 +160,10 @@ export const MonitorDepartmentTable = () => {
         confirm: {
           text: 'Xoá đơn vị',
           action: async () => {
-            await deleteOrganization({ id: row.id || '', parent_uuid: currentUser?.sub_id });
-            hideModalConfirm();
+            if (currentUser) {
+              await deleteOrganization({ id: row.id || '', agencyId: currentUser?.sub_id });
+              hideModalConfirm();
+            }
           },
         },
         cancel: {
@@ -205,9 +216,27 @@ export const MonitorDepartmentTable = () => {
     },
   };
 
+  const handleExpanded = (ids: Array<string | number>) => {
+    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) =>
+      organizations.every((item) => item.parentId !== rowId)
+    );
+    if (rowIdsWithNotLoadedChilds.length) {
+      Promise.all(
+        rowIdsWithNotLoadedChilds.map((rowId) =>
+          getListOrganizationChilds({ agency_id: currentUser?.sub_id, orgId: `${rowId}` })
+        )
+      );
+    }
+    setExpandedRowIds(ids);
+  };
+
   return (
     <>
-      <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
+      <ModalAddEdit
+        {...modalAddEdit}
+        onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })}
+        onSuccess={refetch}
+      />
       <ModalChangePassword
         {...modalChangePass}
         onClose={() => setModalChangePass({ ...modalChangePass, show: false })}
@@ -227,8 +256,8 @@ export const MonitorDepartmentTable = () => {
         </Button>
       </Box>
       <Paper sx={{ boxShadow: 'none' }}>
-        <Grid rows={organizations} columns={columns}>
-          <TreeDataState />
+        <Grid rows={organizations} columns={columns} getRowId={getRowId}>
+          <TreeDataState expandedRowIds={expandedRowIds} onExpandedRowIdsChange={handleExpanded} />
           <CustomTreeData getChildRows={getChildRows} />
           <Table
             columnExtensions={tableColumnExtensions}

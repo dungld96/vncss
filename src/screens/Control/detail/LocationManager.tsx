@@ -334,7 +334,7 @@ export const LocationManager = ({
               fontSize: '14px',
             }}
           >
-            <Grid item xs={5}>
+            <Grid item xs={10}>
               <Box
                 style={{
                   display: 'flex',
@@ -347,7 +347,7 @@ export const LocationManager = ({
                 Tên Tài khoản
               </Box>
             </Grid>
-            <Grid item xs={5}>
+            {/* <Grid item xs={5}>
               <Box
                 style={{
                   display: 'flex',
@@ -358,7 +358,7 @@ export const LocationManager = ({
               >
                 Số điện thoại
               </Box>
-            </Grid>
+            </Grid> */}
             <Grid item xs={2}>
               <Box
                 style={{
@@ -377,7 +377,7 @@ export const LocationManager = ({
               <>
                 <Grid
                   item
-                  xs={5}
+                  xs={10}
                   height="48px"
                   style={{
                     borderLeft: '1px solid #C5C6D2',
@@ -398,7 +398,7 @@ export const LocationManager = ({
                     {item.username}
                   </Box>
                 </Grid>
-                <Grid
+                {/* <Grid
                   item
                   xs={5}
                   height="48px"
@@ -410,7 +410,7 @@ export const LocationManager = ({
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                     {item.phone}
                   </Box>
-                </Grid>
+                </Grid> */}
                 <Grid
                   item
                   xs={2}

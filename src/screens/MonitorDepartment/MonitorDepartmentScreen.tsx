@@ -29,9 +29,13 @@ const MonitorDepartmentScreen = () => {
   const handleSetLimit = (limit: number) => {
     dispatch(setLimit({ limit }));
   };
+
+  const refetch = () => {
+    trigger({ agency_id: currentUser?.sub_id, params: { limit, ...paginate } });
+  };
   return (
     <Box mt={2} ml={2} mr={'12px'}>
-      <MonitorDepartmentTable />
+      <MonitorDepartmentTable refetch={refetch} />
       <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );

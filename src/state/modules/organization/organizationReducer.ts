@@ -23,13 +23,16 @@ const slice = createSlice({
       state.organizations = organizations;
       state.cursor = cursor;
     },
+    setOrganizationChilds: (state, { payload: { organizations } }: PayloadAction<{ organizations: any[] }>) => {
+      state.organizations = organizations.concat(...state.organizations);
+    },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;
     },
   },
 });
 
-export const { setOrganizations, setLimit } = slice.actions;
+export const { setOrganizations, setLimit, setOrganizationChilds } = slice.actions;
 
 export default slice.reducer;
 

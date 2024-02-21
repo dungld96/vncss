@@ -1,7 +1,6 @@
 import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
-import { MoreHoriz } from '@mui/icons-material';
-import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   CustomFieldType,
@@ -11,12 +10,9 @@ import {
   TableHeaderContent,
   TableTreeCell,
 } from '../../common/DxTable/DxTableCommon';
-import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { Box } from '@mui/system';
 import { useSelector } from 'react-redux';
-import GroupIcon from '../../assets/icons/group-icon.svg';
-import KeyIcon from '../../assets/icons/key-icon.svg';
 import Button from '../../common/button/Button';
 import Select from '../../common/Select/Select';
 import ModalChangePassword from '../Users/ModalChangePassword';
@@ -121,10 +117,12 @@ export const RegulatoryAgenciesTable = ({
         return (
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-              <Typography sx={{ textAlign: 'right', width: '60px' }}>{row?.count_locations}</Typography>
-              <IconButton>
+              <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                {row?.count_locations?.toLocaleString('en-US')}
+              </Typography>
+              {/* <IconButton>
                 <ImageIcon image={GroupIcon} />
-              </IconButton>
+              </IconButton> */}
             </Box>
           </>
         );
@@ -135,10 +133,12 @@ export const RegulatoryAgenciesTable = ({
         return (
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-              <Typography sx={{ textAlign: 'right', width: '60px' }}>{row?.count_devices}</Typography>
-              <IconButton>
+              <Typography sx={{ textAlign: 'right', width: '60px' }}>
+                {row?.count_devices?.toLocaleString('en-US')}
+              </Typography>
+              {/* <IconButton>
                 <ImageIcon image={GroupIcon} />
-              </IconButton>
+              </IconButton> */}
             </Box>
           </>
         );

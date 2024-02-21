@@ -17,10 +17,12 @@ import {
 import { useSelector } from 'react-redux';
 import { selectOrganization } from 'state/modules/organization/organizationReducer';
 import { useAuth } from 'hooks/useAuth';
+import { useSnackbar } from 'hooks/useSnackbar';
 
 interface Props {
   show: boolean;
   onClose: () => void;
+  onSuccess: () => void;
   type: string;
   initialValues: IOrganization;
 }
@@ -45,7 +47,7 @@ const validationPassword = {
   tag: Yup.string().required('Thẻ tag không được để trống'),
 };
 
-const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) => {
+const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues, onSuccess }) => {
   const [addOrganization] = useCreateOrganizationMutation();
   const [updateOrganization] = useUpdateOrganizationMutation();
   const organizations = useSelector(selectOrganization);
@@ -53,6 +55,7 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
   const {
     auth: { currentUser },
   } = useAuth();
+  const { setSnackbar } = useSnackbar();
 
   const listOrganizations = organizations.map((i) => ({
     value: i.id,
@@ -71,14 +74,36 @@ const ModalAddEdit: React.FC<Props> = ({ show, type, onClose, initialValues }) =
         await addOrganization({
           organization: { name, address, username, password, tag, parent_id },
           parent_uuid: currentUser?.sub_id,
-        }).unwrap();
-        onClose();
+        })
+          .then((res: any) => {
+            if (res.error) {
+              setSnackbar({ open: true, message: 'Có lỗi khi cập nhật đơn vị giám sát', severity: 'error' });
+              return;
+            }
+            setSnackbar({ open: true, message: 'Cập nhật đơn vị giám sát thành công', severity: 'success' });
+            onClose();
+            onSuccess();
+          })
+          .catch(() => {
+            setSnackbar({ open: true, message: 'Có lỗi khi cập nhật đơn vị giám sát', severity: 'error' });
+          });
       } else {
         await updateOrganization({
           organization: { id, name, address, username, password, tag, parent_id },
           parent_uuid: currentUser?.sub_id,
-        }).unwrap();
-        onClose();
+        })
+          .then((res: any) => {
+            if (res.error) {
+              setSnackbar({ open: true, message: 'Có lỗi khi cập nhật đơn vị giám sát', severity: 'error' });
+              return;
+            }
+            setSnackbar({ open: true, message: 'Cập nhật đơn vị giám sát thành công', severity: 'success' });
+            onClose();
+            onSuccess();
+          })
+          .catch(() => {
+            setSnackbar({ open: true, message: 'Có lỗi khi cập nhật đơn vị giám sát', severity: 'error' });
+          });
       }
     },
   });
