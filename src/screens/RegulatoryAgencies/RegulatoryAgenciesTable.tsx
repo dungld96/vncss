@@ -171,9 +171,7 @@ export const RegulatoryAgenciesTable = ({
     refetch();
   };
   const handleExpanded = (ids: Array<string | number>) => {
-    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) =>
-      regulatoryAgencies.every((item) => item.parentId !== rowId)
-    );
+    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) => expandedRowIds.every((item) => item !== rowId));
     if (rowIdsWithNotLoadedChilds.length) {
       Promise.all(rowIdsWithNotLoadedChilds.map((rowId) => getListRegulatoriesChilds({ id: `${rowId}` })));
     }

@@ -116,7 +116,6 @@ const ActionCellContent = ({
 const getRowId = (row: any) => row.id;
 export const AgenciesTable = () => {
   const [expandedRowIds, setExpandedRowIds] = useState<Array<string | number>>([]);
-  const [loading, setLoading] = useState(false);
   const agencies = useSelector(selectAgencies);
   const [deleteAgency] = useDeleteAgencyMutation();
   const [getAgencyChilds] = useLazyGetAgencyChildsQuery();
@@ -186,9 +185,7 @@ export const AgenciesTable = () => {
   };
 
   const handleExpanded = (ids: Array<string | number>) => {
-    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) =>
-      agenciesParsed.every((item) => item.parentId !== rowId)
-    );
+    const rowIdsWithNotLoadedChilds = [...ids].filter((rowId) => expandedRowIds.every((item) => item !== rowId));
     if (rowIdsWithNotLoadedChilds.length) {
       Promise.all(rowIdsWithNotLoadedChilds.map((rowId) => getAgencyChilds({ id: `${rowId}` })));
     }
