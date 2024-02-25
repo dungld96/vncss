@@ -26,14 +26,14 @@ const LocationBaseInfo = ({ location }: { location?: LocationType }) => {
         <InfoTitle>Loại hình KD:</InfoTitle>
         <InfoValue>{location?.business || 'Khác'}</InfoValue>
       </Box>
-      {/* <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Người liên hệ:</InfoTitle>
         <InfoValue>{location?.contact_name || '--'}</InfoValue>
-      </Box> */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+      </Box>
+      {/* <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>Chức vụ:</InfoTitle>
         <InfoValue>Giám đốc</InfoValue>
-      </Box>
+      </Box> */}
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
         <InfoTitle>SĐT người liên hệ:</InfoTitle>
         <InfoValue>{location?.contact_number || '--'}</InfoValue>
