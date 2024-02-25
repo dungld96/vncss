@@ -32,7 +32,7 @@
     "dayjs": "^1.11.7",
     "firebase": "^10.0.0",
     "formik": "^2.2.9",
-    "google-map-react": "^2.2.0",
+    "google-map-react": "^2.2.1",
     "points-cluster": "^0.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
