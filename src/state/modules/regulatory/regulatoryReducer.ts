@@ -23,7 +23,8 @@ const slice = createSlice({
       state.cursor = cursor;
     },
     setRegulatoriesChilds: (state, { payload: { regulatories } }: PayloadAction<{ regulatories: any[] }>) => {
-      state.regulatories = regulatories.concat(...state.regulatories);
+      const filterRegs = regulatories.filter((item) => !state.regulatories.find((sr) => sr.id === item.id));
+      state.regulatories = filterRegs.concat(...state.regulatories);
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;

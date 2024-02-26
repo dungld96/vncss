@@ -24,7 +24,8 @@ const slice = createSlice({
       state.cursor = cursor;
     },
     setOrganizationChilds: (state, { payload: { organizations } }: PayloadAction<{ organizations: any[] }>) => {
-      state.organizations = organizations.concat(...state.organizations);
+      const filters = organizations.filter((item) => !state.organizations.find((sr) => sr.id === item.id));
+      state.organizations = filters.concat(...state.organizations);
     },
     setLimit: (state, { payload: { limit } }: PayloadAction<{ limit: number }>) => {
       state.limit = limit;

@@ -19,7 +19,8 @@ const slice = createSlice({
       state.agencies = agencies;
     },
     setAgencyChilds: (state, { payload: { agencies } }: PayloadAction<{ agencies: IAgency[] }>) => {
-      state.agencies = agencies.concat(...state.agencies);
+      const filters = agencies.filter((item) => !state.agencies.find((sr) => sr.id === item.id));
+      state.agencies = filters.concat(...state.agencies);
     },
   },
 });
