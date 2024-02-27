@@ -240,6 +240,8 @@ export default function DrawerSidebar({ open }: Props) {
     return item.route === localtion.pathname;
   };
 
+  const currentAccountType = currentUser?.type;
+
   return (
     <Box>
       <Drawer
@@ -294,15 +296,20 @@ export default function DrawerSidebar({ open }: Props) {
           {listFeature.map((item) => {
             if (!currentUser) return null;
 
-            if (
-              currentAgency &&
-              !item.permission.includes(currentAgency.level) &&
-              !item.permission.includes('org') &&
-              !item.permission.includes('regulatory')
-            ) {
+            if (currentAgency && !item.permission.includes(currentAgency.level)) {
+              return null;
+            }
+            if (currentAccountType && currentAccountType === 'regulatory' && !item.permission.includes('regulatory')) {
               return null;
             }
 
+            if (
+              currentAccountType &&
+              currentAccountType === 'organization' &&
+              !item.permission.includes('org')
+            ) {
+              return null;
+            }
             return (
               <List key={item.id} component="div" disablePadding>
                 <ListItem

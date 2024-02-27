@@ -87,6 +87,36 @@ export const LocationManager = ({
     });
   };
 
+  const handleDeleteManager = (indexSelected: number) => {
+    const eventReceiver = eventReceivers[indexSelected];
+    const newEventReceivers = eventReceivers.filter((item, index) => index !== indexSelected);
+
+    showModalConfirm({
+      type: 'warning',
+      title: 'Xoá người nhận thông báo',
+      content: `Bạn có chắc chắn muốn xoá người nhận thông báo ${eventReceiver.name} không?`,
+      confirm: {
+        text: 'Xoá',
+        action: async () => {
+          if (currentUser && locationId) {
+            updateLocationControl({
+              agencyId: currentUser.sub_id,
+              locationId: locationId,
+              data: { event_receivers: [...newEventReceivers] },
+            }).then((res) => {
+              refetch();
+              setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
+            });
+          }
+          hideModalConfirm();
+        },
+      },
+      cancel: {
+        action: hideModalConfirm,
+      },
+    });
+  };
+
   const handleSaveEnableEventNumber = (eventReceivers: EventReceiveType[]) => {
     if (currentUser && locationId) {
       updateLocationControl({
@@ -334,7 +364,7 @@ export const LocationManager = ({
               fontSize: '14px',
             }}
           >
-            <Grid item xs={10}>
+            <Grid item xs={5}>
               <Box
                 style={{
                   display: 'flex',
@@ -347,7 +377,7 @@ export const LocationManager = ({
                 Tên Tài khoản
               </Box>
             </Grid>
-            {/* <Grid item xs={5}>
+            <Grid item xs={5}>
               <Box
                 style={{
                   display: 'flex',
@@ -358,7 +388,7 @@ export const LocationManager = ({
               >
                 Số điện thoại
               </Box>
-            </Grid> */}
+            </Grid>
             <Grid item xs={2}>
               <Box
                 style={{
@@ -377,7 +407,7 @@ export const LocationManager = ({
               <>
                 <Grid
                   item
-                  xs={10}
+                  xs={5}
                   height="48px"
                   style={{
                     borderLeft: '1px solid #C5C6D2',
@@ -398,7 +428,7 @@ export const LocationManager = ({
                     {item.username}
                   </Box>
                 </Grid>
-                {/* <Grid
+                <Grid
                   item
                   xs={5}
                   height="48px"
@@ -410,7 +440,7 @@ export const LocationManager = ({
                   <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                     {item.phone}
                   </Box>
-                </Grid> */}
+                </Grid>
                 <Grid
                   item
                   xs={2}
@@ -420,7 +450,10 @@ export const LocationManager = ({
                     borderBottom: '1px solid #C5C6D2',
                   }}
                 >
-                  <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                  <Box
+                    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
+                    // onClick={() => handleDeleteEventReceiver(index)}
+                  >
                     <DeleteOutline style={{ color: '#8B8C9B', cursor: 'pointer' }} />
                   </Box>
                 </Grid>
