@@ -88,8 +88,11 @@ export const RegulatoryAgenciesTable = ({
   ]);
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
-    { columnName: 'name', width: 250 },
+    { columnName: 'name', width: 280 },
     { columnName: 'action', width: 200, align: 'center' },
+    { columnName: 'tag', width: 200 },
+    { columnName: 'count_locations', width: 140 },
+    { columnName: 'count_devices', width: 120 },
   ]);
 
   const handleClick = (type: string, id: string) => {
@@ -99,6 +102,17 @@ export const RegulatoryAgenciesTable = ({
   };
 
   const customField: CustomFieldType = {
+    tag: {
+      renderContent: ({ row }) => {
+        return (
+          <>
+            <Typography>
+              {`@${row.tag}`}
+            </Typography>
+          </>
+        );
+      },
+    },
     address: {
       renderContent: ({ row }) => {
         return (
@@ -117,7 +131,7 @@ export const RegulatoryAgenciesTable = ({
         return (
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-              <Typography sx={{ textAlign: 'right', width: '60px' }}>
+              <Typography sx={{ textAlign: 'right', width: '36px' }}>
                 {row?.count_locations?.toLocaleString('en-US')}
               </Typography>
               {/* <IconButton>
@@ -133,7 +147,7 @@ export const RegulatoryAgenciesTable = ({
         return (
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: '-20px' }}>
-              <Typography sx={{ textAlign: 'right', width: '60px' }}>
+              <Typography sx={{ textAlign: 'right', width: '36px' }}>
                 {row?.count_devices?.toLocaleString('en-US')}
               </Typography>
               {/* <IconButton>
