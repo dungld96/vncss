@@ -74,7 +74,7 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handl
             handleSuccess();
           }
         })
-        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật ví trí', severity: 'error' }));
+        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật vị trí', severity: 'error' }));
       onClose();
     },
   });

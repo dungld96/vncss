@@ -31,6 +31,12 @@ export interface RemoveNodeRequestInterface {
   gatewayId: string;
 }
 
+export interface RemoveGatewayRequestInterface {
+  agencyId: string;
+  locationId: string;
+  gatewayId: string;
+}
+
 export interface ControlLocationGatewayType {
   id: string;
   agency_id: string;
@@ -136,6 +142,7 @@ export const controlApi = createApi({
     'UpdateNodeControl',
     'handleAlertControl',
     'RemoveNode',
+    'RemoveGateway',
   ],
   endpoints: (build) => {
     const item = localStorage.getItem('current_user');
@@ -253,6 +260,19 @@ export const controlApi = createApi({
           }
         },
         invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'RemoveNode' }]),
+      }),
+      removeGateway: build.mutation<any, RemoveGatewayRequestInterface>({
+        query: ({ agencyId, locationId, gatewayId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/gateways/${gatewayId}`,
+              method: 'DELETE',
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'RemoveGateway' }]),
       }),
       addCamera: build.mutation<AddGatewayResponsiveInterface, AddCameraRequestInterface>({
         query: ({ data, agencyId, locationId }) => {
@@ -560,4 +580,5 @@ export const {
   useUpdateLocationEquipmentsMutation,
   useDeleteLocationEquipmentMutation,
   useGetControlLocationStatusQuery,
+  useRemoveGatewayMutation
 } = controlApi;

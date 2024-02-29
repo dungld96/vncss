@@ -44,13 +44,13 @@ const ModalEditTags: React.FC<Props> = ({ show, onClose, location, handleSuccess
     updateLocation({ location: body, parent_uuid: currentUser?.sub_id })
       .then((res: any) => {
         if (res.error) {
-          setSnackbar({ open: true, message: 'Có lỗi khi cập nhật thẻ tag ví trí', severity: 'error' });
+          setSnackbar({ open: true, message: 'Có lỗi khi cập nhật thẻ tag vị trí', severity: 'error' });
           return;
         }
         setSnackbar({ open: true, message: 'Cập nhật thẻ tag vị trí thành công', severity: 'success' });
         handleSuccess();
       })
-      .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật thẻ tag ví trí', severity: 'error' }));
+      .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật thẻ tag vị trí', severity: 'error' }));
     onClose();
   };
 

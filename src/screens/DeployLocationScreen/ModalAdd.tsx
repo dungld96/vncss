@@ -79,7 +79,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           .then((res) => {
             setSnackbar({ open: true, message: 'Thêm vị trí thành công', severity: 'success' });
           })
-          .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi thêm ví trí', severity: 'error' }));
+          .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi thêm vị trí', severity: 'error' }));
         onClose();
       }
     },

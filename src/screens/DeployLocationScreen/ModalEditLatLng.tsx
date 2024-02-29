@@ -52,7 +52,7 @@ const ModalEditLatLng: React.FC<Props> = ({ show, onClose, agencyId, locationId,
         }
         onClose();
       })
-      .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật ví trí', severity: 'error' }));
+      .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật vị trí', severity: 'error' }));
   };
 
   return (

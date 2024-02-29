@@ -23,6 +23,7 @@ import {
   useHandleAlertControlMutation,
   useGetControlLocationEventImageQuery,
   useUpdateLocationControlMutation,
+  useRemoveGatewayMutation,
 } from '../../../services/control.service';
 import { useAuth } from '../../../hooks/useAuth';
 import { AddNodeDialog } from './dialogs/AddNodeDialog';
@@ -33,6 +34,7 @@ import dayjs from 'dayjs';
 import { INodeType, useGetNodeTypesQuery } from '../../../services/node.service';
 import { useSnackbar } from '../../../hooks/useSnackbar';
 import { LocationImages } from './LocationImages';
+import useModalConfirm from 'hooks/useModalConfirm';
 
 const InfoTitle = styled(Typography)({ fontSize: '14px', color: '#8B8C9B' });
 const InfoValue = styled(Typography)({ fontSize: '14px', color: '#1E2323' });
@@ -102,6 +104,8 @@ const GatewayInfo = ({
   const [openUpdateGatewayDialog, setOpenUpdateGatewayDialog] = useState(false);
   const [handleAlert] = useHandleAlertControlMutation();
   const [updateLocationControl] = useUpdateLocationControlMutation();
+  const [deleteGateway] = useRemoveGatewayMutation();
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const { setSnackbar } = useSnackbar();
   const {
     auth: { currentUser },
@@ -132,6 +136,46 @@ const GatewayInfo = ({
           setSnackbar({ open: true, message: 'Xử lý cảnh báo thành công', severity: 'success' });
         })
         .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xử lý cảnh báo', severity: 'error' }));
+    }
+  };
+
+  const handleDeleteGateway = () => {
+    if (currentUser && location) {
+      showModalConfirm({
+        type: 'warning',
+        title: 'Xoá gateway khỏi vị trí triển khai',
+        content: 'Bạn có chắc chắn muốn xoá gateway khỏi vị trí này không?',
+        confirm: {
+          action: () => {
+            deleteGateway({ locationId: location.id, agencyId: currentUser.sub_id, gatewayId: gateway.id })
+              .then((res: any) => {
+                if (res.error) {
+                  setSnackbar({
+                    open: true,
+                    message: 'Có lỗi khi xoá gateway khỏi vị trí triển khai',
+                    severity: 'error',
+                  });
+                  return;
+                }
+                setSnackbar({
+                  open: true,
+                  message: 'Xoá gateway khỏi vị trí triển khai thành công',
+                  severity: 'success',
+                });
+                refetchGateway();
+              })
+              .catch(() =>
+                setSnackbar({ open: true, message: 'Có lỗi khi xoá gateway khỏi vị trítriển khai ', severity: 'error' })
+              );
+
+            hideModalConfirm();
+          },
+          text: 'Xoá gateway',
+        },
+        cancel: {
+          action: hideModalConfirm,
+        },
+      });
     }
   };
 
@@ -183,6 +227,19 @@ const GatewayInfo = ({
                   }}
                 >
                   Chỉnh sửa thông tin Gateway
+                </Box>
+                <Box
+                  p={2}
+                  style={{
+                    color: '#E13153',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    backgroundColor: '#F8F9FC',
+                    fontWeight: 500,
+                  }}
+                  onClick={handleDeleteGateway}
+                >
+                  Xoá bỏ gateway này
                 </Box>
               </Box>
             </Popover>

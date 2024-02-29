@@ -15,6 +15,8 @@ import { useSnackbar } from '../../../hooks/useSnackbar';
 import ModalEdit from '../../../screens/DeployLocationScreen/ModalEdit';
 import { UpdateLatLng } from './dialogs/UpdateLatLng';
 import Loading from 'common/Loading/Loading';
+import useModalConfirm from 'hooks/useModalConfirm';
+import { useDeleteLocationMutation } from 'services/location.service';
 
 const DLCard = styled(Card)({
   position: 'absolute',
@@ -48,6 +50,9 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const [openUpdateLatLngDialog, setOpenUpdateLatLngDialog] = React.useState(false);
   const [getControlLocation, result] = useLazyGetControlLocationQuery();
   const [getControlLocations] = useLazyGetControlLocationsQuery();
+  const { showModalConfirm, hideModalConfirm } = useModalConfirm();
+  const [deleteLocation] = useDeleteLocationMutation();
+  const { setSnackbar } = useSnackbar();
 
   const {
     auth: { currentUser },
@@ -78,6 +83,35 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
   const onCloseLatLngUpdate = () => {
     setOpenUpdateLatLngDialog(false);
     onRefresh();
+  };
+
+  const handleClickDelete = () => {
+    setLocationSettingAnchorEl(undefined);
+    showModalConfirm({
+      type: 'warning',
+      title: 'Xoá vị trí triển khai',
+      content: 'Bạn có chắc chắn muốn xoá vị trí này không?',
+      confirm: {
+        action: () => {
+          deleteLocation({ id: selectedLocationId, parent_uuid: currentUser?.sub_id })
+            .then((res: any) => {
+              if (res.error) {
+                setSnackbar({ open: true, message: 'Có lỗi khi xoá vị trí', severity: 'error' });
+                return;
+              }
+              setSnackbar({ open: true, message: 'Xoá vị trí thành công', severity: 'success' });
+              window.location.reload();
+            })
+            .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xoá vị trí', severity: 'error' }));
+
+          hideModalConfirm();
+        },
+        text: 'Xoá vị trí',
+      },
+      cancel: {
+        action: hideModalConfirm,
+      },
+    });
   };
 
   const location = result.data as LocationType;
@@ -184,6 +218,19 @@ export const ControlDetail = ({ selectedLocationId, locationName, onClose }: Pro
                   }}
                 >
                   Chỉnh sửa toạ độ vị trí
+                </Box>
+                <Box
+                  p={2}
+                  style={{
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    fontWeight: 500,
+                    borderBottom: '1px solid #ddd',
+                    color: '#E13153',
+                  }}
+                  onClick={handleClickDelete}
+                >
+                  Xoá bỏ bị trí này
                 </Box>
               </Box>
             </Popover>

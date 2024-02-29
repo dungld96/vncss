@@ -235,7 +235,7 @@ export const DeployLocationTable = ({ refetch }: { refetch: () => void }) => {
               .then((res) => {
                 setSnackbar({ open: true, message: 'Xoá vị trí thành công', severity: 'success' });
               })
-              .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xoá ví trí', severity: 'error' }));
+              .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi xoá vị trí', severity: 'error' }));
 
             hideModalConfirm();
           },

@@ -50,7 +50,7 @@ export const UpdateLatLng: React.FC<Props> = ({ show, location, onClose }) => {
           onClose();
           getControlLocations({ agency_id: currentUser.sub_id });
         })
-        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật ví trí', severity: 'error' }));
+        .catch(() => setSnackbar({ open: true, message: 'Có lỗi khi cập nhật vị trí', severity: 'error' }));
     }
   };
 
