@@ -70,8 +70,11 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
   }, []);
 
   const dataCity = area.find((item: any) => item.name === province);
-  const districtList = dataCity?.level2s?.map((item: any) => ({ label: item.name, value: item.name }));
-  const dataDistrict = dataCity?.level2s?.find((item: any) => item.name == district);
+  const districtList = dataCity?.level2s?.map((item: any) => ({
+    label: `${item.type} ${item.name}`,
+    value: `${item.type} ${item.name}`,
+  }));
+  const dataDistrict = dataCity?.level2s?.find((item: any) => `${item.type} ${item.name}` == district);
 
   const createTowns = (arr1: any, arr2: any) => {
     if (!arr1 || !arr1.length) return arr2;
@@ -79,8 +82,8 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
   };
 
   const towns = (dataDistrict ? createTowns(dataDistrict?.level3s, [dataDistrict]) : [])?.map((item: any) => ({
-    label: item.name,
-    value: item.name,
+    label: `${item.type} ${item.name}`,
+    value: `${item.type} ${item.name}`,
   }));
 
   const businessTypes = BusinessTypes.map((item) => ({ label: item.value, value: item.value }));

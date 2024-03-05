@@ -165,8 +165,12 @@ export const DeployLocationTable = ({ refetch }: { refetch: () => void }) => {
 
   const [tableColumnExtensions] = useState<Table.ColumnExtension[]>([
     { columnName: 'name', width: 200 },
-    { columnName: 'action', width: 200, align: 'center' },
+    { columnName: 'action', width: 120, align: 'center' },
     { columnName: 'event_receiver_count', align: 'center' },
+    { columnName: 'tags', width: 200 },
+    { columnName: 'maintaint_date', width: 200 },
+    { columnName: 'contact_number', width: 160 },
+    { columnName: 'contact_name', width: 160 },
   ]);
 
   const [customField] = useState<CustomFieldType>({

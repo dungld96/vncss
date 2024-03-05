@@ -16,10 +16,10 @@ const LocationBaseInfo = ({ location }: { location?: LocationType }) => {
         <InfoTitle>Tên:</InfoTitle>
         <InfoValue>{location?.name || '--'}</InfoValue>
       </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-        <InfoTitle>Địa chỉ:</InfoTitle>
+      <Box display="flex" justifyContent="space-between" alignItems="flex-start" py={1}>
+        <InfoTitle style={{minWidth: '100px'}}>Địa chỉ:</InfoTitle>
         <InfoValue>
-          {`${location?.address}, xã ${location?.commune}, huyện ${location?.district},  ${location?.province}` || '--'}
+          {`${location?.address}, ${location?.commune}, ${location?.district}, ${location?.province}` || '--'}
         </InfoValue>
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>

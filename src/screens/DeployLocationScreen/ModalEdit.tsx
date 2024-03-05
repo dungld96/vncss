@@ -52,7 +52,6 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handl
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
-      if (!values?.tags?.length) return;
       const body = {
         id: values.id,
         name: values.name,
@@ -79,7 +78,8 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handl
     },
   });
 
-  const { handleSubmit, resetForm, submitForm } = formik;
+  const { handleSubmit, resetForm, submitForm, errors } = formik;
+  console.log(errors)
 
   useEffect(() => {
     fetchArea();
