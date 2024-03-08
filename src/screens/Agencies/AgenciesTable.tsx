@@ -25,7 +25,11 @@ import {
 import { ImageIcon } from '../../utils/UtilsComponent';
 
 import { useSelector } from 'react-redux';
-import { useDeleteAgencyMutation, useLazyGetAgencyChildsQuery } from '../../services/agencies.service';
+import {
+  useChangePasswordAgencyMutation,
+  useDeleteAgencyMutation,
+  useLazyGetAgencyChildsQuery,
+} from '../../services/agencies.service';
 import AddIcon from '../../assets/icons/add-circle.svg';
 import DeleteIcon from '../../assets/icons/delete-icon.svg';
 import EditIcon from '../../assets/icons/edit-icon.svg';
@@ -39,6 +43,8 @@ import { AgencyType, defaultInitialValue } from './constants';
 import { IAgency } from './mockData';
 import ModalAddEdit from './ModalAddEdit';
 import { useAuth } from '../../hooks/useAuth';
+import ModalChangePassword from 'screens/Users/ModalChangePassword';
+import { useSnackbar } from 'hooks/useSnackbar';
 
 const getChildRows = (row: IAgency, rootRows: IAgency[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
@@ -119,15 +125,19 @@ export const AgenciesTable = () => {
   const agencies = useSelector(selectAgencies);
   const [deleteAgency] = useDeleteAgencyMutation();
   const [getAgencyChilds] = useLazyGetAgencyChildsQuery();
+  const [changePassword, { isLoading }] = useChangePasswordAgencyMutation();
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [modalAddEdit, setModalAddEdit] = useState({
     show: false,
     type: 'create',
     initialValues: defaultInitialValue,
   });
+  const [modalChangePass, setModalChangePass] = useState(false);
+  const [selectedAgency, setSelectedAgency] = useState<string>();
   const {
     auth: { currentUser },
   } = useAuth();
+  const { setSnackbar } = useSnackbar();
 
   const agenciesParsed = React.useMemo(() => {
     return agencies.map((item) => ({
@@ -151,6 +161,11 @@ export const AgenciesTable = () => {
   ] as Table.ColumnExtension[];
 
   const handleClick = (type: string, row: AgencyType) => {
+    if (type === 'change-pass') {
+      setSelectedAgency(row.id);
+      setModalChangePass(true);
+      return;
+    }
     if (type === 'edit') {
       setModalAddEdit({
         show: true,
@@ -192,8 +207,36 @@ export const AgenciesTable = () => {
     setExpandedRowIds(ids);
   };
 
+  const handelChangePass = async (password: string, id: string) => {
+    changePassword({ id, password })
+      .then((res: any) => {
+        if (res.error) {
+          setSnackbar({ open: true, message: 'Có lỗi khi đổi mật khẩu', severity: 'error' });
+          return;
+        }
+        setSnackbar({ open: true, message: 'Đổi mật khẩu thành công', severity: 'success' });
+        setModalChangePass(false);
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: 'Có lỗi khi đổi mật khẩu', severity: 'error' });
+      });
+  };
+
   return (
     <>
+      {modalChangePass && selectedAgency && (
+        <ModalChangePassword
+          show
+          id={selectedAgency}
+          onClose={() => {
+            setModalChangePass(false);
+            setSelectedAgency(undefined);
+          }}
+          onSubmit={(pass, id) => handelChangePass(pass, id)}
+          isLoading={isLoading}
+        />
+      )}
+
       <ModalAddEdit {...modalAddEdit} onClose={() => setModalAddEdit({ ...modalAddEdit, show: false })} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input

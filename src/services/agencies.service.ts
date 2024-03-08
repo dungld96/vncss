@@ -179,6 +179,22 @@ export const agenciesApi = createApi({
         return error ? [] : [{ type: 'AllAgencies' }];
       },
     }),
+    changePasswordAgency: build.mutation<CurrentAgencyResponsiveInterface, { password: string; id: string }>({
+      query: ({ id, password }) => {
+        try {
+          return {
+            url: `agencies/${id}/changepassword`,
+            method: 'PUT',
+            body: { password },
+          };
+        } catch (error: any) {
+          throw new error.message();
+        }
+      },
+      invalidatesTags: (result, error, data) => {
+        return error ? [] : [{ type: 'AllAgencies' }];
+      },
+    }),
     deleteAgency: build.mutation<null, { id: string }>({
       query: (body) => {
         try {
@@ -206,4 +222,5 @@ export const {
   useLazyGetAgencyQuery,
   useLazyGetCurrentAgencyQuery,
   useLazyGetAgencyChildsQuery,
+  useChangePasswordAgencyMutation,
 } = agenciesApi;
