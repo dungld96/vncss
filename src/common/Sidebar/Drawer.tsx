@@ -18,6 +18,7 @@ import {
   ROUTE_WAREHOUSES,
   ROUTE_CONTROL,
   ROUTE_WAREHOUSE_CAMERA,
+  APP_USER,
 } from '../../utils/routesMap';
 import RegulatoryAgencyIcon from '../../assets/icons/regulatory-agency-icon.svg';
 import RegulatoryAgencyActiveIcon from '../../assets/icons/regulatory-agency-active-icon.svg';
@@ -26,6 +27,8 @@ import agencyActiveIcon from '../../assets/icons/agency-active-icon.svg';
 import usersIcon from '../../assets/icons/users-icon.svg';
 import usersActiveIcon from '../../assets/icons/users-active-icon.svg';
 import reportsIcon from '../../assets/icons/report-icon.svg';
+import appUserIcon from '../../assets/icons/app-user.svg';
+import appUserActiveIcon from '../../assets/icons/app-user-active.svg';
 import reportsActiveIcon from '../../assets/icons/report-active-icon.svg';
 import simIcon from '../../assets/icons/sim-icon.svg';
 import simActiveIcon from '../../assets/icons/sim-active-icon.svg';
@@ -189,6 +192,14 @@ const listFeature = [
     activeIcon: <ImageIcon image={reportsActiveIcon} />,
     permission: [0],
     route: ROUTE_REPORTS,
+  },
+  {
+    id: '0b2e42ed-00f9-4dbe-a1d3-37b76f2671ur',
+    title: 'Người dùng',
+    icon: <ImageIcon image={appUserIcon} />,
+    activeIcon: <ImageIcon image={appUserActiveIcon} />,
+    permission: [0],
+    route: APP_USER,
   },
 ] as IRouteItem[];
 

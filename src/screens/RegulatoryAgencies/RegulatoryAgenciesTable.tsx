@@ -1,6 +1,6 @@
 import { CustomTreeData, TreeDataState } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableTreeColumn } from '@devexpress/dx-react-grid-material-ui';
-import { Paper, Typography } from '@mui/material';
+import { IconButton, Paper, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   CustomFieldType,
@@ -24,10 +24,14 @@ import {
 import { selectRegulatories } from '../../state/modules/regulatory/regulatoryReducer';
 import useApp from 'hooks/useApp';
 import { useSnackbar } from 'hooks/useSnackbar';
+import { Add, DialerSip } from '@mui/icons-material';
+import ExpandIcon from '../../assets/icons/expand.svg';
+import ExpandedIcon from '../../assets/icons/expanded.svg';
+import { ImageIcon } from 'utils/UtilsComponent';
 
 const getChildRows = (row: IRegulatory, rootRows: IRegulatory[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
-  return childRows.length ? childRows : [];
+  return childRows.length ? childRows : row?.tag === 'CA_bocongan' ? null : [];
 };
 
 const ActionCellContent = ({
@@ -48,6 +52,26 @@ const ActionCellContent = ({
         Đổi mật khẩu
       </Typography>
     </div>
+  );
+};
+
+const ExpandButton = ({ expanded, visible, onToggle }: { expanded: any; visible: any; onToggle: any }) => {
+  return visible ? (
+    <IconButton
+      style={{ marginRight: '12px' }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
+    >
+      {expanded ? (
+        <ImageIcon image={ExpandedIcon} style={{ width: '16px', height: '16px' }} />
+      ) : (
+        <ImageIcon image={ExpandIcon} style={{ width: '16px', height: '16px' }} />
+      )}
+    </IconButton>
+  ) : (
+    <IconButton style={{ marginRight: '32px' }} />
   );
 };
 
@@ -106,9 +130,7 @@ export const RegulatoryAgenciesTable = ({
       renderContent: ({ row }) => {
         return (
           <>
-            <Typography>
-              {`@${row.tag}`}
-            </Typography>
+            <Typography>{`@${row.tag}`}</Typography>
           </>
         );
       },
@@ -118,9 +140,9 @@ export const RegulatoryAgenciesTable = ({
         return (
           <>
             <Typography>
-              {`${row?.address}${row?.commune ? `, ${row?.commune}` : ''}${row?.district ? `, ${row?.district}` : ''}${
-                row?.province ? `, ${row?.province}` : ''
-              }`}
+              {`${row?.address ? `${row?.address}, ` : ''} ${row?.commune ? `${row?.commune}, ` : ''}${
+                row?.district ? `${row?.district}, ` : ''
+              }${row?.province ? `${row?.province}` : ''}`}
             </Typography>
           </>
         );
@@ -249,7 +271,7 @@ export const RegulatoryAgenciesTable = ({
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
-          <TableTreeColumn for="name" cellComponent={TableTreeCell} expandButtonComponent={ExpandButtonTableTree} />
+          <TableTreeColumn for="name" cellComponent={TableTreeCell} expandButtonComponent={ExpandButton} />
         </Grid>
       </Paper>
     </>

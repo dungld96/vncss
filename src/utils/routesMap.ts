@@ -13,6 +13,7 @@ export const ROUTE_VITAL_VEHICLE = '/vehicle-vital';
 export const MONITOR_DEPARTMENT = '/organizations';
 export const DEPLOY_LOCATION = '/depoy-location';
 export const ROUTE_CONTROL = '/control';
+export const APP_USER = '/app-users';
 
 export const routeTitle = {
   control: 'Giám sát',
@@ -25,4 +26,5 @@ export const routeTitle = {
   'depoy-location': 'Vị trí triển khai',
   'regulatory-agency': 'Cơ quan chức năng',
   organizations: 'Đơn vị giám sát',
+  'app-users': 'Người dùng',
 };

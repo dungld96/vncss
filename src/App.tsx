@@ -196,6 +196,7 @@ function App() {
             <Route path="warehouse-gateway" element={<WarehouseGatewayScreen />} />
             <Route path="warehouse-cameras" element={<CamerasScreen />} />
             <Route path="control" element={<ControlScreen />} />
+            <Route path="app-users" element={<UsersScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>

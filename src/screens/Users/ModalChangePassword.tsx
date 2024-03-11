@@ -24,11 +24,17 @@ const ContentWrapper = styled(DialogContent)({
 });
 
 const validationSchema = Yup.object().shape({
-  new_password: Yup.string().min(8, 'Mật khẩu tối thiểu 8 kí tự').required('Mật khẩu không được để trống'),
-  confirm_new_password: Yup.string()
-    .trim()
-    .required('Xác nhận mật khẩu không được để trống.')
-    .oneOf([Yup.ref('new_password'), ''], 'Xác nhận mật khẩu phải khớp với mật khẩu mới.'),
+  new_password: Yup.string()
+  .required('Vui lòng nhập mật khẩu mới')
+  .min(8, 'Mật khẩu mới ít nhất phải từ 8 ký tự')
+  .max(64, 'Mật khẩu mới không quá 64 ký tự')
+  .matches(
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\s]).{8,}$/,
+    'Mật khẩu mới cần có ít nhất một ký tự in hoa, một ký tự in thường và một ký tự đặc biệt'
+  ),
+confirm_new_password: Yup.string()
+  .required('Vui lòng nhập lại mật khẩu mới')
+  .oneOf([Yup.ref('new_password'), ''], 'Nhập lại mật khẩu mới không khớp'),
 });
 
 const ModalChangePassword: React.FC<Props> = ({ show, id, onClose, onSubmit, isLoading = false }) => {
@@ -44,7 +50,7 @@ const ModalChangePassword: React.FC<Props> = ({ show, id, onClose, onSubmit, isL
     },
   });
 
-  const { handleSubmit, getFieldProps } = formik;
+  const { handleSubmit, getFieldProps, isSubmitting, touched, values, errors } = formik;
 
   return (
     <Modal size="sm" show={show} close={onClose} title="Thay đổi mật khẩu">

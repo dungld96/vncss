@@ -8,7 +8,6 @@ import { useAuth } from '../../hooks/useAuth';
 import ModalChangePassword from './ModalChangePassword';
 import ModalProfileStore from './ModalProfileStore';
 import ModalProfileUser from './ModalProfileUser';
-import { UpdateCurrentUserRequestInterface } from '../../services/users.service';
 
 const ProfileContainer = styled.div({
   width: '100%',
@@ -177,7 +176,9 @@ const Profile: React.FC = () => {
         onClose={() => setShowModalStore(false)}
         initialValues={initialAgencyValues}
       />
-      <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      {modalChangePass.show && (
+        <ModalChangePassword {...modalChangePass} onClose={() => setModalChangePass({ show: false })} />
+      )}
       <ProfileContainer>
         <ProfileWrapper>
           <Stack flexDirection="column" justifyContent="center" alignItems="center">

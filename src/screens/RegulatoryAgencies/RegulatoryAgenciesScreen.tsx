@@ -35,9 +35,9 @@ export default function RegulatoryAgenciesScreen() {
     getListRegulatories({ limit, ...paginate });
   };
   return (
-    <Box mt={2} ml={2} mr={'12px'}>
+    <Box mt={2} ml={2} mr={'12px'} pb={4}>
       <RegulatoryAgenciesTable fetchFilter={fetchFilter} refetch={refetch} />
-      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
+      {/* <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} /> */}
     </Box>
   );
 }

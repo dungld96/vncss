@@ -22,7 +22,19 @@ const ContentWrapper = styled(DialogContent)({
   marginBottom: 32,
 });
 
-const validationSchema = Yup.object().shape({});
+const validationSchema = Yup.object().shape({
+  new_password: Yup.string()
+    .required('Vui lòng nhập mật khẩu mới')
+    .min(8, 'Mật khẩu mới ít nhất phải từ 8 ký tự')
+    .max(64, 'Mật khẩu mới không quá 64 ký tự')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\s]).{8,}$/,
+      'Mật khẩu mới cần có ít nhất một ký tự in hoa, một ký tự in thường và một ký tự đặc biệt'
+    ),
+  confirm_new_password: Yup.string()
+    .required('Vui lòng nhập lại mật khẩu mới')
+    .oneOf([Yup.ref('new_password'), ''], 'Nhập lại mật khẩu mới không khớp'),
+});
 
 const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
   const [changePassword] = useChangePasswordMutation();
@@ -48,7 +60,7 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
     },
   });
 
-  const { handleSubmit, getFieldProps } = formik;
+  const { handleSubmit, getFieldProps, isSubmitting, touched, values, errors } = formik;
 
   return (
     <Modal size="sm" show={show} close={onClose} title="Sửa thông tin đại lý">
@@ -68,6 +80,8 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
               topLable="Mật khẩu mới"
               placeholder="Nhập mật khẩu mới"
               iconStartAdorment={<ImageIcon image={KeyIcon} />}
+              showError={touched.new_password || isSubmitting}
+              error={errors.new_password}
             />
             <Input
               {...getFieldProps('confirm_new_password')}
@@ -75,6 +89,8 @@ const ModalChangePassword: React.FC<Props> = ({ show, onClose }) => {
               topLable="Nhập lại mật khẩu mới"
               placeholder="Nhập lại mật khẩu mới"
               iconStartAdorment={<ImageIcon image={KeyIcon} />}
+              showError={touched.confirm_new_password || isSubmitting}
+              error={errors.confirm_new_password}
             />
           </ContentWrapper>
 

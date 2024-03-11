@@ -30,7 +30,8 @@ export const regulatoryApi = createApi({
           } = await queryFulfilled;
           const dataParse = data.map((item: any) => ({
             ...item,
-            parentId: item.parent_id || null,
+            parentId: null,
+            parent_id: null,
           }));
           dispatch(
             setRegulatories({
@@ -75,7 +76,8 @@ export const regulatoryApi = createApi({
           } = await queryFulfilled;
           const dataParse = data.map((item: any) => ({
             ...item,
-            parentId: item.parent_id || null,
+            parentId: null,
+            parent_id: null,
           }));
           dispatch(
             setRegulatories({
