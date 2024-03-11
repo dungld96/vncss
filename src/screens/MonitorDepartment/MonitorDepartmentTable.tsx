@@ -35,6 +35,8 @@ import { selectOrganization } from '../../state/modules/organization/organizatio
 import ModalAddEdit from './ModalAddEdit';
 import { defaultInitialValue } from './constants';
 import { useAuth } from 'hooks/useAuth';
+import ExpandIcon from '../../assets/icons/expand.svg';
+import ExpandedIcon from '../../assets/icons/expanded.svg';
 
 const getChildRows = (row: IOrganization, rootRows: IOrganization[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
@@ -109,6 +111,26 @@ const ActionCellContent = ({
         </MenuItem>
       </Menu>
     </div>
+  );
+};
+
+const ExpandButton = ({ expanded, visible, onToggle }: { expanded: any; visible: any; onToggle: any }) => {
+  return visible ? (
+    <IconButton
+      style={{ marginRight: '12px' }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
+    >
+      {expanded ? (
+        <ImageIcon image={ExpandedIcon} style={{ width: '16px', height: '16px' }} />
+      ) : (
+        <ImageIcon image={ExpandIcon} style={{ width: '16px', height: '16px' }} />
+      )}
+    </IconButton>
+  ) : (
+    <IconButton style={{ marginRight: '32px' }} />
   );
 };
 
@@ -242,7 +264,7 @@ export const MonitorDepartmentTable = ({ refetch }: { refetch: () => void }) => 
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <Input
           style={{ width: 311, background: '#FFFFFF' }}
-          placeholder="Tìm kiếm tên nhân viên"
+          placeholder="Tìm kiếm tên đơn vị giám sát"
           iconStartAdorment={<ImageIcon image={SearchIcon} />}
         />
         <Button
@@ -264,7 +286,7 @@ export const MonitorDepartmentTable = ({ refetch }: { refetch: () => void }) => 
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
-          <TableTreeColumn for="name" cellComponent={TableTreeCell} expandButtonComponent={ExpandButtonTableTree} />
+          <TableTreeColumn for="name" cellComponent={TableTreeCell} expandButtonComponent={ExpandButton} />
         </Grid>
       </Paper>
     </>

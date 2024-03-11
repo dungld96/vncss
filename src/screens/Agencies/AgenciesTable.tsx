@@ -45,6 +45,8 @@ import ModalAddEdit from './ModalAddEdit';
 import { useAuth } from '../../hooks/useAuth';
 import ModalChangePassword from 'screens/Users/ModalChangePassword';
 import { useSnackbar } from 'hooks/useSnackbar';
+import ExpandIcon from '../../assets/icons/expand.svg';
+import ExpandedIcon from '../../assets/icons/expanded.svg';
 
 const getChildRows = (row: IAgency, rootRows: IAgency[]) => {
   const childRows = rootRows.filter((r) => r.parentId === (row ? row.id : null));
@@ -119,6 +121,27 @@ const ActionCellContent = ({
     </div>
   );
 };
+
+const ExpandButton = ({ expanded, visible, onToggle }: { expanded: any; visible: any; onToggle: any }) => {
+  return visible ? (
+    <IconButton
+      style={{ marginRight: '12px' }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
+    >
+      {expanded ? (
+        <ImageIcon image={ExpandedIcon} style={{ width: '16px', height: '16px' }} />
+      ) : (
+        <ImageIcon image={ExpandIcon} style={{ width: '16px', height: '16px' }} />
+      )}
+    </IconButton>
+  ) : (
+    <IconButton style={{ marginRight: '32px' }} />
+  );
+};
+
 const getRowId = (row: any) => row.id;
 export const AgenciesTable = () => {
   const [expandedRowIds, setExpandedRowIds] = useState<Array<string | number>>([]);
@@ -260,7 +283,7 @@ export const AgenciesTable = () => {
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
-          <TableTreeColumn for="name" cellComponent={TableTreeCell} expandButtonComponent={ExpandButtonTableTree} />
+          <TableTreeColumn for="name" cellComponent={TableTreeCell} expandButtonComponent={ExpandButton} />
         </Grid>
       </Paper>
     </>

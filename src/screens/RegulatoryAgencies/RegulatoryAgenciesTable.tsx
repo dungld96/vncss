@@ -24,7 +24,6 @@ import {
 import { selectRegulatories } from '../../state/modules/regulatory/regulatoryReducer';
 import useApp from 'hooks/useApp';
 import { useSnackbar } from 'hooks/useSnackbar';
-import { Add, DialerSip } from '@mui/icons-material';
 import ExpandIcon from '../../assets/icons/expand.svg';
 import ExpandedIcon from '../../assets/icons/expanded.svg';
 import { ImageIcon } from 'utils/UtilsComponent';
