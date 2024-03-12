@@ -35,7 +35,7 @@ import Button from '../../common/button/Button';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { IUser } from '../../services/auth.service';
 import { useDeletelUserMutation } from '../../services/users.service';
-import { selectUsers } from '../../state/modules/user/userReducer';
+import { selectAppUsers } from '../../state/modules/app-user/appUserReducer';
 
 const ActionCellContent = ({
   cellProps,
@@ -113,7 +113,7 @@ export const AppUsersTable = () => {
   const [selection, setSelection] = useState<Array<number | string>>([]);
   const [modalChangePass, setModalChangePass] = useState({ show: false, id: '' });
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
-  const users = useSelector(selectUsers);
+  const users = useSelector(selectAppUsers);
 
   const [columns] = useState([
     { name: 'name', title: 'Họ tên' },
@@ -183,13 +183,20 @@ export const AppUsersTable = () => {
 
   return (
     <>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <Input
+          style={{ width: 311, background: '#FFFFFF' }}
+          placeholder="Tìm kiếm tên người dùng"
+          iconStartAdorment={<ImageIcon image={SearchIcon} />}
+        />
+      </Box>
       <Paper sx={{ boxShadow: 'none', position: 'relative' }}>
         <Grid rows={users || []} columns={columns}>
-          <SelectionState
+          {/* <SelectionState
             selection={selection.map((id) => users.findIndex((r: IUser) => r.id === id))}
             onSelectionChange={handleSelectionChange}
-          />
-          <IntegratedSelection />
+          /> */}
+          {/* <IntegratedSelection /> */}
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={(props) =>
@@ -197,15 +204,15 @@ export const AppUsersTable = () => {
             }
           />
           <TableHeaderRow cellComponent={TableHeaderCell} contentComponent={TableHeaderContent} />
-          <TableSelection
+          {/* <TableSelection
             highlightRow
             showSelectionColumn
             showSelectAll
             cellComponent={TableSelectionCell}
             headerCellComponent={TableSelectionHeaderCell}
-          />
+          /> */}
 
-          {selection.length > 0 && (
+          {/* {selection.length > 0 && (
             <Box
               display="flex"
               alignItems="center"
@@ -235,7 +242,7 @@ export const AppUsersTable = () => {
                 Xóa
               </ButtonBase>
             </Box>
-          )}
+          )} */}
         </Grid>
       </Paper>
     </>

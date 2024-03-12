@@ -2,18 +2,18 @@ import Pagination from '../../common/pagination/Pagination';
 import { CursorType } from '../../configs/constant';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyGetAllUsersQuery } from '../../services/users.service';
-import { selectUsersState, setLimit } from '../../state/modules/user/userReducer';
+import { useLazyGetAllAppUsersQuery } from '../../services/appUsers.service';
+import { selectAppUsersState, setLimit } from '../../state/modules/app-user/appUserReducer';
 import { AppUsersTable } from './AppUsersTable';
 import { Box } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import { useAppDispatch } from '../../state/store';
 
-export default function UsersScreen() {
-  const [trigger] = useLazyGetAllUsersQuery();
+export default function AppUsersScreen() {
+  const [trigger] = useLazyGetAllAppUsersQuery();
   const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { limit, cursor } = useSelector(selectUsersState);
+  const { limit, cursor } = useSelector(selectAppUsersState);
   const {
     auth: { currentUser },
   } = useAuth();
@@ -21,7 +21,7 @@ export default function UsersScreen() {
 
   useEffect(() => {
     if (currentUser) {
-      trigger({ agencyId: currentUser.sub_id, params: { limit, ...paginate } });
+      trigger({ params: { limit, ...paginate } });
     }
   }, [trigger, limit, paginate, currentUser]);
 

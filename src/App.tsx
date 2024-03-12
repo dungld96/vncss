@@ -26,6 +26,7 @@ import { ControlScreen } from './screens/Control/ControlScreen';
 import { GlobalSnackbar } from './common/snackbar/Snackbar';
 import { useSnackbar } from './hooks/useSnackbar';
 import { CamerasScreen } from './screens/cameras/CamerasScreen';
+import AppUsersScreen from './screens/AppUsers/AppUsersScreen';
 import { useAuth } from './hooks/useAuth';
 import { messaging, getTokenFcm } from './firebase';
 import { ROUTE_CONTROL } from './utils/routesMap';
@@ -196,7 +197,7 @@ function App() {
             <Route path="warehouse-gateway" element={<WarehouseGatewayScreen />} />
             <Route path="warehouse-cameras" element={<CamerasScreen />} />
             <Route path="control" element={<ControlScreen />} />
-            <Route path="app-users" element={<UsersScreen />} />
+            <Route path="app-users" element={<AppUsersScreen />} />
             {/* <Route path="unauthorized" element={<UnauthorizePage />} /> */}
           </Route>
         </Route>

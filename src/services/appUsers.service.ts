@@ -1,13 +1,18 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ResponsiveInterface, queryRootConfig } from './http.service';
-import { setCurrentUser } from '../state/modules/auth/authReducer';
-import type { IUser } from './auth.service';
-import { setUsers } from '../state/modules/user/userReducer';
+import { setAppUsers } from '../state/modules/app-user/appUserReducer';
 import { CursorType } from '../configs/constant';
 
 
-export interface UsersResponsiveInterface extends ResponsiveInterface {
-  data: IUser[];
+export interface AppUsersResponsiveInterface extends ResponsiveInterface {
+  data: {
+    id: string;
+    phone: string;
+    username: string;
+    dob: string;
+    gender: string;
+    email: string;
+  }[];
   cursors: CursorType;
 }
 
@@ -17,8 +22,8 @@ export const appUsersApi = createApi({
   tagTypes: ['AppUsers', 'AllAppUsers'],
   endpoints: (build) => ({
     
-    getAllUsers: build.query<UsersResponsiveInterface, { agencyId?: string; params: any }>({
-      query: ({ agencyId, params }) => ({ url: `agencies/${agencyId}/users`, params }),
+    getAllAppUsers: build.query<AppUsersResponsiveInterface, { params: any }>({
+      query: ({ params }) => ({ url: `mobile-users`, params }),
       providesTags(result) {
         if (result) {
           return [{ type: 'AllAppUsers' }];
@@ -31,14 +36,9 @@ export const appUsersApi = createApi({
             data: { data, cursors },
           } = await queryFulfilled;
 
-          const dataParse = data.map((item) => ({
-            ...item,
-            name: `${item.first_name} ${item.last_name}`,
-            roleName: parseRoleName(item.role),
-          }));
           dispatch(
-            setUsers({
-              users: dataParse,
+            setAppUsers({
+              appUsers: data,
               cursor: cursors,
             })
           );
@@ -50,19 +50,8 @@ export const appUsersApi = createApi({
   }),
 });
 
-export const parseRoleName = (role: string) => {
-  switch (role) {
-    case 'manager':
-      return 'Quản trị viên';
-    case 'technician':
-      return 'Nhân viên kỹ thuật';
-
-    default:
-      return 'Nhân Viên';
-  }
-};
 
 export const {
-  useGetAllUsersQuery,
-  useLazyGetAllUsersQuery,
+  useGetAllAppUsersQuery,
+  useLazyGetAllAppUsersQuery,
 } = appUsersApi;
