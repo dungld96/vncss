@@ -1,51 +1,51 @@
 export interface TagType {
-  tagName: string;
-  agency: string;
+  tag: string;
+  name: string;
 }
 
 export const dataTag = [
   {
-    tagName: '@Dawson',
-    agency: 'Collins',
+    tag: '@Dawson',
+    name: 'Collins',
   },
   {
-    tagName: '@Freeman',
-    agency: 'Owen',
+    tag: '@Freeman',
+    name: 'Owen',
   },
   {
-    tagName: '@Foster',
-    agency: 'McLaughlin',
+    tag: '@Foster',
+    name: 'McLaughlin',
   },
   {
-    tagName: '@Tran',
-    agency: 'Silva',
+    tag: '@Tran',
+    name: 'Silva',
   },
   {
-    tagName: '@Chambers',
-    agency: 'Quinn',
+    tag: '@Chambers',
+    name: 'Quinn',
   },
   {
-    tagName: '@Knight',
-    agency: 'Keller',
+    tag: '@Knight',
+    name: 'Keller',
   },
   {
-    tagName: '@Schmidt',
-    agency: 'Peterson',
+    tag: '@Schmidt',
+    name: 'Peterson',
   },
   {
-    tagName: '@Herrera',
-    agency: 'Christensen',
+    tag: '@Herrera',
+    name: 'Christensen',
   },
   {
-    tagName: '@Pratt',
-    agency: 'Lopez',
+    tag: '@Pratt',
+    name: 'Lopez',
   },
   {
-    tagName: '@Edwards',
-    agency: 'Schwartz',
+    tag: '@Edwards',
+    name: 'Schwartz',
   },
   {
-    tagName: '@Mitchell',
-    agency: 'Obrien',
+    tag: '@Mitchell',
+    name: 'Obrien',
   },
 ];

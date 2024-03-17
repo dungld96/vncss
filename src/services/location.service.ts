@@ -5,7 +5,7 @@ import { queryRootConfig } from './http.service';
 export const loactionsApi = createApi({
   ...queryRootConfig,
   reducerPath: 'loactionsApi',
-  tagTypes: ['Location'],
+  tagTypes: ['Location', 'searchTag'],
   endpoints: (build) => ({
     getListLocations: build.query<any, { agency_id?: string; params: any }>({
       query: (body) => ({ url: `agencies/${body.agency_id}/locations`, params: body.params }),
@@ -81,6 +81,13 @@ export const loactionsApi = createApi({
       },
       invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'Location' }]),
     }),
+    searchTags: build.query<any, { tag?: string }>({
+      query: ({ tag }) => ({ url: `tags/search`, params: { tag } }),
+      providesTags() {
+        return [{ type: 'searchTag' }];
+      },
+      transformResponse: (response: { data: any }, meta, arg) => response.data,
+    }),
   }),
 });
 
@@ -91,4 +98,5 @@ export const {
   useDeleteLocationMutation,
   useUpdateLocationMutation,
   useGetLocationQuery,
+  useLazySearchTagsQuery
 } = loactionsApi;

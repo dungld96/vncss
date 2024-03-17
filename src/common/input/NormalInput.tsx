@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, TextField, TextFieldProps } from '@mui/material';
 
-export const NormalInput = ({ topLable, ...rest }: { topLable: string } & TextFieldProps) => {
+export const NormalInput = ({ topLable, ...rest }: { topLable?: string } & TextFieldProps) => {
   return (
     <Box>
       {topLable && (

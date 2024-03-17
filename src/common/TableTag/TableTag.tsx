@@ -1,82 +1,82 @@
 import {
+  Autocomplete,
   Box,
   Divider,
   FormHelperText,
   IconButton,
+  ListItem,
+  ListItemText,
   Menu,
   MenuItem,
+  Popover,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImageIcon } from '../../utils/UtilsComponent';
 
 import deleteIconGray from '../../assets/icons/trash-icon-gray.svg';
-
+import { useLazySearchTagsQuery } from 'services/location.service';
+import { NormalInput } from 'common/input/NormalInput';
+import { debounce } from 'lodash';
+import { useDebounce } from 'hooks/useDebonce';
 interface TagType {
-  tagName: string;
-  agency: string;
+  tag: string;
+  name: string;
 }
 interface Props {
   tags: TagType[];
   hideButtonAdd?: boolean;
-  data: TagType[];
   onSelected?: (tags: TagType[]) => void;
   error?: string;
   errorEmpty?: boolean;
 }
 
-const TableTag: React.FC<Props> = ({ tags, hideButtonAdd, data, error, onSelected, errorEmpty }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
+const TableTag: React.FC<Props> = ({ tags, hideButtonAdd, error, onSelected, errorEmpty }) => {
+  const [inputValue, setInputValue] = React.useState('');
+  const [options, setOptions] = React.useState<readonly any[]>([]);
   const touched = useRef(false);
+  const [searchTag] = useLazySearchTagsQuery();
+  const debouncedValue = useDebounce(inputValue, 1000);
 
   useEffect(() => {
     if (errorEmpty) touched.current = true;
   }, [errorEmpty]);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  useEffect(() => {
+    if (debouncedValue) {
+      loadData();
+    }
+  }, [debouncedValue]);
+
+  const handleInputChange = (inputValue: string) => {
+    setInputValue(inputValue);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const loadData = () => {
+    searchTag({ tag: debouncedValue }).then((res) => {
+      const { data } = res;
+      setOptions(data);
+    });
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'filter-simple-popover' : undefined;
-
-  let noItem = !data.length;
-
-  const newData = data.map((item) => {
-    const hide = tags?.some((i) => i.tagName === item.tagName);
-
-    noItem = hide;
-
-    return {
-      ...item,
-      hide,
-    };
-  });
 
   const handleSelect = (tag: TagType) => {
     onSelected?.([...tags, tag]);
-    if (noItem) {
-      setAnchorEl(null);
-    }
+    setInputValue('');
+    setOptions([]);
   };
   const handleRemove = (tag: TagType) => {
-    const newTags = tags.filter((i) => i.tagName !== tag.tagName);
+    const newTags = tags.filter((i) => i.tag !== tag.tag);
     onSelected?.(newTags);
-    setAnchorEl(null);
   };
 
-  const errorText = !open && touched.current && !tags.length ? error : undefined;
+  const errorText = touched.current && !tags.length ? error : undefined;
 
   return (
     <TableContainer
@@ -107,100 +107,111 @@ const TableTag: React.FC<Props> = ({ tags, hideButtonAdd, data, error, onSelecte
               Thẻ tag
             </TableCell>
             <TableCell align="center" width={'45%'} sx={{ borderRightColor: 'rgba(224, 224, 224, 1)' }}>
-            Tên đơn vị giám sát
+              Tên đơn vị giám sát
             </TableCell>
             <TableCell align="center"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {tags.map(({ tagName, agency }) => (
+          {tags.map(({ tag, name }) => (
             <TableRow
-              key={tagName}
+              key={tag}
               sx={{
                 border: 'none',
               }}
             >
               <TableCell align="center" width={'45%'} sx={{ fontSize: '14px', fontWeight: '400', color: '#8F0A0C' }}>
-                {tagName}
+                {tag}
               </TableCell>
               <TableCell align="center" width={'45%'} sx={{ fontSize: '14px', fontWeight: '500', color: '#1E2323' }}>
-                {agency}
+                {name}
               </TableCell>
               <TableCell align="center">
-                <IconButton onClick={() => handleRemove({ tagName, agency })}>
+                <IconButton onClick={() => handleRemove({ tag, name })}>
                   <ImageIcon image={deleteIconGray} />
                 </IconButton>
               </TableCell>
             </TableRow>
           ))}
-          {!hideButtonAdd && !noItem && (
+          {!hideButtonAdd && (
             <TableRow
               sx={{
                 border: 'none',
               }}
             >
               <TableCell colSpan={3} align="center" width={'100%'}>
-                <Box>
-                  <Typography
-                    aria-describedby={id}
-                    onClick={handleClick}
-                    sx={{
-                      color: '#0075FF',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '400',
+                <Box display={'flex'} justifyContent="center">
+                  <Autocomplete
+                    sx={{ width: 200 }}
+                    filterOptions={(x) => x}
+                    options={options}
+                    autoComplete
+                    filterSelectedOptions
+                    noOptionsText="Không có đơn vị giám sát"
+                    inputValue={inputValue}
+                    onInputChange={(event, newInputValue) => {
+                      handleInputChange(newInputValue);
                     }}
-                  >
-                    Thêm tag đơn vị giám sát
-                  </Typography>
-                  <Menu
-                    id={id}
-                    open={open}
-                    anchorEl={anchorEl}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'center',
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Thêm đơn vị giám sát"
+                        fullWidth
+                        sx={{
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            border: '0',
+                          },
+                          '& .MuiInputBase-root': {
+                            borderRadius: '8px',
+                            height: '44px',
+                            color: '#1E2323',
+                            fontWeight: '500',
+                            fontSize: '14px',
+                          },
+                          '& .MuiFormHelperText-root': {
+                            color: '#ec0e0e',
+                          },
+
+                          '& .MuiAutocomplete-endAdornment': {
+                            display: 'none',
+                          },
+
+                          input: {
+                            '&::placeholder': {
+                              color: '#0075FF',
+                              opacity: 1,
+                              fontWeight: 400,
+                            },
+                            '&:-webkit-autofill': {
+                              transition: ' background-color 5000s ease-in-out 0s',
+                            },
+                          },
+                        }}
+                      />
+                    )}
+                    renderOption={(props, option: any) => {
+                      return (
+                        <>
+                          <ListItem onClick={() => handleSelect(option)} divider style={{ cursor: 'pointer' }}>
+                            <ListItemText
+                              primary={
+                                <Typography sx={{ fontSize: '14px', fontWeight: '700', lineHeight: '22px' }}>
+                                  {option.name}
+                                </Typography>
+                              }
+                              secondary={
+                                <Typography
+                                  sx={{ fontSize: '12px', fontWeight: '400', lineHeight: '22px', color: '#8B8C9B' }}
+                                >
+                                  {option.tag}
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                        </>
+                      );
                     }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'center',
-                    }}
-                    PaperProps={{
-                      sx: {
-                        p: '8px 20px',
-                        width: '375px',
-                        borderRadius: '12px',
-                        boxSizing: 'border-box',
-                      },
-                    }}
-                  >
-                    {newData.map((i) => (
-                      <Box>
-                        <MenuItem
-                          key={i.tagName}
-                          sx={{
-                            height: '56px',
-                            display: i?.hide ? 'none' : 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            justifyContent: 'space-between',
-                          }}
-                          onClick={() => handleSelect(i)}
-                        >
-                          <Typography sx={{ fontSize: '14px', fontWeight: '700', lineHeight: '22px' }}>
-                            {i.agency}
-                          </Typography>
-                          <Typography
-                            sx={{ fontSize: '12px', fontWeight: '400', lineHeight: '22px', color: '#8B8C9B' }}
-                          >
-                            {i.tagName}
-                          </Typography>
-                        </MenuItem>
-                        <Divider sx={{ margin: '0 16px !important', borderColor: '#EEF2FA' }} />
-                      </Box>
-                    ))}
-                  </Menu>
+                  />
                 </Box>
               </TableCell>
             </TableRow>

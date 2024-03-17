@@ -52,8 +52,8 @@ const StyledTableRow = styled(TableRow)(() => ({
   },
 }));
 export const tagsList = [
-  { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
-  { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
+  { name: 'Công an Hà Nội', tag: 'CA_hanoi' },
+  { name: 'Hội sở Vietcombank', tag: 'vietcombank_hoiso' },
 ];
 interface Props {
   formik: FormikProps<FormikValues | any>;
@@ -320,7 +320,7 @@ const LocationInfo: React.FC<Props> = ({ formik }) => {
           Đơn vị giám sát
         </Typography>
         <Box>
-          <TableTag data={tagsList} tags={tags} onSelected={(tags) => setFieldValue('tags', tags)} />
+          <TableTag tags={tags} onSelected={(tags) => setFieldValue('tags', tags)} />
         </Box>
       </Box>
     </Box>

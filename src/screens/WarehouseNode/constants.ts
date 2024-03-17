@@ -4,9 +4,10 @@ export const LIST_STATUS_NODE = {
   WARRANTY: 'repared',
   SAVE: 'stock',
   FREE: 'free',
+  NEAR_SUB_END: 'near_subscription_end'
 };
 
-const { ALL, ACTIVE, FREE, WARRANTY, SAVE } = LIST_STATUS_NODE;
+const { ALL, ACTIVE, FREE, WARRANTY, SAVE, NEAR_SUB_END } = LIST_STATUS_NODE;
 
 export const mappingStatusNode = {
   [ALL]: 'Tất cả trạng thái',
@@ -22,6 +23,15 @@ export const mappingStatusNodeColor = {
   [SAVE]: '#8B8C9B',
   [FREE]: '#0c8ce9',
 };
+
+
+export const statusNodeList = [
+  { label: 'Kích hoạt', value: ACTIVE },
+  { label: 'Bảo hành', value: WARRANTY },
+  { label: 'Lưu kho', value: SAVE },
+  { label: 'Sắp hết hạn', value: NEAR_SUB_END },
+];
+
 
 export const listStatusNode = Object.keys(mappingStatusNode).map((item) => ({
   value: item,

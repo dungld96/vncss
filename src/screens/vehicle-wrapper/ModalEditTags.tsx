@@ -17,8 +17,8 @@ interface Props {
   location: LocationType;
 }
 export const tagsList = [
-  { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
-  { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
+  { name: 'Công an Hà Nội', tag: 'CA_hanoi' },
+  { name: 'Hội sở Vietcombank', tag: 'vietcombank_hoiso' },
 ];
 const ModalEditTags: React.FC<Props> = ({ show, onClose, location, handleSuccess }) => {
   const [tags, setTags] = useState<TagType[]>([]);
@@ -30,8 +30,8 @@ const ModalEditTags: React.FC<Props> = ({ show, onClose, location, handleSuccess
 
   useEffect(() => {
     const tags = location.tags.map((item) => ({
-      tagName: item,
-      agency: tagsList.find((t) => t.tagName === item)?.agency || '',
+      tag: item,
+      name: tagsList.find((t) => t.tag === item)?.name || '',
     }));
     setTags(tags);
   }, [location]);
@@ -39,7 +39,7 @@ const ModalEditTags: React.FC<Props> = ({ show, onClose, location, handleSuccess
   const submit = () => {
     const body = {
       id: location.id,
-      tags: tags.map((item) => item.tagName),
+      tags: tags.map((item) => item.tag),
     };
     updateLocation({ location: body, parent_uuid: currentUser?.sub_id })
       .then((res: any) => {
@@ -56,7 +56,7 @@ const ModalEditTags: React.FC<Props> = ({ show, onClose, location, handleSuccess
 
   return (
     <Modal size="sm" show={show} close={onClose} title="Chỉnh sửa thẻ tag">
-      <TableTag data={tagsList} tags={tags} onSelected={(selectedTags) => setTags(selectedTags)} />
+      <TableTag tags={tags} onSelected={(selectedTags) => setTags(selectedTags)} />
       <DialogActions sx={{ padding: 0, marginTop: '32px' }}>
         <Button style={{ width: 131 }} variant="outlined" onClick={onClose}>
           Quay lại

@@ -6,7 +6,7 @@ export const defaultInitialValues = {
   contact_name: '',
   contact_number: '',
   contract_date: '',
-  tags: [] as { tagName: string; agency: string }[],
+  tags: [] as { tag: string; agency: string }[],
   address: '',
   commune: '',
   district: '',

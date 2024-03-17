@@ -46,7 +46,7 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handl
     initialValues: {
       ...location,
       contract_date: dayjs(location?.contract_date)?.format('DD/MM/YYYY'),
-      tags: tagsList.filter((item) => (location?.tags || []).includes(item.tagName)),
+      tags: tagsList.filter((item) => (location?.tags || []).includes(item.tag)),
       event_receivers: location?.event_receivers || [],
     },
     enableReinitialize: true,
@@ -62,7 +62,7 @@ const ModalEdit: React.FC<Props> = ({ show, onClose, agencyId, locationId, handl
         district: values.district,
         commune: values.commune,
         address: values.address,
-        tags: values.tags.map((item) => item.tagName),
+        tags: values.tags.map((item) => item.tag),
         contract_date: dayjs(values.contract_date, 'DD/MM/YYYY').unix(),
         business: values.business,
       };

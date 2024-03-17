@@ -151,15 +151,7 @@ const ConfirmInfo: React.FC<Props> = ({ values, setFieldValue, isSubmitting }) =
           Cơ quan, Đơn vị giám sát vị trí
         </Typography>
         <Box>
-          <TableTag
-            data={[
-              { agency: 'Công an Hà Nội', tagName: 'CA_hanoi' },
-              { agency: 'Hội sở Vietcombank', tagName: 'vietcombank_hoiso' },
-            ]}
-            tags={tags as any}
-            hideButtonAdd
-            onSelected={(tags) => setFieldValue('tags', tags)}
-          />
+          <TableTag tags={tags as any} hideButtonAdd onSelected={(tags) => setFieldValue('tags', tags)} />
         </Box>
       </Box>
     </Box>

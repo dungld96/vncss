@@ -67,9 +67,9 @@ const SelectTag: React.FC<Props> = ({ data }) => {
                 justifyContent: 'space-between',
               }}
             >
-              <Typography sx={{ fontSize: '14px', fontWeight: '700', lineHeight: '22px' }}>{i.agency}</Typography>
+              <Typography sx={{ fontSize: '14px', fontWeight: '700', lineHeight: '22px' }}>{i.name}</Typography>
               <Typography sx={{ fontSize: '12px', fontWeight: '400', lineHeight: '22px', color: '#8B8C9B' }}>
-                {i.tagName}
+                {i.tag}
               </Typography>
             </MenuItem>
             <Divider sx={{ margin: '0 16px !important', borderColor: '#EEF2FA' }} />

@@ -41,12 +41,19 @@ import { useAuth } from '../../hooks/useAuth';
 import useModalConfirm from '../../hooks/useModalConfirm';
 import { INodeType, useAchieveNodeMutation, useDeleteNodeMutation } from '../../services/node.service';
 import { selectNode } from '../../state/modules/node/nodeReducer';
-import { defaultInitialValues, listStatusNode, mappingStatusNode, mappingStatusNodeColor } from './constants';
+import {
+  defaultInitialValues,
+  listStatusNode,
+  mappingStatusNode,
+  mappingStatusNodeColor,
+  statusNodeList,
+} from './constants';
 import ModalAddNode from './ModalAddNode';
 import ModalChangeAgency from './ModalChangeAgency';
 import ModalEditNode from './ModalEditNode';
 import { useLazyGetAllAgenciesQuery } from '../../services/agencies.service';
 import { selectAgencies } from '../../state/modules/agency/agencyReducer';
+import { useQueryParams, StringParam } from 'use-query-params';
 
 const ActionCellContent = ({
   cellProps,
@@ -126,7 +133,20 @@ const ActionCellContent = ({
   );
 };
 
-export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) => {
+interface FiltersFormValue {
+  search: string;
+  agencyId: string;
+  nodeTypeId: string;
+  status: string;
+}
+
+export const WarehouseNodeTable = ({ nodeTypes, refetch }: { nodeTypes: INodeType[]; refetch: () => void }) => {
+  const [query, setQuery] = useQueryParams({
+    agencyId: StringParam,
+    search: StringParam,
+    nodeTypeId: StringParam,
+    status: StringParam,
+  });
   const [achieveNode] = useAchieveNodeMutation();
   const [deleteNode] = useDeleteNodeMutation();
   const [trigger] = useLazyGetAllAgenciesQuery();
@@ -144,14 +164,24 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
     ids: [''],
   });
 
-  const data = useSelector(selectNode);
-  const agencies = useSelector(selectAgencies);
-
+  const defaultFiltersFormValue = {
+    agencyId: query.agencyId || 'all',
+    nodeTypeId: query.nodeTypeId || 'all',
+    status: query.status || 'all',
+  };
+  const [searchValue, setSearchValue] = React.useState(query.search || '');
+  const [filtersFormValue, setFiltersFormValue] = React.useState(defaultFiltersFormValue);
   const {
-    auth: { currentUser },
+    auth: { currentUser, currentAgency },
   } = useAuth();
 
+  const data = useSelector(selectNode);
+  const agencies = useSelector(selectAgencies);
+  const agenciesList = (agencies || [])
+    .concat(currentAgency ? [currentAgency] : [])
+    .map((item) => ({ value: item.id, label: item.name }));
   const mappingAgencies = agencies.reduce((p, v) => ({ ...p, [v?.id || '']: v.name }), {}) as any;
+  const nodeTypesList = (nodeTypes || []).map((item) => ({ value: item.id, label: item.name }));
 
   const [columns] = useState([
     { name: 'nodeType', title: 'Loại' },
@@ -293,6 +323,38 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
     }
   }, [trigger, currentUser]);
 
+  const handleFilter = () => {
+    setQuery({
+      agencyId: filtersFormValue.agencyId,
+      search: searchValue ? searchValue : undefined,
+      nodeTypeId: filtersFormValue.nodeTypeId,
+      status: filtersFormValue.status,
+    });
+  };
+
+  const handleClearFilter = () => {
+    setFiltersFormValue({ agencyId: 'all', nodeTypeId: 'all', status: 'all' });
+    setSearchValue('');
+    setQuery({
+      agencyId: undefined,
+      search: undefined,
+      nodeTypeId: undefined,
+      status: undefined,
+    });
+  };
+
+  const handleChange = (filterName: 'agencyId' | 'nodeTypeId' | 'status', value: any) => {
+    setFiltersFormValue({
+      ...filtersFormValue,
+      [filterName]: value,
+    } as FiltersFormValue);
+  };
+
+  const onSearchChange = (e: any) => {
+    const value = e.target.value;
+    setSearchValue(value);
+  };
+
   return (
     <>
       <ModalChangeAgency
@@ -301,7 +363,7 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
         onSuccess={() => setSelection([])}
         onClose={() => setModaChangeAgency({ ...modalChangeAgency, show: false })}
       />
-      <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} nodeTypes={nodeTypes}/>
+      <ModalEditNode {...modalEdit} onClose={() => setModalEdit({ ...modalEdit, show: false })} nodeTypes={nodeTypes} />
       <ModalAddNode show={showModalAdd} onClose={() => setShowModalAdd(false)} nodeTypes={nodeTypes} />
       <Box
         sx={{
@@ -324,15 +386,68 @@ export const WarehouseNodeTable = ({ nodeTypes }: { nodeTypes: INodeType[] }) =>
           <Input
             noMarginTop
             topLable="Tìm kiếm"
-            style={{ width: 212, background: '#FFFFFF' }}
-            placeholder="Tìm kiếm"
+            style={{ width: 240, background: '#FFFFFF' }}
+            placeholder="Tìm kiếm serial"
             iconStartAdorment={<ImageIcon image={SearchIcon} />}
+            onChange={onSearchChange}
+            value={searchValue}
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter') {
+                handleFilter();
+                ev.preventDefault();
+              }
+            }}
           />
-          <Select noMarginTop topLable="Đại lý" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
-          <Select noMarginTop topLable="Loại thiết bị" data={[{ value: 'all', label: 'Tất cả' }]} selected="all" />
-          <Select noMarginTop topLable="Trạng thái" data={listStatusNode} selected="0" />
-          <Button style={{ width: 90 }} variant="contained">
+          <Select
+            noMarginTop
+            fullWidth
+            data={agenciesList}
+            selected={filtersFormValue.agencyId}
+            setSelected={(data) => handleChange('agencyId', data)}
+            style={{ width: '200px', marginRight: '16px' }}
+            topLable="Đại lý"
+            placeholder="Tất cả đại lý"
+          />
+
+          <Select
+            fullWidth
+            noMarginTop
+            data={nodeTypesList}
+            selected={filtersFormValue.nodeTypeId}
+            setSelected={(data) => handleChange('nodeTypeId', data)}
+            style={{ width: '200px', marginRight: '16px' }}
+            topLable="Loại thiết bị"
+            placeholder="Tất cả"
+          />
+          <Select
+            fullWidth
+            noMarginTop
+            data={statusNodeList}
+            selected={filtersFormValue.status}
+            setSelected={(data) => handleChange('status', data)}
+            style={{ width: '200px', marginRight: '16px' }}
+            topLable="Trạng thái"
+            placeholder="Tất cả"
+          />
+          <Button
+            onClick={handleFilter}
+            color="primary"
+            variant="contained"
+            style={{
+              height: '40px',
+              padding: '0 16px',
+              marginRight: '16px',
+            }}
+          >
             Lọc
+          </Button>
+          <Button
+            onClick={handleClearFilter}
+            color="primary"
+            variant="outlined"
+            style={{ height: '40px', padding: '0 16px' }}
+          >
+            Xoá bộ lọc
           </Button>
         </Box>
         <Button variant="contained" onClick={() => setShowModalAdd(true)}>

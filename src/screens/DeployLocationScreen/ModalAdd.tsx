@@ -71,7 +71,7 @@ const ModalAdd: React.FC<Props> = ({ show, onClose }) => {
           address: values.address,
           lat: Number(selectedPosition?.lat),
           lng: Number(selectedPosition?.lng),
-          tags: values.tags.map((item) => item.tagName),
+          tags: values.tags.map((item) => item.tag),
           contract_date: dayjs(values.contract_date, 'DD/MM/YYYY').unix(),
           business: values.business,
         };

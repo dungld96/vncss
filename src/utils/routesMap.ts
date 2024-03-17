@@ -20,7 +20,7 @@ export const routeTitle = {
   agencies: 'Đại lý',
   users: 'Nhân viên',
   'warehouse-gateway': 'Kho Gateway',
-  'warehouse-node': 'Kho Note',
+  'warehouse-node': 'Kho Node',
   'warehouse-sim': 'Kho Sim',
   'warehouse-cameras': 'Kho Camera',
   'depoy-location': 'Vị trí triển khai',

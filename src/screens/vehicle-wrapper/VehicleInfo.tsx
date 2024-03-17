@@ -34,7 +34,7 @@ const VehicleInfo: React.FC<Props> = ({ maxHeight }) => {
           Cơ quan, Đơn vị giám sát vị trí
         </Typography>
         <Box>
-          <TableTag data={[]} tags={[dataTag[0]]} />
+          <TableTag tags={[dataTag[0]]} />
         </Box>
       </Box>
     </SimpleBar>
