@@ -267,16 +267,16 @@ const GatewayInfo = ({
               justifyContent="center"
               alignItems="center"
               style={{
-                color: location.active_alert ? '#08C727' : '#8B8C9B',
+                color: gateway.state?.mode ? '#08C727' : '#8B8C9B',
                 fontSize: '12px',
                 fontWeight: 500,
                 // cursor: 'pointer',
               }}
               // onClick={handleClickOnOff}
             >
-              <img src={location.active_alert ? OnButton : OffButton} alt="" />
+              <img src={gateway.state?.mode ? OnButton : OffButton} alt="" />
               <Typography style={{ marginTop: '16px', fontWeight: 500 }}>
-                Cảnh báo {location.active_alert ? 'ON' : 'OFF'}
+                Cảnh báo {gateway.state?.mode ? 'ON' : 'OFF'}
               </Typography>
             </Box>
           </Box>

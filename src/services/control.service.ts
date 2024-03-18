@@ -58,6 +58,7 @@ export interface ControlLocationGatewayType {
     hum: number;
     temp: number;
     timestamp: number;
+    mode: number
     sensors: {
       mode: number;
       type: string;
