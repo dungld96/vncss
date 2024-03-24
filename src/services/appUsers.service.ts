@@ -13,7 +13,8 @@ export interface AppUsersResponsiveInterface extends ResponsiveInterface {
     gender: string;
     email: string;
   }[];
-  cursors: CursorType;
+  cursor: CursorType;
+  total: number;
 }
 
 export const appUsersApi = createApi({
@@ -23,7 +24,7 @@ export const appUsersApi = createApi({
   endpoints: (build) => ({
     
     getAllAppUsers: build.query<AppUsersResponsiveInterface, { params: any }>({
-      query: ({ params }) => ({ url: `mobile-users`, params }),
+      query: ({ params }) => ({ url: `app-users`, params }),
       providesTags(result) {
         if (result) {
           return [{ type: 'AllAppUsers' }];
@@ -33,13 +34,14 @@ export const appUsersApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const {
-            data: { data, cursors },
+            data: { data, cursor, total },
           } = await queryFulfilled;
 
           dispatch(
             setAppUsers({
               appUsers: data,
-              cursor: cursors,
+              cursor: cursor,
+              total: total,
             })
           );
         } catch (error) {

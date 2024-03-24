@@ -6,6 +6,7 @@ import { EventReceiveType } from '../../../state/modules/location/locationReduce
 import useModalConfirm from '../../../hooks/useModalConfirm';
 import {
   useGetControlLocationManagersQuery,
+  useRemoveManagerMutation,
   useUpdateLocationControlMutation,
 } from '../../../services/control.service';
 import { useSnackbar } from '../../../hooks/useSnackbar';
@@ -48,6 +49,7 @@ export const LocationManager = ({
   const [openAddManagerDialog, setOpenAddManagerDialog] = React.useState(false);
   const { showModalConfirm, hideModalConfirm } = useModalConfirm();
   const [updateLocationControl] = useUpdateLocationControlMutation();
+  const [removeManager] = useRemoveManagerMutation();
   const { data: managers, refetch: refetchManager } = useGetControlLocationManagersQuery({
     agencyId: currentUser?.sub_id ?? '',
     locationId,
@@ -87,25 +89,22 @@ export const LocationManager = ({
     });
   };
 
-  const handleDeleteManager = (indexSelected: number) => {
-    const eventReceiver = eventReceivers[indexSelected];
-    const newEventReceivers = eventReceivers.filter((item, index) => index !== indexSelected);
-
+  const handleDeleteManager = (manager: any) => {
     showModalConfirm({
       type: 'warning',
       title: 'Xoá người nhận thông báo',
-      content: `Bạn có chắc chắn muốn xoá người nhận thông báo ${eventReceiver.name} không?`,
+      content: `Bạn có chắc chắn muốn xoá người quản lý ${manager.username} không?`,
       confirm: {
         text: 'Xoá',
         action: async () => {
           if (currentUser && locationId) {
-            updateLocationControl({
+            removeManager({
               agencyId: currentUser.sub_id,
               locationId: locationId,
-              data: { event_receivers: [...newEventReceivers] },
+              managerId: manager.id,
             }).then((res) => {
-              refetch();
-              setSnackbar({ open: true, message: 'Cập nhận dánh sách nhận cảnh báo thành công', severity: 'success' });
+              refetchManager();
+              setSnackbar({ open: true, message: 'Cập nhận dánh sách người quản lý thành công', severity: 'success' });
             });
           }
           hideModalConfirm();
@@ -452,7 +451,7 @@ export const LocationManager = ({
                 >
                   <Box
                     style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}
-                    // onClick={() => handleDeleteEventReceiver(index)}
+                    onClick={() => handleDeleteManager(item)}
                   >
                     <DeleteOutline style={{ color: '#8B8C9B', cursor: 'pointer' }} />
                   </Box>

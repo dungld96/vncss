@@ -13,7 +13,7 @@ export default function AppUsersScreen() {
   const [trigger] = useLazyGetAllAppUsersQuery();
   const [paginate, setPaginate] = useState<CursorType>({});
 
-  const { limit, cursor } = useSelector(selectAppUsersState);
+  const { limit, cursor, total } = useSelector(selectAppUsersState);
   const {
     auth: { currentUser },
   } = useAuth();
@@ -32,7 +32,7 @@ export default function AppUsersScreen() {
   return (
     <Box mt={2} ml={2} mr={'12px'}>
       <AppUsersTable />
-      <Pagination paginate={cursor} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
+      <Pagination paginate={cursor} total={total} setPaginate={setPaginate} limit={limit} setLimit={handleSetLimit} />
     </Box>
   );
 }

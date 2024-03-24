@@ -144,6 +144,7 @@ export const controlApi = createApi({
     'handleAlertControl',
     'RemoveNode',
     'RemoveGateway',
+    'RemoveManager',
   ],
   endpoints: (build) => {
     const item = localStorage.getItem('current_user');
@@ -544,6 +545,19 @@ export const controlApi = createApi({
         },
         invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'UpdateControlLocation' }]),
       }),
+      removeManager: build.mutation<ResponsiveInterface, any>({
+        query: ({ agencyId, locationId, managerId }) => {
+          try {
+            return {
+              url: `agencies/${agencyId}/monitoring/locations/${locationId}/managers/${managerId}`,
+              method: 'DELETE',
+            };
+          } catch (error: any) {
+            throw new error.message();
+          }
+        },
+        invalidatesTags: (result, error, data) => (error ? [] : [{ type: 'RemoveManager' }]),
+      }),
     };
   },
 });
@@ -581,5 +595,6 @@ export const {
   useUpdateLocationEquipmentsMutation,
   useDeleteLocationEquipmentMutation,
   useGetControlLocationStatusQuery,
-  useRemoveGatewayMutation
+  useRemoveGatewayMutation,
+  useRemoveManagerMutation
 } = controlApi;

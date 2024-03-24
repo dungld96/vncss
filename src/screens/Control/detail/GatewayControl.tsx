@@ -283,63 +283,86 @@ const GatewayInfo = ({
         </Box>
       )}
 
-      <Box pt={1} width={gatewayTypeCode === 'GW-CTL4G' ? '50%' : '100%'}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Loại:</InfoTitle>
-          <InfoValue>{gatewayTypeName || '--'}</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Serial:</InfoTitle>
-          <InfoValue>{gateway.serial || '--'}</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Phiên bản:</InfoTitle>
-          <InfoValue>{gateway.version || '--'}</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Số sim:</InfoTitle>
-          <InfoValue>{gateway.sim || '--'}</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Ngày kích hoạt:</InfoTitle>
-          <InfoValue>{dayjs(gateway.active_at).format('DD/MM/YYYY HH:mm')}</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Số ngày còn lại:</InfoTitle>
-          <InfoValue>{diffDay} Ngày</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Trạng thái:</InfoTitle>
-          <InfoValue>{gateway.status === 'activated' ? 'Đang hoạt động' : 'Lưu kho'}</InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>Cập nhật lần cuối:</InfoTitle>
-          <InfoValue>
-            {gateway.state ? dayjs(gateway.state.timestamp * 1000).format('DD/MM/YYYY HH:mm') : '--'}
-          </InfoValue>
-        </Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-          <InfoTitle>{'Chế độ test & kiểm thử'}:</InfoTitle>
-          <InfoValue>
-            <Switch size="small" checked={gateway.testing} readOnly />
-          </InfoValue>
-        </Box>
-        {gatewayTypeCode === 'GW-CTL4G' && (
-          <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-            <InfoTitle>{'Xử lý cảnh báo'}:</InfoTitle>
-            <InfoValue>
-              <Button
-                variant="contained"
-                style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
-                onClick={handleProcessed}
-                disabled={location.state !== 'alert'}
-              >
-                Đã xử lý
-              </Button>
-            </InfoValue>
-          </Box>
-        )}
+      <Box pt={1}>
+        <Grid container>
+          <Grid item xs={gatewayTypeCode === 'GW-CTL4G' ? 6 : 12} paddingRight={4}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle style={{ fontWeight: 600, color: '#1E2323' }}>Output 01 - ON</InfoTitle>
+              <InfoValue>
+                <Switch checked={true} size="small" readOnly />
+              </InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle style={{ fontWeight: 600, color: '#1E2323' }}>Output 02 - ON</InfoTitle>
+              <InfoValue>
+                <Switch checked={true} readOnly size="small" />
+              </InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Loại:</InfoTitle>
+              <InfoValue>{gatewayTypeName || '--'}</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Serial:</InfoTitle>
+              <InfoValue>{gateway.serial || '--'}</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Phiên bản:</InfoTitle>
+              <InfoValue>{gateway.version || '--'}</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Điện áp:</InfoTitle>
+              <InfoValue>{'12V'}</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Số sim:</InfoTitle>
+              <InfoValue>{gateway.sim || '--'}</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Ngày kích hoạt:</InfoTitle>
+              <InfoValue>{dayjs(gateway.active_at).format('DD/MM/YYYY HH:mm')}</InfoValue>
+            </Box>
+          </Grid>
+          <Grid item xs={gatewayTypeCode === 'GW-CTL4G' ? 6 : 12} paddingLeft={4}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Số ngày còn lại:</InfoTitle>
+              <InfoValue>{diffDay} Ngày</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Trạng thái:</InfoTitle>
+              <InfoValue>{gateway.status === 'activated' ? 'Đang hoạt động' : 'Lưu kho'}</InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>Cập nhật lần cuối:</InfoTitle>
+              <InfoValue>
+                {gateway.state ? dayjs(gateway.state.timestamp * 1000).format('DD/MM/YYYY HH:mm') : '--'}
+              </InfoValue>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+              <InfoTitle>{'Chế độ test & kiểm thử'}:</InfoTitle>
+              <InfoValue>
+                <Switch size="small" checked={gateway.testing} readOnly />
+              </InfoValue>
+            </Box>
+            {gatewayTypeCode === 'GW-CTL4G' && (
+              <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+                <InfoTitle>{'Xử lý cảnh báo'}:</InfoTitle>
+                <InfoValue>
+                  <Button
+                    variant="contained"
+                    style={{ padding: '4px 16px', borderRadius: '8px', height: '36px' }}
+                    onClick={handleProcessed}
+                    disabled={location.state !== 'alert'}
+                  >
+                    Đã xử lý
+                  </Button>
+                </InfoValue>
+              </Box>
+            )}
+          </Grid>
+        </Grid>
       </Box>
+
       {/* {gatewayTypeCode === 'GW-ATM4G' && (
         <Box mt={1} py={2} style={{ borderTop: '1px solid #EEF2FA' }}>
           <Typography style={{ fontWeight: 600, fontSize: 18 }}>Thiết bị chống cướp</Typography>
