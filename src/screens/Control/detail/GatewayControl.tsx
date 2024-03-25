@@ -286,18 +286,23 @@ const GatewayInfo = ({
       <Box pt={1}>
         <Grid container>
           <Grid item xs={gatewayTypeCode === 'GW-CTL4G' ? 6 : 12} paddingRight={4}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-              <InfoTitle style={{ fontWeight: 600, color: '#1E2323' }}>Output 01 - ON</InfoTitle>
-              <InfoValue>
-                <Switch checked={true} size="small" readOnly />
-              </InfoValue>
-            </Box>
-            <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
-              <InfoTitle style={{ fontWeight: 600, color: '#1E2323' }}>Output 02 - ON</InfoTitle>
-              <InfoValue>
-                <Switch checked={true} readOnly size="small" />
-              </InfoValue>
-            </Box>
+            {gatewayTypeCode === 'GW-CTL4G' && (
+              <>
+                <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+                  <InfoTitle style={{ fontWeight: 600, color: '#1E2323' }}>Output 01 - ON</InfoTitle>
+                  <InfoValue>
+                    <Switch checked={true} size="small" readOnly />
+                  </InfoValue>
+                </Box>
+                <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+                  <InfoTitle style={{ fontWeight: 600, color: '#1E2323' }}>Output 02 - ON</InfoTitle>
+                  <InfoValue>
+                    <Switch checked={true} readOnly size="small" />
+                  </InfoValue>
+                </Box>
+              </>
+            )}
+
             <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
               <InfoTitle>Loại:</InfoTitle>
               <InfoValue>{gatewayTypeName || '--'}</InfoValue>
